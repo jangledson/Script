@@ -8,9 +8,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="mobile-web-app-capable" content="yes" />
     
-    <!-- Manifest para PWA -->
-    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIllvdUNhbiBMZWl0b3IiLAogICJzaG9ydF9uYW1lIjogIllvdUNhbiIsCiAgImRlc2NyaXB0aW9uIjogIkFwcHJlbmRhIGluZ2zDqnMgY29tIGxlaXR1cmEgZGUgZnJhc2VzIGVtIGluZ2zDqnMiLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiIzVDM0QyRSIsCiAgInRoZW1lX2NvbG9yIjogIiM1QzNEMkUiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWwsJTNDc3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgdmlld0JveD0nMCAwIDUxMiA1MTInJTNFJTNDcmVjdCB3aWR0aD0nNTEyJyBoZWlnaHQ9JzUxMicgcng9JzUwJyBmaWxsPSclMjM1QzNEMkUnLyUzRSUzQ3RleHQgeD0nMjU2JyB5PScyODAnIGZvbnQtc2l6ZT0nMjUwJyB0ZXh0LWFuY2hvcj0nbWlkZGxlJyBmaWxsPSclMjNGRkYnJTNFJTNDL3RleHQlM0UlM0Mvc3ZnJTNFIiwKICAgICAgInNpemVzIjogIjUxMng1MTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9zdmcreG1sIiwKICAgICAgInB1cnBvc2UiOiAiYW55IG1hc2thYmxlIgogICAgfQogIF0KfQ==" />
-
     <title>📚 YouCan Leitor</title>
 
     <!-- Bibliotecas -->
@@ -20,9 +17,6 @@
     </script>
 
     <style>
-        /* ================================================================
-                   RESET E BASE
-                   ================================================================ */
         * {
             margin: 0;
             padding: 0;
@@ -35,6 +29,7 @@
             height: 100%;
             overflow: hidden;
             background: #5C3D2E;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -47,10 +42,12 @@
             height: 100vh;
             height: 100dvh;
             overflow: hidden;
+            user-select: none;
+            -webkit-user-select: none;
         }
 
         /* ================================================================
-                   🚀 SPLASH SCREEN (TELA DE ABERTURA)
+                   🚀 SPLASH SCREEN
                    ================================================================ */
         #splashScreen {
             position: fixed;
@@ -123,8 +120,7 @@
             height: 100%;
             background: linear-gradient(90deg, #4CAF50, #8BC34A);
             border-radius: 3px;
-            width: 0%;
-            animation: loadingProgress 1.5s ease-in-out forwards;
+            width: 100%;
         }
 
         #splashScreen .version-info {
@@ -135,22 +131,8 @@
         }
 
         @keyframes splashPulse {
-            0%,
-            100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.02);
-            }
-        }
-
-        @keyframes loadingProgress {
-            0% {
-                width: 0%;
-            }
-            100% {
-                width: 100%;
-            }
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
         }
 
         /* ================================================================
@@ -220,123 +202,9 @@
             justify-content: center;
         }
 
-        .toolbar-actions button:hover {
-            background: rgba(255, 255, 255, 0.25);
-        }
-
-        .toolbar-actions .btn-update {
-            background: rgba(76, 175, 80, 0.4);
-            animation: updatePulse 2s ease-in-out infinite;
-            position: relative;
-        }
-
-        .toolbar-actions .btn-update:hover {
-            background: rgba(76, 175, 80, 0.6);
-        }
-
-        .toolbar-actions .btn-update.has-update {
-            background: rgba(255, 152, 0, 0.6);
-        }
-
-        .toolbar-actions .btn-update .badge {
-            position: absolute;
-            top: -4px;
-            right: -4px;
-            background: #FF5722;
-            color: #FFF;
-            border-radius: 50%;
-            width: 16px;
-            height: 16px;
-            font-size: 9px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 2px solid #5C3D2E;
-        }
-
-        @keyframes updatePulse {
-            0%,
-            100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.05);
-            }
-        }
-
-        /* ================================================================
-                   NOTIFICAÇÃO DE ATUALIZAÇÃO
-                   ================================================================ */
-        .update-notification {
-            position: fixed;
-            bottom: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #333;
-            color: #FFF;
-            padding: 14px 24px;
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-            z-index: 5000;
-            display: none;
-            align-items: center;
-            gap: 16px;
-            max-width: 90%;
-            animation: slideUp 0.4s ease;
-        }
-
-        .update-notification.show {
-            display: flex;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateX(-50%) translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(-50%) translateY(0);
-            }
-        }
-
-        .update-notification .update-text {
-            font-size: 13px;
-            line-height: 1.4;
-        }
-
-        .update-notification .update-text strong {
-            color: #8BC34A;
-        }
-
-        .update-notification .update-btn {
-            background: #4CAF50;
-            border: none;
-            color: #FFF;
-            padding: 8px 20px;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 13px;
-            cursor: pointer;
-            transition: background 0.2s;
-            white-space: nowrap;
-        }
-
-        .update-notification .update-btn:hover {
-            background: #388E3C;
-        }
-
-        .update-notification .update-close {
-            background: none;
-            border: none;
-            color: #999;
-            font-size: 20px;
-            cursor: pointer;
-            padding: 0 4px;
-        }
-
-        .update-notification .update-close:hover {
-            color: #FFF;
+        .toolbar-actions button:active {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(0.95);
         }
 
         /* ===== TELAS ===== */
@@ -349,25 +217,18 @@
         }
 
         .tela.ativa {
-            display: flex;
+            display: flex !important;
             flex-direction: column;
         }
 
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* ================================================================
-                   🏠 ESTANTE DE MADEIRA COM COMPARTIMENTOS
+                   🏠 ESTANTE
                    ================================================================ */
-
         .estante-wrapper {
             flex: 1;
             overflow-y: auto;
@@ -495,17 +356,6 @@
             display: none;
         }
 
-        .compartimento::before {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 6px;
-            background: rgba(0, 0, 0, 0.08);
-            border-radius: 0 0 3px 3px;
-        }
-
         .livro-card {
             flex: 0 0 auto;
             width: 56px;
@@ -518,8 +368,8 @@
             z-index: 2;
         }
 
-        .livro-card:hover {
-            transform: translateY(-10px) scale(1.03);
+        .livro-card:active {
+            transform: translateY(-10px) scale(0.95);
         }
 
         .lombada {
@@ -616,16 +466,10 @@
             justify-content: center;
             z-index: 10;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-            transition: transform 0.2s;
         }
 
         .livro-card:hover .btn-excluir-livro {
             display: flex;
-        }
-
-        .btn-excluir-livro:hover {
-            transform: scale(1.15);
-            background: #C62828;
         }
 
         .estante-vazia {
@@ -650,7 +494,6 @@
         /* ================================================================
                    📖 LEITOR
                    ================================================================ */
-
         .leitor-header {
             display: flex;
             justify-content: space-between;
@@ -667,11 +510,10 @@
             cursor: pointer;
             color: #5C3D2E;
             padding: 4px 8px;
-            transition: transform 0.2s;
         }
 
-        .leitor-header .voltar:hover {
-            transform: scale(1.1);
+        .leitor-header .voltar:active {
+            transform: scale(0.9);
         }
 
         .leitor-header .titulo-leitor {
@@ -714,8 +556,8 @@
             white-space: nowrap;
         }
 
-        .leitor-actions button:hover {
-            background: #D5CCC2;
+        .leitor-actions button:active {
+            transform: scale(0.95);
         }
 
         .leitor-actions button.ativo {
@@ -728,17 +570,9 @@
             color: #FFF;
         }
 
-        .leitor-actions button.primario:hover {
-            background: #4A3124;
-        }
-
         .leitor-actions button.btn-audio {
             background: #2196F3;
             color: #FFF;
-        }
-
-        .leitor-actions button.btn-audio:hover {
-            background: #1976D2;
         }
 
         .leitor-actions button.btn-audio.ativo-audio {
@@ -777,7 +611,6 @@
 
         .pagina-item .ingles:active {
             background: #E3F2FD;
-            transform: scale(0.99);
         }
 
         .pagina-item .ingles::after {
@@ -785,11 +618,6 @@
             font-size: 16px;
             margin-left: 10px;
             opacity: 0.4;
-            transition: opacity 0.2s;
-        }
-
-        .pagina-item .ingles:hover::after {
-            opacity: 1;
         }
 
         .pagina-item .ingles.falando {
@@ -798,13 +626,8 @@
         }
 
         @keyframes pulseAudio {
-            0%,
-            100% {
-                background: #BBDEFB;
-            }
-            50% {
-                background: #90CAF9;
-            }
+            0%, 100% { background: #BBDEFB; }
+            50% { background: #90CAF9; }
         }
 
         .pagina-item .divisor {
@@ -844,8 +667,8 @@
             color: #3D2B1A;
         }
 
-        .pagina-nav button:hover:not(:disabled) {
-            background: #D5CCC2;
+        .pagina-nav button:active:not(:disabled) {
+            transform: scale(0.97);
         }
 
         .pagina-nav button:disabled {
@@ -858,14 +681,9 @@
             color: #FFF;
         }
 
-        .pagina-nav button.primario:hover:not(:disabled) {
-            background: #4A3124;
-        }
-
         /* ================================================================
                    ⚙️ CONFIGURAÇÕES
                    ================================================================ */
-
         .btn-config {
             position: absolute;
             bottom: 20px;
@@ -886,9 +704,8 @@
             z-index: 20;
         }
 
-        .btn-config:hover {
-            transform: scale(1.08) rotate(30deg);
-            background: #4A3124;
+        .btn-config:active {
+            transform: scale(0.9) rotate(30deg);
         }
 
         .fab {
@@ -913,14 +730,13 @@
             z-index: 5;
         }
 
-        .fab:hover {
-            transform: scale(1.06);
+        .fab:active {
+            transform: scale(0.9);
         }
 
         /* ================================================================
                    📤 IMPORTAÇÃO
                    ================================================================ */
-
         .import-area {
             border: 2px dashed #D5CCC2;
             border-radius: 16px;
@@ -932,7 +748,7 @@
             background: #FAF8F5;
         }
 
-        .import-area:hover {
+        .import-area:active {
             border-color: #5C3D2E;
             background: #F5F0EB;
         }
@@ -995,7 +811,8 @@
             transition: all 0.2s;
         }
 
-        .import-form .btn-importar:hover:not(:disabled) {
+        .import-form .btn-importar:active:not(:disabled) {
+            transform: scale(0.98);
             background: #388E3C;
         }
 
@@ -1019,16 +836,11 @@
             font-size: 10px;
             font-weight: 600;
             color: #555;
-            transition: all 0.2s;
         }
 
         .import-form .formatos-aceitos span.suportado {
             background: #4CAF50;
             color: #FFF;
-        }
-
-        .import-form .formatos-aceitos span.em-breve {
-            opacity: 0.5;
         }
 
         .import-form .dica {
@@ -1048,7 +860,6 @@
         /* ================================================================
                    MODAL CONFIG
                    ================================================================ */
-
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -1080,23 +891,14 @@
         }
 
         @keyframes modalIn {
-            from {
-                opacity: 0;
-                transform: scale(0.92);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
+            from { opacity: 0; transform: scale(0.92); }
+            to { opacity: 1; transform: scale(1); }
         }
 
         .modal h2 {
             font-size: 19px;
             color: #5C3D2E;
             margin-bottom: 18px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
 
         .modal .grupo {
@@ -1128,25 +930,14 @@
             color: #333;
         }
 
-        .modal .grupo .opcoes button:hover {
-            border-color: #5C3D2E;
+        .modal .grupo .opcoes button:active {
+            transform: scale(0.95);
         }
 
         .modal .grupo .opcoes button.selecionado {
             border-color: #5C3D2E;
             background: #5C3D2E;
             color: #FFF;
-        }
-
-        .modal .grupo .opcoes button.danger {
-            border-color: #e53935;
-            color: #e53935;
-        }
-
-        .modal .grupo .opcoes button.danger:hover {
-            background: #e53935;
-            color: #FFF;
-            border-color: #e53935;
         }
 
         .modal .grupo .controle-fonte {
@@ -1163,11 +954,10 @@
             background: #E8DDD0;
             font-size: 18px;
             cursor: pointer;
-            transition: all 0.2s;
         }
 
-        .modal .grupo .controle-fonte button:hover {
-            background: #D5CCC2;
+        .modal .grupo .controle-fonte button:active {
+            transform: scale(0.9);
         }
 
         .modal .grupo .controle-fonte span {
@@ -1228,16 +1018,14 @@
             height: 28px;
             font-size: 14px;
             cursor: pointer;
-            transition: all 0.2s;
             flex-shrink: 0;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        .modal .grupo .item-livro .btn-excluir-config:hover {
-            background: #c62828;
-            transform: scale(1.1);
+        .modal .grupo .item-livro .btn-excluir-config:active {
+            transform: scale(0.9);
         }
 
         .modal .grupo .sem-livros {
@@ -1257,12 +1045,11 @@
             font-size: 15px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
             margin-top: 6px;
         }
 
-        .modal .btn-fechar:hover {
-            background: #4A3124;
+        .modal .btn-fechar:active {
+            transform: scale(0.98);
         }
 
         .modal .toggle-row {
@@ -1325,7 +1112,6 @@
         /* ================================================================
                    ESTILOS GLOBAIS
                    ================================================================ */
-
         .negrito .pagina-item .ingles {
             font-weight: 900 !important;
         }
@@ -1367,157 +1153,49 @@
 
         /* ===== RESPONSIVO ===== */
         @media (max-width: 420px) {
-            .livro-card {
-                width: 48px;
-            }
-            .lombada {
-                font-size: 7px;
-                min-height: 90px;
-                max-height: 120px;
-            }
-            .livro-info .titulo-card {
-                font-size: 5px;
-            }
-            .livro-info .progresso-card {
-                font-size: 5px;
-            }
-            .btn-config {
-                width: 42px;
-                height: 42px;
-                font-size: 18px;
-                bottom: 14px;
-                right: 14px;
-            }
-            .fab {
-                width: 46px;
-                height: 46px;
-                font-size: 22px;
-            }
-            .pagina-item .ingles {
-                font-size: 19px;
-            }
-            .pagina-item .portugues {
-                font-size: 16px;
-            }
-            .modal {
-                padding: 18px;
-            }
-            .compartimento {
-                padding: 0 2px;
-            }
-            .compartimento::after {
-                right: -3px;
-                width: 2px;
-            }
-            .prateleira-header .titulo {
-                font-size: 10px;
-                padding: 2px 8px;
-            }
-            .toolbar h1 {
-                font-size: 16px;
-            }
-            .leitor-actions button {
-                font-size: 10px;
-                padding: 4px 10px;
-            }
-            .pagina-item {
-                padding: 16px 18px;
-            }
-            #splashScreen .logo-icon {
-                font-size: 70px;
-                width: 120px;
-                height: 120px;
-                padding: 20px;
-            }
-            #splashScreen .logo-text {
-                font-size: 22px;
-            }
-            .update-notification {
-                padding: 12px 16px;
-                bottom: 70px;
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-            .update-notification .update-text {
-                font-size: 12px;
-                text-align: center;
-                width: 100%;
-            }
+            .livro-card { width: 48px; }
+            .lombada { font-size: 7px; min-height: 90px; max-height: 120px; }
+            .livro-info .titulo-card { font-size: 5px; }
+            .livro-info .progresso-card { font-size: 5px; }
+            .btn-config { width: 42px; height: 42px; font-size: 18px; bottom: 14px; right: 14px; }
+            .fab { width: 46px; height: 46px; font-size: 22px; }
+            .pagina-item .ingles { font-size: 19px; }
+            .pagina-item .portugues { font-size: 16px; }
+            .modal { padding: 18px; }
+            .compartimento { padding: 0 2px; }
+            .compartimento::after { right: -3px; width: 2px; }
+            .prateleira-header .titulo { font-size: 10px; padding: 2px 8px; }
+            .toolbar h1 { font-size: 16px; }
+            .leitor-actions button { font-size: 10px; padding: 4px 10px; }
+            .pagina-item { padding: 16px 18px; }
+            #splashScreen .logo-icon { font-size: 70px; width: 120px; height: 120px; padding: 20px; }
+            #splashScreen .logo-text { font-size: 22px; }
         }
 
         @media (max-width: 360px) {
-            .livro-card {
-                width: 42px;
-            }
-            .lombada {
-                font-size: 6px;
-                min-height: 75px;
-                max-height: 100px;
-            }
-            .compartimentos {
-                gap: 4px;
-            }
-            .compartimento::after {
-                right: -2px;
-                width: 2px;
-            }
-            .compartimento {
-                padding: 0 1px;
-            }
-            .prateleira {
-                padding: 10px 8px 6px 8px;
-            }
-            .pagina-item .ingles {
-                font-size: 17px;
-                padding: 6px 8px;
-            }
-            .pagina-item .portugues {
-                font-size: 14px;
-            }
-            .pagina-item {
-                padding: 14px 14px;
-            }
+            .livro-card { width: 42px; }
+            .lombada { font-size: 6px; min-height: 75px; max-height: 100px; }
+            .compartimentos { gap: 4px; }
+            .compartimento::after { right: -2px; width: 2px; }
+            .compartimento { padding: 0 1px; }
+            .prateleira { padding: 10px 8px 6px 8px; }
+            .pagina-item .ingles { font-size: 17px; padding: 6px 8px; }
+            .pagina-item .portugues { font-size: 14px; }
+            .pagina-item { padding: 14px 14px; }
         }
 
         @media (max-height: 600px) {
-            .toolbar {
-                padding: 8px 12px;
-                min-height: 44px;
-            }
-            .toolbar h1 {
-                font-size: 15px;
-            }
-            .leitor-header {
-                padding-bottom: 6px;
-            }
-            .leitor-actions {
-                padding: 4px 0;
-            }
-            .pagina-nav {
-                padding: 6px 0 2px;
-            }
-            .pagina-item {
-                padding: 12px 16px;
-            }
-            .pagina-item .ingles {
-                font-size: 17px;
-                padding: 4px 8px;
-            }
-            .pagina-item .portugues {
-                font-size: 14px;
-            }
-            #splashScreen .logo-icon {
-                font-size: 50px;
-                width: 90px;
-                height: 90px;
-                padding: 15px;
-            }
-            #splashScreen .logo-text {
-                font-size: 18px;
-            }
-            #splashScreen .logo-subtext {
-                font-size: 11px;
-            }
+            .toolbar { padding: 8px 12px; min-height: 44px; }
+            .toolbar h1 { font-size: 15px; }
+            .leitor-header { padding-bottom: 6px; }
+            .leitor-actions { padding: 4px 0; }
+            .pagina-nav { padding: 6px 0 2px; }
+            .pagina-item { padding: 12px 16px; }
+            .pagina-item .ingles { font-size: 17px; padding: 4px 8px; }
+            .pagina-item .portugues { font-size: 14px; }
+            #splashScreen .logo-icon { font-size: 50px; width: 90px; height: 90px; padding: 15px; }
+            #splashScreen .logo-text { font-size: 18px; }
+            #splashScreen .logo-subtext { font-size: 11px; }
         }
     </style>
 </head>
@@ -1537,26 +1215,12 @@
         </div>
     </div>
 
-    <!-- ===== NOTIFICAÇÃO DE ATUALIZAÇÃO ===== -->
-    <div class="update-notification" id="updateNotification">
-        <div class="update-text">
-            <strong>🔄 Atualização disponível!</strong><br />
-            <span id="updateVersionText">Versão nova</span>
-        </div>
-        <button class="update-btn" id="updateBtn">Atualizar agora</button>
-        <button class="update-close" id="updateClose">✕</button>
-    </div>
-
     <!-- ===== APP ===== -->
     <div class="app-container" id="appContainer">
 
         <div class="toolbar">
             <h1 id="toolbarTitulo">📚 Minha Estante</h1>
             <div class="toolbar-actions">
-                <button id="btnUpdateCheck" class="btn-update" title="Verificar atualizações">
-                    🔄
-                    <span class="badge" id="updateBadge" style="display:none;">1</span>
-                </button>
                 <button id="btnImportarTop" title="Importar livro">📤</button>
             </div>
         </div>
@@ -1634,7 +1298,7 @@
                     <strong>.CSV:</strong> Separado por vírgula: <em>Inglês,Português</em><br />
                     <strong>.JSON:</strong> Array com objetos "en" e "pt"<br />
                     <strong>.SRT / .VTT:</strong> Legendas com texto em inglês e português<br />
-                    <strong>.PDF:</strong> Extrai texto das páginas (inglês e português separados)<br /><br />
+                    <strong>.PDF:</strong> Extrai texto das páginas<br /><br />
                     🔊 <strong>Clique na frase em inglês</strong> para ouvir a pronúncia!
                 </div>
             </div>
@@ -1687,17 +1351,14 @@
 
                 <div class="grupo">
                     <label>📚 Gerenciar Livros</label>
-                    <div class="lista-livros" id="listaLivrosConfig">
-                        <!-- Preenchido via JavaScript -->
-                    </div>
+                    <div class="lista-livros" id="listaLivrosConfig"></div>
                 </div>
 
                 <div class="grupo">
                     <label>ℹ️ Sobre</label>
                     <div style="padding:8px 12px;background:#f5f0eb;border-radius:8px;font-size:12px;color:#666;">
                         <strong>YouCan Leitor</strong> v1.0.0<br />
-                        Aprenda inglês lendo frases traduzidas<br />
-                        <span id="appVersionInfo">Versão: 1.0.0</span>
+                        Aprenda inglês lendo frases traduzidas
                     </div>
                 </div>
 
@@ -1709,1084 +1370,1063 @@
 
     <script>
         // ================================================================
-        // 📱 PERMISSÕES ANDROID
+        // 🚀 INICIALIZAÇÃO PRINCIPAL - TUDO DENTRO DE UMA FUNÇÃO
         // ================================================================
-        const ANDROID_PERMISSIONS = [
-            'android.permission.INTERNET',
-            'android.permission.ACCESS_NETWORK_STATE',
-            'android.permission.WRITE_EXTERNAL_STORAGE',
-            'android.permission.READ_EXTERNAL_STORAGE',
-            'android.permission.READ_PHONE_STATE',
-            'android.permission.ACCESS_WIFI_STATE',
-            'android.permission.WAKE_LOCK',
-            'android.permission.VIBRATE',
-            'android.permission.ACCESS_COARSE_LOCATION',
-            'android.permission.ACCESS_FINE_LOCATION'
-        ];
-
-        // ================================================================
-        // 🔄 SISTEMA DE ATUALIZAÇÃO
-        // ================================================================
-        const APP_VERSION = '1.0.0';
-        const UPDATE_CHECK_URL = 'https://raw.githubusercontent.com/seu-usuario/seu-repositorio/main/version.json';
-        // Para testes locais, pode usar um arquivo local ou um serviço como:
-        // https://api.npoint.io/  (serviço gratuito para hospedar JSON)
-
-        let updateAvailable = false;
-        let updateData = null;
-
-        function checkForUpdates() {
-            console.log('🔍 Verificando atualizações...');
-
-            // Usar fetch para verificar versão
-            fetch(UPDATE_CHECK_URL)
-                .then(response => {
-                    if (!response.ok) throw new Error('Falha ao buscar atualizações');
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('📦 Dados da atualização:', data);
-                    if (data.version && data.version !== APP_VERSION) {
-                        updateAvailable = true;
-                        updateData = data;
-                        showUpdateNotification(data);
-                        document.getElementById('updateBadge').style.display = 'flex';
-                        document.getElementById('btnUpdateCheck').classList.add('has-update');
-                    } else {
-                        console.log('✅ App já está atualizado!');
-                        hideUpdateNotification();
-                        document.getElementById('updateBadge').style.display = 'none';
-                        document.getElementById('btnUpdateCheck').classList.remove('has-update');
-                    }
-                })
-                .catch(error => {
-                    console.warn('⚠️ Erro ao verificar atualizações:', error.message);
-                    // Se falhar, tenta verificar via Service Worker ou fallback
-                    checkForUpdatesFallback();
-                });
-        }
-
-        function checkForUpdatesFallback() {
-            // Verifica se o Service Worker tem uma atualização pendente
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.getRegistration().then(registration => {
-                    if (registration) {
-                        registration.update().then(() => {
-                            console.log('🔄 Service Worker atualizado');
-                        }).catch(err => {
-                            console.warn('⚠️ Erro ao atualizar Service Worker:', err);
-                        });
-                    }
-                });
-            }
-
-            // Verificar no localStorage se há uma atualização marcada
-            const localUpdate = localStorage.getItem('youcan_pending_update');
-            if (localUpdate) {
-                try {
-                    const data = JSON.parse(localUpdate);
-                    if (data.version && data.version !== APP_VERSION) {
-                        updateAvailable = true;
-                        updateData = data;
-                        showUpdateNotification(data);
-                        document.getElementById('updateBadge').style.display = 'flex';
-                        document.getElementById('btnUpdateCheck').classList.add('has-update');
-                    }
-                } catch (e) {}
-            }
-        }
-
-        function showUpdateNotification(data) {
-            const notification = document.getElementById('updateNotification');
-            const versionText = document.getElementById('updateVersionText');
-
-            versionText.textContent = `Nova versão ${data.version} disponível!`;
-            if (data.description) {
-                versionText.textContent += ` (${data.description})`;
-            }
-
-            notification.classList.add('show');
-        }
-
-        function hideUpdateNotification() {
-            document.getElementById('updateNotification').classList.remove('show');
-        }
-
-        function performUpdate() {
-            if (!updateData) {
-                alert('Nenhuma atualização disponível no momento.');
-                return;
-            }
-
-            // Mostrar progresso
-            const btn = document.getElementById('updateBtn');
-            const originalText = btn.textContent;
-            btn.textContent = '⏳ Baixando...';
-            btn.disabled = true;
-
-            // Simular download (em produção, isso seria um download real)
-            setTimeout(() => {
-                btn.textContent = '✅ Instalando...';
-
-                // Salvar no localStorage que há uma atualização pendente
-                localStorage.setItem('youcan_pending_update', JSON.stringify(updateData));
-
-                setTimeout(() => {
-                    // Forçar recarregar a página para aplicar a atualização
-                    if ('serviceWorker' in navigator) {
-                        navigator.serviceWorker.getRegistration().then(registration => {
-                            if (registration) {
-                                registration.update().then(() => {
-                                    alert(
-                                        '🔄 Atualização instalada! A página será recarregada.');
-                                    window.location.reload();
-                                });
-                            } else {
-                                alert('🔄 Atualização instalada! A página será recarregada.');
-                                window.location.reload();
-                            }
-                        });
-                    } else {
-                        alert('🔄 Atualização instalada! A página será recarregada.');
-                        window.location.reload();
-                    }
-
-                    btn.textContent = originalText;
-                    btn.disabled = false;
-                    hideUpdateNotification();
-                    document.getElementById('updateBadge').style.display = 'none';
-                    document.getElementById('btnUpdateCheck').classList.remove('has-update');
-                }, 1500);
-            }, 2000);
-        }
-
-        // ================================================================
-        // 🚀 SPLASH SCREEN
-        // ================================================================
-        function hideSplash() {
-            const splash = document.getElementById('splashScreen');
-            const app = document.getElementById('appContainer');
-
-            splash.classList.add('fade-out');
-
-            setTimeout(() => {
-                splash.style.display = 'none';
-                app.classList.add('visible');
-                // Verificar atualizações após o app carregar
-                setTimeout(checkForUpdates, 2000);
-                // Verificar a cada 5 minutos
-                setInterval(checkForUpdates, 300000);
-            }, 800);
-        }
-
-        setTimeout(hideSplash, 1800);
-
-        // ================================================================
-        // 📚 DADOS
-        // ================================================================
-        let livros = [];
-        let livroAtual = null;
-        let paginaAtual = 0;
-        let mostrarPT = true;
-        let audioAutomatico = false;
-        let velocidadeVoz = 1.0;
-
-        let config = {
-            tamanhoFonte: 20,
-            negrito: false,
-            fonte: 'fonte-arial',
-            velocidadeVoz: 1.0
-        };
-
-        const LIVROS_EXEMPLO = [{
-            id: 1,
-            titulo: 'The Little Prince',
-            autor: 'Antoine de Saint-Exupéry',
-            cor: '#DC3232',
-            paginas: [
-                { en: 'Once when I was six years old I saw a magnificent picture in a book.',
-                    pt: 'Uma vez, quando eu tinha seis anos, vi uma imagem magnífica em um livro.' },
-                { en: 'The book was called "True Stories from Nature".', pt: 'O livro chamava-se "Histórias Verdadeiras da Natureza".' },
-                { en: 'It showed a boa constrictor swallowing a beast.', pt: 'Mostrava uma jiboia engolindo um animal.' },
-                { en: 'In the book it said: "Boa constrictors swallow their prey whole".',
-                    pt: 'No livro dizia: "As jiboias engolem a presa inteira".' },
-                { en: 'I thought a lot about the adventures in the jungle.', pt: 'Pensei muito sobre as aventuras na selva.' },
-                { en: 'And I drew my first drawing.', pt: 'E desenhei meu primeiro desenho.' }
-            ],
-            paginaAtual: 0
-        }, {
-            id: 2,
-            titulo: 'English Short Stories',
-            autor: 'YouCan',
-            cor: '#3278DC',
-            paginas: [
-                { en: 'The sun was setting behind the mountains.', pt: 'O sol estava se pondo atrás das montanhas.' },
-                { en: 'A gentle breeze moved through the trees.', pt: 'Uma brisa suave movia-se entre as árvores.' },
-                { en: 'Sarah sat on the old wooden bench.', pt: 'Sarah sentou-se no velho banco de madeira.' },
-                { en: 'She had a book in her hands.', pt: 'Ela tinha um livro em suas mãos.' },
-                { en: 'It was her favorite place in the world.', pt: 'Era seu lugar favorito no mundo.' },
-                { en: 'She opened the book and began to read.', pt: 'Ela abriu o livro e começou a ler.' }
-            ],
-            paginaAtual: 0
-        }, {
-            id: 3,
-            titulo: 'Daily English',
-            autor: 'YouCan',
-            cor: '#32B464',
-            paginas: [
-                { en: 'Good morning! How are you today?', pt: 'Bom dia! Como você está hoje?' },
-                { en: 'I would like a cup of coffee, please.', pt: 'Eu gostaria de uma xícara de café, por favor.' },
-                { en: 'What time is the meeting?', pt: 'Que horas é a reunião?' },
-                { en: 'I need to go to the supermarket.', pt: 'Eu preciso ir ao supermercado.' },
-                { en: 'Can you help me with this?', pt: 'Você pode me ajudar com isso?' },
-                { en: 'Thank you very much for your help.', pt: 'Muito obrigado pela sua ajuda.' }
-            ],
-            paginaAtual: 0
-        }];
-
-        // ================================================================
-        // INICIALIZAÇÃO
-        // ================================================================
-        function init() {
-            carregarDados();
-            renderizarEstante();
-            aplicarConfiguracoes();
-            setupEventos();
-            atualizarToolbar('estante');
-            atualizarListaLivrosConfig();
-            document.getElementById('appVersionInfo').textContent = `Versão: ${APP_VERSION}`;
-
-            // Verificar permissões de áudio
-            if (window.speechSynthesis) {
-                window.speechSynthesis.getVoices();
-            }
-        }
-
-        function carregarDados() {
-            const dados = localStorage.getItem('youcan_livros');
-            if (dados) {
-                try {
-                    const parsed = JSON.parse(dados);
-                    if (Array.isArray(parsed) && parsed.length > 0) {
-                        livros = parsed;
-                        return;
-                    }
-                } catch (e) {}
-            }
-            livros = JSON.parse(JSON.stringify(LIVROS_EXEMPLO));
-            salvarDados();
-        }
-
-        function salvarDados() {
-            localStorage.setItem('youcan_livros', JSON.stringify(livros));
-        }
-
-        function carregarConfig() {
-            const dados = localStorage.getItem('youcan_config');
-            if (dados) {
-                try {
-                    const parsed = JSON.parse(dados);
-                    config = parsed;
-                    velocidadeVoz = config.velocidadeVoz || 1.0;
-                    return;
-                } catch (e) {}
-            }
-            config = { tamanhoFonte: 20, negrito: false, fonte: 'fonte-arial', velocidadeVoz: 1.0 };
-            velocidadeVoz = 1.0;
-            salvarConfig();
-        }
-
-        function salvarConfig() {
-            config.velocidadeVoz = velocidadeVoz;
-            localStorage.setItem('youcan_config', JSON.stringify(config));
-        }
-
-        // ================================================================
-        // 📚 GERENCIAMENTO DE LIVROS NAS CONFIGURAÇÕES
-        // ================================================================
-        function atualizarListaLivrosConfig() {
-            const container = document.getElementById('listaLivrosConfig');
-
-            if (livros.length === 0) {
-                container.innerHTML =
-                    `
-                        <div class="sem-livros">
-                            📭 Nenhum livro na estante
-                        </div>
-                    `;
-                return;
-            }
-
-            let html = '';
-            livros.forEach((livro, index) => {
-                const total = livro.paginas.length;
-                const lidas = livro.paginaAtual || 0;
-                const percentual = total > 0 ? Math.round((lidas / total) * 100) : 0;
-
-                html += `
-                        <div class="item-livro">
-                            <div class="info">
-                                <div class="titulo-item">${livro.titulo}</div>
-                                <div class="autor-item">${livro.autor || 'Autor desconhecido'} • ${percentual}% lido • ${total} páginas</div>
-                            </div>
-                            <button class="btn-excluir-config" data-index="${index}" title="Excluir livro">✕</button>
-                        </div>
-                    `;
-            });
-
-            container.innerHTML = html;
-
-            container.querySelectorAll('.btn-excluir-config').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    const index = parseInt(this.dataset.index);
-                    excluirLivroConfig(index);
-                });
-            });
-        }
-
-        function excluirLivroConfig(index) {
-            const livro = livros[index];
-            if (!livro) return;
-
-            if (confirm(`⚠️ Tem certeza que deseja excluir "${livro.titulo}" da estante?\n\nEsta ação não pode ser desfeita!`)) {
-                window.speechSynthesis.cancel();
-                audioAutomatico = false;
-                document.getElementById('btnAudioAutomatico').classList.remove('ativo-audio');
-
-                if (livroAtual === index) {
-                    livroAtual = null;
-                    mostrarTela('estante');
-                } else if (livroAtual !== null && livroAtual > index) {
-                    livroAtual--;
-                }
-
-                livros.splice(index, 1);
-                salvarDados();
-
-                renderizarEstante();
-                atualizarListaLivrosConfig();
-
-                if (livros.length === 0) {
-                    fecharConfig();
-                    mostrarTela('estante');
-                }
-            }
-        }
-
-        // ================================================================
-        // 🏠 ESTANTE
-        // ================================================================
-        function renderizarEstante() {
-            const container = document.getElementById('estanteContainer');
-
-            if (livros.length === 0) {
-                container.innerHTML =
-                    `
-                        <div class="prateleira">
-                            <div class="estante-vazia">
-                                <div class="icone">📚</div>
-                                <p>Nenhum livro na estante.</p>
-                                <p style="font-size:12px;opacity:0.6;">Toque em ➕ para importar</p>
-                            </div>
-                        </div>
-                    `;
-                return;
-            }
-
-            const livrosPorPrateleira = 5;
-            let html = '';
-
-            for (let i = 0; i < livros.length; i += livrosPorPrateleira) {
-                const grupo = livros.slice(i, i + livrosPorPrateleira);
-                const numPrateleira = Math.floor(i / livrosPorPrateleira) + 1;
-
-                html += `
-                        <div class="prateleira">
-                            <div class="prateleira-header">
-                                <span class="titulo">📚 Prateleira ${numPrateleira}</span>
-                                <span class="contador">${grupo.length} livros</span>
-                            </div>
-                            <div class="compartimentos">
-                                ${grupo.map((livro, idx) => {
-                                    const indexGlobal = i + idx;
-                                    const total = livro.paginas.length;
-                                    const lidas = livro.paginaAtual || 0;
-                                    const percentual = total > 0 ? Math.round((lidas / total) * 100) : 0;
-
-                                    let tituloAbreviado = livro.titulo;
-                                    if (tituloAbreviado.length > 14) {
-                                        tituloAbreviado = tituloAbreviado.substring(0, 12) + '…';
-                                    }
-
-                                    return `
-                                        <div class="compartimento">
-                                            <div class="livro-card" data-index="${indexGlobal}">
-                                                <div class="lombada" style="background:${livro.cor || '#5C3D2E'}">
-                                                    ${tituloAbreviado}
-                                                </div>
-                                                <div class="livro-info">
-                                                    <div class="titulo-card">${livro.titulo}</div>
-                                                    <div class="progresso-card">${percentual}%</div>
-                                                </div>
-                                                <button class="btn-excluir-livro" data-index="${indexGlobal}">✕</button>
-                                            </div>
-                                        </div>
-                                    `;
-                                }).join('')}
-                            </div>
-                        </div>
-                    `;
-            }
-
-            container.innerHTML = html;
-
-            container.querySelectorAll('.livro-card').forEach(card => {
-                const index = parseInt(card.dataset.index);
-                card.addEventListener('click', (e) => {
-                    if (e.target.closest('.btn-excluir-livro')) return;
-                    abrirLeitor(index);
-                });
-
-                const btnExcluir = card.querySelector('.btn-excluir-livro');
-                if (btnExcluir) {
-                    btnExcluir.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        excluirLivro(index);
-                    });
-                }
-            });
-        }
-
-        function excluirLivro(index) {
-            const livro = livros[index];
-            if (!livro) return;
-
-            if (confirm(`⚠️ Tem certeza que deseja excluir "${livro.titulo}" da estante?`)) {
-                window.speechSynthesis.cancel();
-                audioAutomatico = false;
-                document.getElementById('btnAudioAutomatico').classList.remove('ativo-audio');
-
-                if (livroAtual === index) {
-                    livroAtual = null;
-                    mostrarTela('estante');
-                } else if (livroAtual !== null && livroAtual > index) {
-                    livroAtual--;
-                }
-
-                livros.splice(index, 1);
-                salvarDados();
-                renderizarEstante();
-                atualizarListaLivrosConfig();
-
-                if (livros.length === 0) {
-                    mostrarTela('estante');
-                }
-            }
-        }
-
-        // ================================================================
-        // 🔊 ÁUDIO (TTS)
-        // ================================================================
-        function falarFrase(texto, callback) {
-            if (!window.speechSynthesis) {
-                alert('Seu navegador não suporta síntese de voz.');
-                if (callback) callback();
-                return;
-            }
-
-            window.speechSynthesis.cancel();
-
-            const utterance = new SpeechSynthesisUtterance(texto);
-            utterance.lang = 'en-US';
-            utterance.rate = velocidadeVoz;
-            utterance.pitch = 1.0;
-            utterance.volume = 1.0;
-
-            const vozes = window.speechSynthesis.getVoices();
-            const vozInglesa = vozes.find(v => v.lang.startsWith('en'));
-            if (vozInglesa) utterance.voice = vozInglesa;
-
-            if (callback) {
-                utterance.onend = callback;
-                utterance.onerror = callback;
-            }
-
-            window.speechSynthesis.speak(utterance);
-            return utterance;
-        }
-
-        function falarFraseAtual() {
-            const livro = livros[livroAtual];
-            if (!livro) return;
-
-            const pagina = livro.paginas[paginaAtual];
-            if (!pagina || !pagina.en) return;
-
-            const elementoIngles = document.querySelector('.pagina-item .ingles');
-            if (elementoIngles) {
-                elementoIngles.classList.add('falando');
-            }
-
-            falarFrase(pagina.en, () => {
-                if (elementoIngles) {
-                    elementoIngles.classList.remove('falando');
-                }
-            });
-        }
-
-        // ================================================================
-        // 📖 LEITOR
-        // ================================================================
-        function abrirLeitor(index) {
-            window.speechSynthesis.cancel();
-            audioAutomatico = false;
-            document.getElementById('btnAudioAutomatico').classList.remove('ativo-audio');
-
-            livroAtual = index;
-            const livro = livros[index];
-            paginaAtual = livro.paginaAtual || 0;
-            mostrarPT = true;
-
-            document.getElementById('leitorTitulo').textContent = livro.titulo;
-            document.getElementById('btnTogglePT').textContent = '🇧🇷 PT';
-            document.getElementById('btnTogglePT').classList.add('ativo');
-
-            mostrarTela('leitor');
-            renderizarPagina();
-            aplicarConfiguracoes();
-        }
-
-        function renderizarPagina() {
-            const livro = livros[livroAtual];
-            if (!livro) return;
-
-            const total = livro.paginas.length;
-            if (paginaAtual >= total) paginaAtual = total - 1;
-            if (paginaAtual < 0) paginaAtual = 0;
-
-            const pagina = livro.paginas[paginaAtual];
-            if (!pagina) return;
-
-            document.getElementById('leitorPagina').textContent = `${paginaAtual + 1}/${total}`;
-
-            document.getElementById('btnAnterior').disabled = paginaAtual === 0;
-            document.getElementById('btnAnterior2').disabled = paginaAtual === 0;
-            document.getElementById('btnProximo').disabled = paginaAtual >= total - 1;
-            document.getElementById('btnProximo2').disabled = paginaAtual >= total - 1;
-
-            const container = document.getElementById('paginasLeitor');
-            const ptClass = mostrarPT ? '' : 'oculto';
-
-            container.innerHTML = `
-                    <div class="pagina-item">
-                        <div class="ingles" id="fraseIngles">${pagina.en}</div>
-                        <div class="divisor"></div>
-                        <div class="portugues ${ptClass}">${pagina.pt || ''}</div>
-                    </div>
-                `;
-
-            const elementoIngles = document.getElementById('fraseIngles');
-            if (elementoIngles) {
-                elementoIngles.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    falarFraseAtual();
-                });
-            }
-
-            livro.paginaAtual = paginaAtual;
-            salvarDados();
-            renderizarEstante();
-            atualizarListaLivrosConfig();
-        }
-
-        // ================================================================
-        // 📤 IMPORTAÇÃO - SUPORTE A MÚLTIPLOS FORMATOS (INCLUINDO PDF)
-        // ================================================================
-        function importarArquivo() {
-            const titulo = document.getElementById('inputTitulo').value.trim();
-            const autor = document.getElementById('inputAutor').value.trim() || 'Desconhecido';
-            const file = document.getElementById('fileInput').files[0];
-
-            if (!titulo) { alert('Digite um título para o livro.'); return; }
-            if (!file) { alert('Selecione um arquivo.'); return; }
-
-            const extensao = file.name.split('.').pop().toLowerCase();
-
-            if (extensao === 'txt' || extensao === 'docx') {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    let texto = e.target.result;
-                    if (extensao === 'docx') {
-                        mammoth.extractRawText({ arrayBuffer: e.target.result })
-                            .then(r => processarTextoDelimitado(r.value, titulo, autor))
-                            .catch(err => alert('Erro ao ler DOCX: ' + err.message));
-                        return;
-                    }
-                    processarTextoDelimitado(texto, titulo, autor);
-                };
-                if (extensao === 'docx') {
-                    reader.readAsArrayBuffer(file);
-                } else {
-                    reader.readAsText(file, 'UTF-8');
-                }
-            } else if (extensao === 'csv') {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    processarCSV(e.target.result, titulo, autor);
-                };
-                reader.readAsText(file, 'UTF-8');
-            } else if (extensao === 'json') {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    processarJSON(e.target.result, titulo, autor);
-                };
-                reader.readAsText(file, 'UTF-8');
-            } else if (extensao === 'srt' || extensao === 'vtt') {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    processarLegendas(e.target.result, titulo, autor);
-                };
-                reader.readAsText(file, 'UTF-8');
-            } else if (extensao === 'pdf') {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const arrayBuffer = e.target.result;
-                    processarPDF(arrayBuffer, titulo, autor);
-                };
-                reader.readAsArrayBuffer(file);
-            } else {
-                alert('Formato não suportado. Use .txt, .docx, .csv, .json, .srt, .vtt ou .pdf');
-            }
-        }
-
-        async function processarPDF(arrayBuffer, titulo, autor) {
-            try {
-                const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-                const totalPages = pdf.numPages;
-                let paginas = [];
-
-                for (let i = 1; i <= totalPages; i++) {
-                    const page = await pdf.getPage(i);
-                    const textContent = await page.getTextContent();
-                    const texto = textContent.items.map(item => item.str).join(' ');
-
-                    if (texto.trim()) {
-                        const linhas = texto.split(/\n|\.\s+/).filter(l => l.trim());
-                        const paginasSeparadas = linhas.map(linha => {
-                            const temPT = /[áàâãéêíóôõúç]/i.test(linha);
-                            const temEN = /[a-zA-Z]/i.test(linha) && !/[áàâãéêíóôõúç]/i.test(linha);
-
-                            if (temPT && temEN) {
-                                const parts = linha.split(/[|;:–-]/);
-                                if (parts.length >= 2) {
-                                    return {
-                                        en: parts[0].trim().replace(/[^a-zA-Z\s.,!?']/g, '').trim(),
-                                        pt: parts[1].trim().replace(/[^a-zA-Záàâãéêíóôõúç\s.,!?']/g, '').trim()
-                                    };
-                                }
-                                const ptCount = (linha.match(/[áàâãéêíóôõúç]/gi) || []).length;
-                                const enCount = (linha.match(/[a-zA-Z]/gi) || []).length;
-
-                                if (ptCount > enCount * 0.3) {
-                                    return { en: '', pt: linha.trim() };
-                                } else {
-                                    return { en: linha.trim(), pt: '' };
-                                }
-                            } else if (temPT) {
-                                return { en: '', pt: linha.trim() };
-                            } else if (temEN) {
-                                return { en: linha.trim(), pt: '' };
-                            }
-                            return { en: linha.trim(), pt: '' };
-                        });
-
-                        let enTexto = '';
-                        let ptTexto = '';
-                        paginasSeparadas.forEach(p => {
-                            if (p.en) enTexto += p.en + ' ';
-                            if (p.pt) ptTexto += p.pt + ' ';
-                        });
-
-                        if (enTexto.trim() || ptTexto.trim()) {
-                            if (!enTexto.trim() && ptTexto.trim()) {
-                                const enExtraido = ptTexto.match(/[a-zA-Z][a-zA-Z\s.,!?']{3,}/g);
-                                if (enExtraido) {
-                                    enTexto = enExtraido.join(' ');
-                                    ptTexto = ptTexto.replace(/[a-zA-Z][a-zA-Z\s.,!?']{3,}/g, '').trim();
-                                }
-                            } else if (enTexto.trim() && !ptTexto.trim()) {
-                                const ptExtraido = ptTexto.match(/[a-zA-Záàâãéêíóôõúç][a-zA-Záàâãéêíóôõúç\s.,!?']{3,}/g);
-                                if (ptExtraido) {
-                                    ptTexto = ptExtraido.join(' ');
-                                    enTexto = enTexto.replace(/[a-zA-Záàâãéêíóôõúç][a-zA-Záàâãéêíóôõúç\s.,!?']{3,}/g, '')
-                                        .trim();
-                                }
-                            }
-
-                            paginas.push({
-                                en: enTexto.trim().substring(0, 500) || 'Texto em inglês não encontrado',
-                                pt: ptTexto.trim().substring(0, 500) || 'Texto em português não encontrado'
-                            });
-                        }
-                    }
-                }
-
-                if (paginas.length === 0) {
-                    alert('Não foi possível extrair texto do PDF. O PDF pode ser scaneado ou não conter texto.');
-                    return;
-                }
-
-                criarLivro(paginas, titulo, autor);
-
-            } catch (error) {
-                console.error('Erro ao processar PDF:', error);
-                alert('Erro ao processar PDF: ' + error.message);
-            }
-        }
-
-        function processarTextoDelimitado(texto, titulo, autor) {
-            const linhas = texto.split('\n').filter(l => l.trim() !== '');
-            if (linhas.length === 0) { alert('Arquivo vazio!'); return; }
-
-            const paginas = linhas.map(linha => {
-                const partes = linha.split('||');
-                return partes.length >= 2 ? { en: partes[0].trim(), pt: partes[1].trim() } : { en: linha.trim(), pt: '' };
-            });
-
-            criarLivro(paginas, titulo, autor);
-        }
-
-        function processarCSV(texto, titulo, autor) {
-            const linhas = texto.split('\n').filter(l => l.trim() !== '');
-            if (linhas.length === 0) { alert('Arquivo vazio!'); return; }
-
-            const paginas = linhas.map(linha => {
-                let partes;
-                if (linha.includes(';')) {
-                    partes = linha.split(';');
-                } else {
-                    partes = linha.split(',');
-                }
-                return partes.length >= 2 ? { en: partes[0].trim().replace(/^"|"$/g, ''), pt: partes[1].trim().replace(
-                        /^"|"$/g, '') } : { en: linha.trim(), pt: '' };
-            });
-
-            criarLivro(paginas, titulo, autor);
-        }
-
-        function processarJSON(texto, titulo, autor) {
-            try {
-                const dados = JSON.parse(texto);
-                if (!Array.isArray(dados)) { alert('JSON deve ser um array de objetos.'); return; }
-
-                const paginas = dados.map(item => ({
-                    en: item.en || item.english || item.English || item.text || '',
-                    pt: item.pt || item.portuguese || item.Portuguese || item.traducao || ''
-                })).filter(p => p.en || p.pt);
-
-                if (paginas.length === 0) { alert('Nenhum dado válido encontrado no JSON.'); return; }
-
-                criarLivro(paginas, titulo, autor);
-            } catch (e) {
-                alert('Erro ao ler JSON: ' + e.message);
-            }
-        }
-
-        function processarLegendas(texto, titulo, autor) {
-            const linhas = texto.split('\n').filter(l => l.trim() !== '');
-            const paginas = [];
-            let textoIngles = '';
-            let textoPortugues = '';
-
-            for (let i = 0; i < linhas.length; i++) {
-                const linha = linhas[i].trim();
-
-                if (linha.match(/^\d+$/) || linha.match(/^\d{2}:\d{2}:\d{2}/) || linha.match(/^\d{2}:\d{2}/) || linha.includes(
-                        '-->')) {
-                    continue;
-                }
-
-                if (linha && !linha.match(/^WEBVTT|^Kindle|^Language/)) {
-                    const temPT = /[áàâãéêíóôõúç]/i.test(linha);
-                    if (temPT) {
-                        textoPortugues = linha;
-                    } else {
-                        textoIngles = linha;
-                    }
-
-                    if (textoIngles && textoPortugues) {
-                        paginas.push({ en: textoIngles, pt: textoPortugues });
-                        textoIngles = '';
-                        textoPortugues = '';
-                    }
-                }
-            }
-
-            if (textoIngles || textoPortugues) {
-                paginas.push({ en: textoIngles || textoPortugues, pt: textoPortugues || textoIngles });
-            }
-
-            if (paginas.length === 0) { alert('Nenhuma legenda válida encontrada.'); return; }
-
-            criarLivro(paginas, titulo, autor);
-        }
-
-        function criarLivro(paginas, titulo, autor) {
-            const cores = ['#DC3232', '#3278DC', '#32B464', '#C89632', '#9632C8', '#32C8C8', '#DC6432', '#C83296', '#2E7D32',
-                '#AD1457', '#1565C0', '#E65100', '#4E342E', '#00695C', '#8D6E63', '#D81B60', '#7B1FA2'
-            ];
-
-            const novoLivro = {
-                id: Date.now(),
-                titulo,
-                autor,
-                cor: cores[Math.floor(Math.random() * cores.length)],
-                paginas,
-                paginaAtual: 0
+        (function() {
+            'use strict';
+
+            // ================================================================
+            // 📚 DADOS GLOBAIS
+            // ================================================================
+            const APP_VERSION = '1.0.0';
+            let livros = [];
+            let livroAtual = null;
+            let paginaAtual = 0;
+            let mostrarPT = true;
+            let audioAutomatico = false;
+            let velocidadeVoz = 1.0;
+
+            let config = {
+                tamanhoFonte: 20,
+                negrito: false,
+                fonte: 'fonte-arial',
+                velocidadeVoz: 1.0
             };
 
-            livros.push(novoLivro);
-            salvarDados();
-            renderizarEstante();
-            atualizarListaLivrosConfig();
+            const LIVROS_EXEMPLO = [{
+                id: 1,
+                titulo: 'The Little Prince',
+                autor: 'Antoine de Saint-Exupéry',
+                cor: '#DC3232',
+                paginas: [
+                    { en: 'Once when I was six years old I saw a magnificent picture in a book.',
+                        pt: 'Uma vez, quando eu tinha seis anos, vi uma imagem magnífica em um livro.' },
+                    { en: 'The book was called "True Stories from Nature".',
+                        pt: 'O livro chamava-se "Histórias Verdadeiras da Natureza".' },
+                    { en: 'It showed a boa constrictor swallowing a beast.',
+                        pt: 'Mostrava uma jiboia engolindo um animal.' },
+                    { en: 'In the book it said: "Boa constrictors swallow their prey whole".',
+                        pt: 'No livro dizia: "As jiboias engolem a presa inteira".' },
+                    { en: 'I thought a lot about the adventures in the jungle.',
+                        pt: 'Pensei muito sobre as aventuras na selva.' },
+                    { en: 'And I drew my first drawing.', pt: 'E desenhei meu primeiro desenho.' }
+                ],
+                paginaAtual: 0
+            }, {
+                id: 2,
+                titulo: 'English Short Stories',
+                autor: 'YouCan',
+                cor: '#3278DC',
+                paginas: [
+                    { en: 'The sun was setting behind the mountains.',
+                        pt: 'O sol estava se pondo atrás das montanhas.' },
+                    { en: 'A gentle breeze moved through the trees.',
+                        pt: 'Uma brisa suave movia-se entre as árvores.' },
+                    { en: 'Sarah sat on the old wooden bench.',
+                        pt: 'Sarah sentou-se no velho banco de madeira.' },
+                    { en: 'She had a book in her hands.', pt: 'Ela tinha um livro em suas mãos.' },
+                    { en: 'It was her favorite place in the world.',
+                        pt: 'Era seu lugar favorito no mundo.' },
+                    { en: 'She opened the book and began to read.',
+                        pt: 'Ela abriu o livro e começou a ler.' }
+                ],
+                paginaAtual: 0
+            }, {
+                id: 3,
+                titulo: 'Daily English',
+                autor: 'YouCan',
+                cor: '#32B464',
+                paginas: [
+                    { en: 'Good morning! How are you today?', pt: 'Bom dia! Como você está hoje?' },
+                    { en: 'I would like a cup of coffee, please.',
+                        pt: 'Eu gostaria de uma xícara de café, por favor.' },
+                    { en: 'What time is the meeting?', pt: 'Que horas é a reunião?' },
+                    { en: 'I need to go to the supermarket.', pt: 'Eu preciso ir ao supermercado.' },
+                    { en: 'Can you help me with this?', pt: 'Você pode me ajudar com isso?' },
+                    { en: 'Thank you very much for your help.',
+                        pt: 'Muito obrigado pela sua ajuda.' }
+                ],
+                paginaAtual: 0
+            }];
 
-            document.getElementById('inputTitulo').value = '';
-            document.getElementById('inputAutor').value = '';
-            document.getElementById('fileInput').value = '';
-            document.getElementById('nomeArquivo').textContent = '';
-            document.getElementById('btnImportarArquivo').disabled = true;
-
-            alert(`📚 "${titulo}" importado com sucesso! (${paginas.length} páginas)`);
-            mostrarTela('estante');
-        }
-
-        // ================================================================
-        // 🧭 NAVEGAÇÃO
-        // ================================================================
-        function mostrarTela(tela) {
-            if (tela !== 'leitor') {
-                window.speechSynthesis.cancel();
-                audioAutomatico = false;
-                document.getElementById('btnAudioAutomatico').classList.remove('ativo-audio');
-            }
-
-            document.querySelectorAll('.tela').forEach(el => el.classList.remove('ativa'));
-            if (tela === 'estante') {
-                document.getElementById('telaEstante').classList.add('ativa');
-                atualizarToolbar('estante');
-            } else if (tela === 'leitor') {
-                document.getElementById('telaLeitor').classList.add('ativa');
-                atualizarToolbar('leitor');
-            } else {
-                document.getElementById('telaImportar').classList.add('ativa');
-                atualizarToolbar('importar');
-            }
-        }
-
-        function atualizarToolbar(tela) {
-            const titulo = document.getElementById('toolbarTitulo');
-            if (tela === 'estante') titulo.textContent = '📚 Minha Estante';
-            else if (tela === 'leitor') titulo.textContent = '📖 Lendo...';
-            else titulo.textContent = '📤 Importar';
-        }
-
-        // ================================================================
-        // ⚙️ CONFIGURAÇÕES
-        // ================================================================
-        function aplicarConfiguracoes() {
-            const container = document.getElementById('appContainer');
-            const tamanho = config.tamanhoFonte || 20;
-
-            document.querySelectorAll('.pagina-item .ingles').forEach(el => el.style.fontSize = tamanho + 'px');
-            document.querySelectorAll('.pagina-item .portugues').forEach(el => el.style.fontSize = (tamanho * 0.85) + 'px');
-            document.getElementById('fonteTamanho').textContent = tamanho;
-            document.getElementById('velocidadeVoz').textContent = velocidadeVoz.toFixed(1);
-
-            container.classList.toggle('negrito', config.negrito);
-            document.getElementById('toggleNegrito').checked = config.negrito;
-
-            ['fonte-georgia', 'fonte-times', 'fonte-arial', 'fonte-verdana', 'fonte-courier'].forEach(f =>
-                container.classList.remove(f));
-            if (config.fonte) container.classList.add(config.fonte);
-
-            document.querySelectorAll('#opcoesFonte button').forEach(btn =>
-                btn.classList.toggle('selecionado', btn.dataset.fonte === config.fonte));
-            salvarConfig();
-        }
-
-        function abrirConfig() {
-            document.getElementById('modalConfig').classList.add('ativo');
-            atualizarListaLivrosConfig();
-        }
-
-        function fecharConfig() { document.getElementById('modalConfig').classList.remove('ativo'); }
-
-        // ================================================================
-        // 🎯 EVENTOS
-        // ================================================================
-        function setupEventos() {
-            // Botão de verificar atualização
-            document.getElementById('btnUpdateCheck').addEventListener('click', function() {
-                if (updateAvailable) {
-                    // Se já tem atualização disponível, mostrar notificação
-                    if (updateData) {
-                        showUpdateNotification(updateData);
-                    }
-                } else {
-                    // Verificar novamente
-                    this.textContent = '⏳';
-                    this.disabled = true;
-                    checkForUpdates();
-                    setTimeout(() => {
-                        this.textContent = '🔄';
-                        this.disabled = false;
-                        if (!updateAvailable) {
-                            alert('✅ Você já está usando a versão mais recente!');
-                        }
-                    }, 3000);
+            // ================================================================
+            // 🔧 FUNÇÕES DE PERSISTÊNCIA
+            // ================================================================
+            function salvarDados() {
+                try {
+                    localStorage.setItem('youcan_livros', JSON.stringify(livros));
+                } catch (e) {
+                    console.warn('Erro ao salvar dados:', e);
                 }
-            });
+            }
 
-            // Botão de atualizar
-            document.getElementById('updateBtn').addEventListener('click', performUpdate);
+            function carregarDados() {
+                try {
+                    const dados = localStorage.getItem('youcan_livros');
+                    if (dados) {
+                        const parsed = JSON.parse(dados);
+                        if (Array.isArray(parsed) && parsed.length > 0) {
+                            livros = parsed;
+                            return;
+                        }
+                    }
+                } catch (e) {
+                    console.warn('Erro ao carregar dados:', e);
+                }
+                livros = JSON.parse(JSON.stringify(LIVROS_EXEMPLO));
+                salvarDados();
+            }
 
-            // Fechar notificação
-            document.getElementById('updateClose').addEventListener('click', function() {
-                hideUpdateNotification();
-            });
+            function salvarConfig() {
+                try {
+                    config.velocidadeVoz = velocidadeVoz;
+                    localStorage.setItem('youcan_config', JSON.stringify(config));
+                } catch (e) {
+                    console.warn('Erro ao salvar config:', e);
+                }
+            }
 
-            document.getElementById('btnImportar').addEventListener('click', () => mostrarTela('importar'));
-            document.getElementById('btnImportarTop').addEventListener('click', () => mostrarTela('importar'));
-            document.getElementById('btnVoltarImportar').addEventListener('click', () => mostrarTela('estante'));
-            document.getElementById('btnVoltarLeitor').addEventListener('click', () => {
-                window.speechSynthesis.cancel();
-                audioAutomatico = false;
-                document.getElementById('btnAudioAutomatico').classList.remove('ativo-audio');
-                mostrarTela('estante');
-            });
+            function carregarConfig() {
+                try {
+                    const dados = localStorage.getItem('youcan_config');
+                    if (dados) {
+                        const parsed = JSON.parse(dados);
+                        config = parsed;
+                        velocidadeVoz = config.velocidadeVoz || 1.0;
+                        return;
+                    }
+                } catch (e) {
+                    console.warn('Erro ao carregar config:', e);
+                }
+                config = { tamanhoFonte: 20, negrito: false, fonte: 'fonte-arial', velocidadeVoz: 1.0 };
+                velocidadeVoz = 1.0;
+                salvarConfig();
+            }
 
-            document.getElementById('btnConfigEstante').addEventListener('click', abrirConfig);
-            document.getElementById('btnFecharConfig').addEventListener('click', fecharConfig);
-            document.getElementById('modalConfig').addEventListener('click', (e) => {
-                if (e.target === e.currentTarget) fecharConfig();
-            });
+            // ================================================================
+            // 🔊 ÁUDIO
+            // ================================================================
+            function falarFrase(texto, callback) {
+                if (!window.speechSynthesis) {
+                    if (callback) callback();
+                    return;
+                }
 
-            document.getElementById('btnAudioFrase').addEventListener('click', falarFraseAtual);
-
-            document.getElementById('btnAudioAutomatico').addEventListener('click', function() {
-                audioAutomatico = !audioAutomatico;
-                this.classList.toggle('ativo-audio', audioAutomatico);
-                if (audioAutomatico) {
-                    setTimeout(falarFraseAtual, 300);
-                } else {
+                try {
                     window.speechSynthesis.cancel();
-                }
-            });
+                    const utterance = new SpeechSynthesisUtterance(texto);
+                    utterance.lang = 'en-US';
+                    utterance.rate = velocidadeVoz;
+                    utterance.pitch = 1.0;
+                    utterance.volume = 1.0;
 
-            ['btnAnterior', 'btnAnterior2'].forEach(id => {
-                document.getElementById(id).addEventListener('click', () => {
-                    if (paginaAtual > 0) {
-                        if (audioAutomatico) {
-                            audioAutomatico = false;
-                            document.getElementById('btnAudioAutomatico').classList.remove('ativo-audio');
-                            window.speechSynthesis.cancel();
-                        }
-                        paginaAtual--;
-                        renderizarPagina();
+                    const vozes = window.speechSynthesis.getVoices();
+                    const vozInglesa = vozes.find(v => v.lang.startsWith('en'));
+                    if (vozInglesa) utterance.voice = vozInglesa;
+
+                    if (callback) {
+                        utterance.onend = callback;
+                        utterance.onerror = callback;
                     }
-                });
-            });
-            ['btnProximo', 'btnProximo2'].forEach(id => {
-                document.getElementById(id).addEventListener('click', () => {
-                    const livro = livros[livroAtual];
-                    if (livro && paginaAtual < livro.paginas.length - 1) {
-                        if (audioAutomatico) {
-                            audioAutomatico = false;
-                            document.getElementById('btnAudioAutomatico').classList.remove('ativo-audio');
-                            window.speechSynthesis.cancel();
-                        }
-                        paginaAtual++;
-                        renderizarPagina();
-                    }
-                });
-            });
 
-            document.getElementById('btnTogglePT').addEventListener('click', function() {
-                mostrarPT = !mostrarPT;
-                this.textContent = mostrarPT ? '🇧🇷 PT' : '🇧🇷 PT (oculto)';
-                this.classList.toggle('ativo');
-                renderizarPagina();
-            });
-
-            document.getElementById('importArea').addEventListener('click', () => document.getElementById('fileInput')
-                .click());
-            document.getElementById('fileInput').addEventListener('change', function() {
-                const nome = this.files[0] ? this.files[0].name : '';
-                document.getElementById('nomeArquivo').textContent = nome;
-                document.getElementById('btnImportarArquivo').disabled = !nome;
-            });
-            document.getElementById('btnImportarArquivo').addEventListener('click', importarArquivo);
-
-            document.getElementById('btnFonteMais').addEventListener('click', () => {
-                if (config.tamanhoFonte < 40) { config.tamanhoFonte += 2;
-                    aplicarConfiguracoes(); }
-            });
-            document.getElementById('btnFonteMenos').addEventListener('click', () => {
-                if (config.tamanhoFonte > 10) { config.tamanhoFonte -= 2;
-                    aplicarConfiguracoes(); }
-            });
-
-            document.getElementById('btnVelocidadeMais').addEventListener('click', () => {
-                if (velocidadeVoz < 2.0) { velocidadeVoz = Math.round((velocidadeVoz + 0.1) * 10) / 10;
-                    aplicarConfiguracoes(); }
-            });
-            document.getElementById('btnVelocidadeMenos').addEventListener('click', () => {
-                if (velocidadeVoz > 0.5) { velocidadeVoz = Math.round((velocidadeVoz - 0.1) * 10) / 10;
-                    aplicarConfiguracoes(); }
-            });
-
-            document.getElementById('toggleNegrito').addEventListener('change', function() {
-                config.negrito = this.checked;
-                aplicarConfiguracoes();
-            });
-            document.querySelectorAll('#opcoesFonte button').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    config.fonte = this.dataset.fonte;
-                    aplicarConfiguracoes();
-                });
-            });
-
-            document.addEventListener('keydown', (e) => {
-                if (document.getElementById('telaLeitor').classList.contains('ativa')) {
-                    if (e.key === 'ArrowRight') { e.preventDefault();
-                        document.getElementById('btnProximo').click(); }
-                    if (e.key === 'ArrowLeft') { e.preventDefault();
-                        document.getElementById('btnAnterior').click(); }
-                    if (e.key === 'f' || e.key === 'F') { e.preventDefault();
-                        falarFraseAtual(); }
-                    if (e.key === ' ') { e.preventDefault(); }
+                    window.speechSynthesis.speak(utterance);
+                } catch (e) {
+                    console.warn('Erro no áudio:', e);
+                    if (callback) callback();
                 }
-                if (e.key === 'Escape') fecharConfig();
-            });
-
-            if (window.speechSynthesis) {
-                window.speechSynthesis.getVoices();
-                window.speechSynthesis.onvoiceschanged = () => {
-                    window.speechSynthesis.getVoices();
-                };
             }
-        }
 
-        // ================================================================
-        // 🚀 INICIAR
-        // ================================================================
-        carregarConfig();
-        init();
+            function falarFraseAtual() {
+                if (livroAtual === null || livroAtual >= livros.length) return;
 
-        console.log('📚 YouCan Leitor v' + APP_VERSION);
-        console.log('📱 Permissões Android configuradas:', ANDROID_PERMISSIONS.length);
-        console.log('🔄 Sistema de atualização automática ativo');
+                const livro = livros[livroAtual];
+                if (!livro || !livro.paginas || paginaAtual >= livro.paginas.length) return;
+
+                const pagina = livro.paginas[paginaAtual];
+                if (!pagina || !pagina.en) return;
+
+                const elementoIngles = document.querySelector('.pagina-item .ingles');
+                if (elementoIngles) {
+                    elementoIngles.classList.add('falando');
+                }
+
+                falarFrase(pagina.en, () => {
+                    if (elementoIngles) {
+                        elementoIngles.classList.remove('falando');
+                    }
+                });
+            }
+
+            // ================================================================
+            // 🏠 RENDERIZAR ESTANTE
+            // ================================================================
+            function renderizarEstante() {
+                const container = document.getElementById('estanteContainer');
+                if (!container) return;
+
+                if (!livros || livros.length === 0) {
+                    container.innerHTML =
+                        `
+                            <div class="prateleira">
+                                <div class="estante-vazia">
+                                    <div class="icone">📚</div>
+                                    <p>Nenhum livro na estante.</p>
+                                    <p style="font-size:12px;opacity:0.6;">Toque em ➕ para importar</p>
+                                </div>
+                            </div>
+                        `;
+                    return;
+                }
+
+                const livrosPorPrateleira = 5;
+                let html = '';
+
+                for (let i = 0; i < livros.length; i += livrosPorPrateleira) {
+                    const grupo = livros.slice(i, i + livrosPorPrateleira);
+                    const numPrateleira = Math.floor(i / livrosPorPrateleira) + 1;
+
+                    html += `
+                            <div class="prateleira">
+                                <div class="prateleira-header">
+                                    <span class="titulo">📚 Prateleira ${numPrateleira}</span>
+                                    <span class="contador">${grupo.length} livros</span>
+                                </div>
+                                <div class="compartimentos">
+                                    ${grupo.map((livro, idx) => {
+                                        const indexGlobal = i + idx;
+                                        const total = livro.paginas ? livro.paginas.length : 0;
+                                        const lidas = livro.paginaAtual || 0;
+                                        const percentual = total > 0 ? Math.round((lidas / total) * 100) : 0;
+
+                                        let tituloAbreviado = livro.titulo || 'Sem título';
+                                        if (tituloAbreviado.length > 14) {
+                                            tituloAbreviado = tituloAbreviado.substring(0, 12) + '…';
+                                        }
+
+                                        return `
+                                            <div class="compartimento">
+                                                <div class="livro-card" data-index="${indexGlobal}">
+                                                    <div class="lombada" style="background:${livro.cor || '#5C3D2E'}">
+                                                        ${tituloAbreviado}
+                                                    </div>
+                                                    <div class="livro-info">
+                                                        <div class="titulo-card">${livro.titulo || 'Sem título'}</div>
+                                                        <div class="progresso-card">${percentual}%</div>
+                                                    </div>
+                                                    <button class="btn-excluir-livro" data-index="${indexGlobal}">✕</button>
+                                                </div>
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            </div>
+                        `;
+                }
+
+                container.innerHTML = html;
+
+                // EVENTOS: Abrir livro
+                container.querySelectorAll('.livro-card').forEach(card => {
+                    const index = parseInt(card.dataset.index);
+                    card.addEventListener('click', function(e) {
+                        if (e.target.closest('.btn-excluir-livro')) return;
+                        abrirLeitor(index);
+                    });
+
+                    const btnExcluir = card.querySelector('.btn-excluir-livro');
+                    if (btnExcluir) {
+                        btnExcluir.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            excluirLivro(parseInt(this.dataset.index));
+                        });
+                    }
+                });
+            }
+
+            function excluirLivro(index) {
+                if (index < 0 || index >= livros.length) return;
+
+                const livro = livros[index];
+                if (!livro) return;
+
+                if (confirm(`⚠️ Tem certeza que deseja excluir "${livro.titulo}" da estante?`)) {
+                    try {
+                        window.speechSynthesis.cancel();
+                    } catch (e) {}
+
+                    if (livroAtual === index) {
+                        livroAtual = null;
+                        mostrarTela('estante');
+                    } else if (livroAtual !== null && livroAtual > index) {
+                        livroAtual--;
+                    }
+
+                    livros.splice(index, 1);
+                    salvarDados();
+                    renderizarEstante();
+                    atualizarListaLivrosConfig();
+
+                    if (livros.length === 0) {
+                        mostrarTela('estante');
+                    }
+                }
+            }
+
+            // ================================================================
+            // 📖 LEITOR
+            // ================================================================
+            function abrirLeitor(index) {
+                if (index < 0 || index >= livros.length) return;
+
+                try {
+                    window.speechSynthesis.cancel();
+                } catch (e) {}
+
+                audioAutomatico = false;
+                const btnAuto = document.getElementById('btnAudioAutomatico');
+                if (btnAuto) btnAuto.classList.remove('ativo-audio');
+
+                livroAtual = index;
+                const livro = livros[index];
+                paginaAtual = livro.paginaAtual || 0;
+                mostrarPT = true;
+
+                const tituloEl = document.getElementById('leitorTitulo');
+                if (tituloEl) tituloEl.textContent = livro.titulo || 'Sem título';
+
+                const btnPT = document.getElementById('btnTogglePT');
+                if (btnPT) {
+                    btnPT.textContent = '🇧🇷 PT';
+                    btnPT.classList.add('ativo');
+                }
+
+                mostrarTela('leitor');
+                renderizarPagina();
+                aplicarConfiguracoes();
+            }
+
+            function renderizarPagina() {
+                if (livroAtual === null || livroAtual >= livros.length) return;
+
+                const livro = livros[livroAtual];
+                if (!livro || !livro.paginas) return;
+
+                const total = livro.paginas.length;
+                if (paginaAtual >= total) paginaAtual = total - 1;
+                if (paginaAtual < 0) paginaAtual = 0;
+
+                const pagina = livro.paginas[paginaAtual];
+                if (!pagina) return;
+
+                const paginaInfo = document.getElementById('leitorPagina');
+                if (paginaInfo) paginaInfo.textContent = `${paginaAtual + 1}/${total}`;
+
+                const btnAnt = document.getElementById('btnAnterior');
+                const btnAnt2 = document.getElementById('btnAnterior2');
+                const btnProx = document.getElementById('btnProximo');
+                const btnProx2 = document.getElementById('btnProximo2');
+
+                if (btnAnt) btnAnt.disabled = paginaAtual === 0;
+                if (btnAnt2) btnAnt2.disabled = paginaAtual === 0;
+                if (btnProx) btnProx.disabled = paginaAtual >= total - 1;
+                if (btnProx2) btnProx2.disabled = paginaAtual >= total - 1;
+
+                const container = document.getElementById('paginasLeitor');
+                if (!container) return;
+
+                const ptClass = mostrarPT ? '' : 'oculto';
+
+                container.innerHTML = `
+                        <div class="pagina-item">
+                            <div class="ingles" id="fraseIngles">${pagina.en || ''}</div>
+                            <div class="divisor"></div>
+                            <div class="portugues ${ptClass}">${pagina.pt || ''}</div>
+                        </div>
+                    `;
+
+                const elementoIngles = document.getElementById('fraseIngles');
+                if (elementoIngles) {
+                    elementoIngles.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        falarFraseAtual();
+                    });
+                }
+
+                livro.paginaAtual = paginaAtual;
+                salvarDados();
+                renderizarEstante();
+                atualizarListaLivrosConfig();
+            }
+
+            // ================================================================
+            // 📚 GERENCIAR LIVROS NAS CONFIGURAÇÕES
+            // ================================================================
+            function atualizarListaLivrosConfig() {
+                const container = document.getElementById('listaLivrosConfig');
+                if (!container) return;
+
+                if (!livros || livros.length === 0) {
+                    container.innerHTML =
+                        `
+                            <div class="sem-livros">
+                                📭 Nenhum livro na estante
+                            </div>
+                        `;
+                    return;
+                }
+
+                let html = '';
+                livros.forEach((livro, index) => {
+                    const total = livro.paginas ? livro.paginas.length : 0;
+                    const lidas = livro.paginaAtual || 0;
+                    const percentual = total > 0 ? Math.round((lidas / total) * 100) : 0;
+
+                    html += `
+                            <div class="item-livro">
+                                <div class="info">
+                                    <div class="titulo-item">${livro.titulo || 'Sem título'}</div>
+                                    <div class="autor-item">${livro.autor || 'Autor desconhecido'} • ${percentual}% lido • ${total} páginas</div>
+                                </div>
+                                <button class="btn-excluir-config" data-index="${index}" title="Excluir livro">✕</button>
+                            </div>
+                        `;
+                });
+
+                container.innerHTML = html;
+
+                container.querySelectorAll('.btn-excluir-config').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const index = parseInt(this.dataset.index);
+                        excluirLivroConfig(index);
+                    });
+                });
+            }
+
+            function excluirLivroConfig(index) {
+                if (index < 0 || index >= livros.length) return;
+
+                const livro = livros[index];
+                if (!livro) return;
+
+                if (confirm(`⚠️ Tem certeza que deseja excluir "${livro.titulo}" da estante?\n\nEsta ação não pode ser desfeita!`)) {
+                    try {
+                        window.speechSynthesis.cancel();
+                    } catch (e) {}
+
+                    if (livroAtual === index) {
+                        livroAtual = null;
+                        mostrarTela('estante');
+                    } else if (livroAtual !== null && livroAtual > index) {
+                        livroAtual--;
+                    }
+
+                    livros.splice(index, 1);
+                    salvarDados();
+
+                    renderizarEstante();
+                    atualizarListaLivrosConfig();
+
+                    if (livros.length === 0) {
+                        fecharConfig();
+                        mostrarTela('estante');
+                    }
+                }
+            }
+
+            // ================================================================
+            // 📤 IMPORTAÇÃO
+            // ================================================================
+            function importarArquivo() {
+                const titulo = document.getElementById('inputTitulo');
+                const autor = document.getElementById('inputAutor');
+                const fileInput = document.getElementById('fileInput');
+
+                if (!titulo || !autor || !fileInput) return;
+
+                const tituloValue = titulo.value.trim();
+                const autorValue = autor.value.trim() || 'Desconhecido';
+                const file = fileInput.files[0];
+
+                if (!tituloValue) { alert('Digite um título para o livro.'); return; }
+                if (!file) { alert('Selecione um arquivo.'); return; }
+
+                const extensao = file.name.split('.').pop().toLowerCase();
+
+                if (extensao === 'txt' || extensao === 'docx') {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        if (extensao === 'docx') {
+                            mammoth.extractRawText({ arrayBuffer: e.target.result })
+                                .then(r => processarTextoDelimitado(r.value, tituloValue, autorValue))
+                                .catch(err => alert('Erro ao ler DOCX: ' + err.message));
+                            return;
+                        }
+                        processarTextoDelimitado(e.target.result, tituloValue, autorValue);
+                    };
+                    if (extensao === 'docx') {
+                        reader.readAsArrayBuffer(file);
+                    } else {
+                        reader.readAsText(file, 'UTF-8');
+                    }
+                } else if (extensao === 'csv') {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        processarCSV(e.target.result, tituloValue, autorValue);
+                    };
+                    reader.readAsText(file, 'UTF-8');
+                } else if (extensao === 'json') {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        processarJSON(e.target.result, tituloValue, autorValue);
+                    };
+                    reader.readAsText(file, 'UTF-8');
+                } else if (extensao === 'srt' || extensao === 'vtt') {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        processarLegendas(e.target.result, tituloValue, autorValue);
+                    };
+                    reader.readAsText(file, 'UTF-8');
+                } else if (extensao === 'pdf') {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        processarPDF(e.target.result, tituloValue, autorValue);
+                    };
+                    reader.readAsArrayBuffer(file);
+                } else {
+                    alert('Formato não suportado. Use .txt, .docx, .csv, .json, .srt, .vtt ou .pdf');
+                }
+            }
+
+            function processarTextoDelimitado(texto, titulo, autor) {
+                const linhas = texto.split('\n').filter(l => l.trim() !== '');
+                if (linhas.length === 0) { alert('Arquivo vazio!'); return; }
+
+                const paginas = linhas.map(linha => {
+                    const partes = linha.split('||');
+                    return partes.length >= 2 ? { en: partes[0].trim(), pt: partes[1].trim() } : { en: linha.trim(),
+                        pt: '' };
+                });
+
+                criarLivro(paginas, titulo, autor);
+            }
+
+            function processarCSV(texto, titulo, autor) {
+                const linhas = texto.split('\n').filter(l => l.trim() !== '');
+                if (linhas.length === 0) { alert('Arquivo vazio!'); return; }
+
+                const paginas = linhas.map(linha => {
+                    let partes;
+                    if (linha.includes(';')) {
+                        partes = linha.split(';');
+                    } else {
+                        partes = linha.split(',');
+                    }
+                    return partes.length >= 2 ? {
+                        en: partes[0].trim().replace(/^"|"$/g, ''),
+                        pt: partes[1].trim().replace(/^"|"$/g, '')
+                    } : { en: linha.trim(), pt: '' };
+                });
+
+                criarLivro(paginas, titulo, autor);
+            }
+
+            function processarJSON(texto, titulo, autor) {
+                try {
+                    const dados = JSON.parse(texto);
+                    if (!Array.isArray(dados)) { alert('JSON deve ser um array de objetos.'); return; }
+
+                    const paginas = dados.map(item => ({
+                        en: item.en || item.english || item.English || item.text || '',
+                        pt: item.pt || item.portuguese || item.Portuguese || item.traducao || ''
+                    })).filter(p => p.en || p.pt);
+
+                    if (paginas.length === 0) { alert('Nenhum dado válido encontrado no JSON.'); return; }
+
+                    criarLivro(paginas, titulo, autor);
+                } catch (e) {
+                    alert('Erro ao ler JSON: ' + e.message);
+                }
+            }
+
+            function processarLegendas(texto, titulo, autor) {
+                const linhas = texto.split('\n').filter(l => l.trim() !== '');
+                const paginas = [];
+                let textoIngles = '';
+                let textoPortugues = '';
+
+                for (let i = 0; i < linhas.length; i++) {
+                    const linha = linhas[i].trim();
+
+                    if (linha.match(/^\d+$/) || linha.match(/^\d{2}:\d{2}:\d{2}/) || linha.match(/^\d{2}:\d{2}/) || linha
+                        .includes('-->')) {
+                        continue;
+                    }
+
+                    if (linha && !linha.match(/^WEBVTT|^Kindle|^Language/)) {
+                        const temPT = /[áàâãéêíóôõúç]/i.test(linha);
+                        if (temPT) {
+                            textoPortugues = linha;
+                        } else {
+                            textoIngles = linha;
+                        }
+
+                        if (textoIngles && textoPortugues) {
+                            paginas.push({ en: textoIngles, pt: textoPortugues });
+                            textoIngles = '';
+                            textoPortugues = '';
+                        }
+                    }
+                }
+
+                if (textoIngles || textoPortugues) {
+                    paginas.push({ en: textoIngles || textoPortugues, pt: textoPortugues || textoIngles });
+                }
+
+                if (paginas.length === 0) { alert('Nenhuma legenda válida encontrada.'); return; }
+
+                criarLivro(paginas, titulo, autor);
+            }
+
+            async function processarPDF(arrayBuffer, titulo, autor) {
+                try {
+                    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                    const totalPages = pdf.numPages;
+                    let paginas = [];
+
+                    for (let i = 1; i <= totalPages; i++) {
+                        const page = await pdf.getPage(i);
+                        const textContent = await page.getTextContent();
+                        const texto = textContent.items.map(item => item.str).join(' ');
+
+                        if (texto.trim()) {
+                            const linhas = texto.split(/\n|\.\s+/).filter(l => l.trim());
+                            let enTexto = '';
+                            let ptTexto = '';
+
+                            linhas.forEach(linha => {
+                                const temPT = /[áàâãéêíóôõúç]/i.test(linha);
+                                const temEN = /[a-zA-Z]/i.test(linha) && !/[áàâãéêíóôõúç]/i.test(linha);
+
+                                if (temPT && temEN) {
+                                    const parts = linha.split(/[|;:–-]/);
+                                    if (parts.length >= 2) {
+                                        enTexto += parts[0].trim().replace(/[^a-zA-Z\s.,!?']/g, '').trim() +
+                                        ' ';
+                                        ptTexto += parts[1].trim().replace(/[^a-zA-Záàâãéêíóôõúç\s.,!?']/g,
+                                            '').trim() + ' ';
+                                        return;
+                                    }
+                                }
+
+                                if (temPT) {
+                                    ptTexto += linha.trim() + ' ';
+                                } else if (temEN) {
+                                    enTexto += linha.trim() + ' ';
+                                }
+                            });
+
+                            if (enTexto.trim() || ptTexto.trim()) {
+                                paginas.push({
+                                    en: enTexto.trim().substring(0, 500) || 'Texto em inglês não encontrado',
+                                    pt: ptTexto.trim().substring(0, 500) || 'Texto em português não encontrado'
+                                });
+                            }
+                        }
+                    }
+
+                    if (paginas.length === 0) {
+                        alert('Não foi possível extrair texto do PDF. O PDF pode ser scaneado ou não conter texto.');
+                        return;
+                    }
+
+                    criarLivro(paginas, titulo, autor);
+
+                } catch (error) {
+                    console.error('Erro ao processar PDF:', error);
+                    alert('Erro ao processar PDF: ' + error.message);
+                }
+            }
+
+            function criarLivro(paginas, titulo, autor) {
+                const cores = ['#DC3232', '#3278DC', '#32B464', '#C89632', '#9632C8', '#32C8C8', '#DC6432', '#C83296',
+                    '#2E7D32',
+                    '#AD1457', '#1565C0', '#E65100', '#4E342E', '#00695C', '#8D6E63', '#D81B60', '#7B1FA2'
+                ];
+
+                const novoLivro = {
+                    id: Date.now(),
+                    titulo: titulo,
+                    autor: autor,
+                    cor: cores[Math.floor(Math.random() * cores.length)],
+                    paginas: paginas,
+                    paginaAtual: 0
+                };
+
+                livros.push(novoLivro);
+                salvarDados();
+                renderizarEstante();
+                atualizarListaLivrosConfig();
+
+                const inputTitulo = document.getElementById('inputTitulo');
+                const inputAutor = document.getElementById('inputAutor');
+                const fileInput = document.getElementById('fileInput');
+                const nomeArquivo = document.getElementById('nomeArquivo');
+
+                if (inputTitulo) inputTitulo.value = '';
+                if (inputAutor) inputAutor.value = '';
+                if (fileInput) fileInput.value = '';
+                if (nomeArquivo) nomeArquivo.textContent = '';
+
+                const btnImportar = document.getElementById('btnImportarArquivo');
+                if (btnImportar) btnImportar.disabled = true;
+
+                alert(`📚 "${titulo}" importado com sucesso! (${paginas.length} páginas)`);
+                mostrarTela('estante');
+            }
+
+            // ================================================================
+            // 🧭 NAVEGAÇÃO
+            // ================================================================
+            function mostrarTela(tela) {
+                if (tela !== 'leitor') {
+                    try {
+                        window.speechSynthesis.cancel();
+                    } catch (e) {}
+                    audioAutomatico = false;
+                    const btnAuto = document.getElementById('btnAudioAutomatico');
+                    if (btnAuto) btnAuto.classList.remove('ativo-audio');
+                }
+
+                document.querySelectorAll('.tela').forEach(el => el.classList.remove('ativa'));
+
+                if (tela === 'estante') {
+                    const el = document.getElementById('telaEstante');
+                    if (el) el.classList.add('ativa');
+                    atualizarToolbar('estante');
+                } else if (tela === 'leitor') {
+                    const el = document.getElementById('telaLeitor');
+                    if (el) el.classList.add('ativa');
+                    atualizarToolbar('leitor');
+                } else {
+                    const el = document.getElementById('telaImportar');
+                    if (el) el.classList.add('ativa');
+                    atualizarToolbar('importar');
+                }
+            }
+
+            function atualizarToolbar(tela) {
+                const titulo = document.getElementById('toolbarTitulo');
+                if (!titulo) return;
+
+                if (tela === 'estante') titulo.textContent = '📚 Minha Estante';
+                else if (tela === 'leitor') titulo.textContent = '📖 Lendo...';
+                else titulo.textContent = '📤 Importar';
+            }
+
+            // ================================================================
+            // ⚙️ CONFIGURAÇÕES
+            // ================================================================
+            function aplicarConfiguracoes() {
+                const container = document.getElementById('appContainer');
+                if (!container) return;
+
+                const tamanho = config.tamanhoFonte || 20;
+
+                document.querySelectorAll('.pagina-item .ingles').forEach(el => el.style.fontSize = tamanho + 'px');
+                document.querySelectorAll('.pagina-item .portugues').forEach(el => el.style.fontSize = (tamanho * 0.85) +
+                    'px');
+
+                const fonteTamanho = document.getElementById('fonteTamanho');
+                if (fonteTamanho) fonteTamanho.textContent = tamanho;
+
+                const velocidadeEl = document.getElementById('velocidadeVoz');
+                if (velocidadeEl) velocidadeEl.textContent = velocidadeVoz.toFixed(1);
+
+                container.classList.toggle('negrito', config.negrito);
+
+                const toggleNegrito = document.getElementById('toggleNegrito');
+                if (toggleNegrito) toggleNegrito.checked = config.negrito;
+
+                ['fonte-georgia', 'fonte-times', 'fonte-arial', 'fonte-verdana', 'fonte-courier'].forEach(f =>
+                    container.classList.remove(f));
+                if (config.fonte) container.classList.add(config.fonte);
+
+                document.querySelectorAll('#opcoesFonte button').forEach(btn => {
+                    btn.classList.toggle('selecionado', btn.dataset.fonte === config.fonte);
+                });
+
+                salvarConfig();
+            }
+
+            function abrirConfig() {
+                const modal = document.getElementById('modalConfig');
+                if (modal) {
+                    modal.classList.add('ativo');
+                    atualizarListaLivrosConfig();
+                }
+            }
+
+            function fecharConfig() {
+                const modal = document.getElementById('modalConfig');
+                if (modal) modal.classList.remove('ativo');
+            }
+
+            // ================================================================
+            // 🚀 SPLASH SCREEN
+            // ================================================================
+            function hideSplash() {
+                const splash = document.getElementById('splashScreen');
+                const app = document.getElementById('appContainer');
+
+                if (splash) splash.classList.add('fade-out');
+
+                setTimeout(() => {
+                    if (splash) splash.style.display = 'none';
+                    if (app) app.classList.add('visible');
+                }, 800);
+            }
+
+            // ================================================================
+            // 🎯 EVENTOS
+            // ================================================================
+            function setupEventos() {
+                // IMPORTAR
+                const btnImportar = document.getElementById('btnImportar');
+                const btnImportarTop = document.getElementById('btnImportarTop');
+                const btnVoltarImportar = document.getElementById('btnVoltarImportar');
+                const btnVoltarLeitor = document.getElementById('btnVoltarLeitor');
+
+                if (btnImportar) btnImportar.addEventListener('click', () => mostrarTela('importar'));
+                if (btnImportarTop) btnImportarTop.addEventListener('click', () => mostrarTela('importar'));
+                if (btnVoltarImportar) btnVoltarImportar.addEventListener('click', () => mostrarTela('estante'));
+                if (btnVoltarLeitor) {
+                    btnVoltarLeitor.addEventListener('click', function() {
+                        try { window.speechSynthesis.cancel(); } catch (e) {}
+                        audioAutomatico = false;
+                        const btnAuto = document.getElementById('btnAudioAutomatico');
+                        if (btnAuto) btnAuto.classList.remove('ativo-audio');
+                        mostrarTela('estante');
+                    });
+                }
+
+                // CONFIG
+                const btnConfig = document.getElementById('btnConfigEstante');
+                const btnFecharConfig = document.getElementById('btnFecharConfig');
+                const modalConfig = document.getElementById('modalConfig');
+
+                if (btnConfig) btnConfig.addEventListener('click', abrirConfig);
+                if (btnFecharConfig) btnFecharConfig.addEventListener('click', fecharConfig);
+                if (modalConfig) {
+                    modalConfig.addEventListener('click', function(e) {
+                        if (e.target === this) fecharConfig();
+                    });
+                }
+
+                // ÁUDIO
+                const btnAudioFrase = document.getElementById('btnAudioFrase');
+                if (btnAudioFrase) btnAudioFrase.addEventListener('click', falarFraseAtual);
+
+                const btnAudioAuto = document.getElementById('btnAudioAutomatico');
+                if (btnAudioAuto) {
+                    btnAudioAuto.addEventListener('click', function() {
+                        audioAutomatico = !audioAutomatico;
+                        this.classList.toggle('ativo-audio', audioAutomatico);
+                        if (audioAutomatico) {
+                            setTimeout(falarFraseAtual, 300);
+                        } else {
+                            try { window.speechSynthesis.cancel(); } catch (e) {}
+                        }
+                    });
+                }
+
+                // NAVEGAÇÃO
+                ['btnAnterior', 'btnAnterior2'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.addEventListener('click', function() {
+                            if (paginaAtual > 0) {
+                                if (audioAutomatico) {
+                                    audioAutomatico = false;
+                                    const btnAuto = document.getElementById(
+                                    'btnAudioAutomatico');
+                                    if (btnAuto) btnAuto.classList.remove('ativo-audio');
+                                    try { window.speechSynthesis.cancel(); } catch (e) {}
+                                }
+                                paginaAtual--;
+                                renderizarPagina();
+                            }
+                        });
+                    }
+                });
+
+                ['btnProximo', 'btnProximo2'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.addEventListener('click', function() {
+                            if (livroAtual !== null && livroAtual < livros.length) {
+                                const livro = livros[livroAtual];
+                                if (livro && paginaAtual < livro.paginas.length - 1) {
+                                    if (audioAutomatico) {
+                                        audioAutomatico = false;
+                                        const btnAuto = document.getElementById(
+                                            'btnAudioAutomatico');
+                                        if (btnAuto) btnAuto.classList.remove('ativo-audio');
+                                        try { window.speechSynthesis.cancel(); } catch (e) {}
+                                    }
+                                    paginaAtual++;
+                                    renderizarPagina();
+                                }
+                            }
+                        });
+                    }
+                });
+
+                // TOGGLE PT
+                const btnTogglePT = document.getElementById('btnTogglePT');
+                if (btnTogglePT) {
+                    btnTogglePT.addEventListener('click', function() {
+                        mostrarPT = !mostrarPT;
+                        this.textContent = mostrarPT ? '🇧🇷 PT' : '🇧🇷 PT (oculto)';
+                        this.classList.toggle('ativo');
+                        renderizarPagina();
+                    });
+                }
+
+                // IMPORTAÇÃO ARQUIVO
+                const importArea = document.getElementById('importArea');
+                const fileInput = document.getElementById('fileInput');
+                const btnImportarArquivo = document.getElementById('btnImportarArquivo');
+
+                if (importArea) {
+                    importArea.addEventListener('click', function() {
+                        const input = document.getElementById('fileInput');
+                        if (input) input.click();
+                    });
+                }
+
+                if (fileInput) {
+                    fileInput.addEventListener('change', function() {
+                        const nome = this.files[0] ? this.files[0].name : '';
+                        const nomeEl = document.getElementById('nomeArquivo');
+                        if (nomeEl) nomeEl.textContent = nome;
+                        if (btnImportarArquivo) btnImportarArquivo.disabled = !nome;
+                    });
+                }
+
+                if (btnImportarArquivo) {
+                    btnImportarArquivo.addEventListener('click', importarArquivo);
+                }
+
+                // CONFIGURAÇÕES
+                const btnFonteMais = document.getElementById('btnFonteMais');
+                const btnFonteMenos = document.getElementById('btnFonteMenos');
+
+                if (btnFonteMais) {
+                    btnFonteMais.addEventListener('click', function() {
+                        if (config.tamanhoFonte < 40) {
+                            config.tamanhoFonte += 2;
+                            aplicarConfiguracoes();
+                        }
+                    });
+                }
+
+                if (btnFonteMenos) {
+                    btnFonteMenos.addEventListener('click', function() {
+                        if (config.tamanhoFonte > 10) {
+                            config.tamanhoFonte -= 2;
+                            aplicarConfiguracoes();
+                        }
+                    });
+                }
+
+                const btnVelocidadeMais = document.getElementById('btnVelocidadeMais');
+                const btnVelocidadeMenos = document.getElementById('btnVelocidadeMenos');
+
+                if (btnVelocidadeMais) {
+                    btnVelocidadeMais.addEventListener('click', function() {
+                        if (velocidadeVoz < 2.0) {
+                            velocidadeVoz = Math.round((velocidadeVoz + 0.1) * 10) / 10;
+                            aplicarConfiguracoes();
+                        }
+                    });
+                }
+
+                if (btnVelocidadeMenos) {
+                    btnVelocidadeMenos.addEventListener('click', function() {
+                        if (velocidadeVoz > 0.5) {
+                            velocidadeVoz = Math.round((velocidadeVoz - 0.1) * 10) / 10;
+                            aplicarConfiguracoes();
+                        }
+                    });
+                }
+
+                const toggleNegrito = document.getElementById('toggleNegrito');
+                if (toggleNegrito) {
+                    toggleNegrito.addEventListener('change', function() {
+                        config.negrito = this.checked;
+                        aplicarConfiguracoes();
+                    });
+                }
+
+                document.querySelectorAll('#opcoesFonte button').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        config.fonte = this.dataset.fonte;
+                        aplicarConfiguracoes();
+                    });
+                });
+
+                // TECLADO
+                document.addEventListener('keydown', function(e) {
+                    const leitorAtivo = document.getElementById('telaLeitor')?.classList.contains('ativa');
+                    if (leitorAtivo) {
+                        if (e.key === 'ArrowRight') { e.preventDefault();
+                            document.getElementById('btnProximo')?.click(); }
+                        if (e.key === 'ArrowLeft') { e.preventDefault();
+                            document.getElementById('btnAnterior')?.click(); }
+                        if (e.key === 'f' || e.key === 'F') { e.preventDefault();
+                            falarFraseAtual(); }
+                        if (e.key === ' ') { e.preventDefault(); }
+                    }
+                    if (e.key === 'Escape') fecharConfig();
+                });
+
+                // VOZES
+                if (window.speechSynthesis) {
+                    window.speechSynthesis.getVoices();
+                    window.speechSynthesis.onvoiceschanged = function() {
+                        window.speechSynthesis.getVoices();
+                    };
+                }
+            }
+
+            // ================================================================
+            // 🚀 INICIAR
+            // ================================================================
+            function init() {
+                carregarConfig();
+                carregarDados();
+                renderizarEstante();
+                aplicarConfiguracoes();
+                setupEventos();
+                atualizarToolbar('estante');
+                atualizarListaLivrosConfig();
+
+                // Esconder splash após carregar
+                setTimeout(hideSplash, 1500);
+
+                console.log('📚 YouCan Leitor v' + APP_VERSION + ' iniciado!');
+                console.log('📚 Livros carregados:', livros.length);
+            }
+
+            // Iniciar quando o DOM estiver pronto
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+
+        })();
     </script>
 
 </body>

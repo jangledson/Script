@@ -7,6 +7,8 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js">
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js">
+    </script>
 
     <style>
         * {
@@ -20,7 +22,7 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background: #A8907A;
+            background: #5C3D2E;
         }
 
         body {
@@ -35,6 +37,106 @@
             overflow: hidden;
         }
 
+        /* ================================================================
+                   🚀 SPLASH SCREEN (TELA DE ABERTURA)
+                   ================================================================ */
+        #splashScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #5C3D2E;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        #splashScreen.fade-out {
+            opacity: 0;
+            transform: scale(1.1);
+            pointer-events: none;
+        }
+
+        #splashScreen .logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            animation: splashPulse 2s ease-in-out infinite;
+        }
+
+        #splashScreen .logo-icon {
+            font-size: 100px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            padding: 30px;
+            width: 160px;
+            height: 160px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
+            border: 3px solid rgba(255, 255, 255, 0.15);
+        }
+
+        #splashScreen .logo-text {
+            color: #FFF;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        #splashScreen .logo-subtext {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        #splashScreen .loading-bar {
+            width: 200px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 3px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        #splashScreen .loading-bar .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            border-radius: 3px;
+            width: 0%;
+            animation: loadingProgress 1.5s ease-in-out forwards;
+        }
+
+        @keyframes splashPulse {
+            0%,
+            100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.02);
+            }
+        }
+
+        @keyframes loadingProgress {
+            0% {
+                width: 0%;
+            }
+            100% {
+                width: 100%;
+            }
+        }
+
+        /* ================================================================
+                   APP CONTAINER
+                   ================================================================ */
         .app-container {
             width: 100%;
             height: 100vh;
@@ -47,6 +149,12 @@
             position: relative;
             display: flex;
             flex-direction: column;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+
+        .app-container.visible {
+            opacity: 1;
         }
 
         /* ===== TOOLBAR ===== */
@@ -1177,6 +1285,15 @@
             .pagina-item {
                 padding: 16px 18px;
             }
+            #splashScreen .logo-icon {
+                font-size: 70px;
+                width: 120px;
+                height: 120px;
+                padding: 20px;
+            }
+            #splashScreen .logo-text {
+                font-size: 22px;
+            }
         }
 
         @media (max-width: 360px) {
@@ -1240,12 +1357,37 @@
             .pagina-item .portugues {
                 font-size: 14px;
             }
+            #splashScreen .logo-icon {
+                font-size: 50px;
+                width: 90px;
+                height: 90px;
+                padding: 15px;
+            }
+            #splashScreen .logo-text {
+                font-size: 18px;
+            }
+            #splashScreen .logo-subtext {
+                font-size: 11px;
+            }
         }
     </style>
 </head>
 
 <body>
 
+    <!-- ===== SPLASH SCREEN ===== -->
+    <div id="splashScreen">
+        <div class="logo-container">
+            <div class="logo-icon">📚</div>
+            <div class="logo-text">YouCan Leitor</div>
+            <div class="logo-subtext">Aprenda inglês lendo</div>
+            <div class="loading-bar">
+                <div class="progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== APP ===== -->
     <div class="app-container" id="appContainer">
 
         <div class="toolbar">
@@ -1305,7 +1447,7 @@
                 <input type="text" id="inputAutor" placeholder="Ex: J.K. Rowling" />
 
                 <div class="import-area" id="importArea">
-                    <input type="file" id="fileInput" accept=".txt,.docx,.csv,.json,.srt,.vtt" />
+                    <input type="file" id="fileInput" accept=".txt,.docx,.csv,.json,.srt,.vtt,.pdf" />
                     <div class="icone">📄</div>
                     <p>Clique para selecionar um arquivo</p>
                     <div class="nome-arquivo" id="nomeArquivo"></div>
@@ -1316,6 +1458,7 @@
                         <span class="suportado">📋 .JSON</span>
                         <span class="suportado">🎬 .SRT</span>
                         <span class="suportado">🎬 .VTT</span>
+                        <span class="suportado">📕 .PDF</span>
                     </div>
                 </div>
 
@@ -1326,7 +1469,8 @@
                     <strong>.TXT / .DOCX:</strong> Cada linha: <strong>Inglês||Português</strong><br />
                     <strong>.CSV:</strong> Separado por vírgula: <em>Inglês,Português</em><br />
                     <strong>.JSON:</strong> Array com objetos "en" e "pt"<br />
-                    <strong>.SRT / .VTT:</strong> Legendas com texto em inglês e português<br /><br />
+                    <strong>.SRT / .VTT:</strong> Legendas com texto em inglês e português<br />
+                    <strong>.PDF:</strong> Extrai texto das páginas (inglês e português separados)<br /><br />
                     🔊 <strong>Clique na frase em inglês</strong> para ouvir a pronúncia!
                 </div>
             </div>
@@ -1391,6 +1535,24 @@
     </div>
 
     <script>
+        // ============================================================
+        // 🚀 SPLASH SCREEN
+        // ============================================================
+        function hideSplash() {
+            const splash = document.getElementById('splashScreen');
+            const app = document.getElementById('appContainer');
+
+            splash.classList.add('fade-out');
+
+            setTimeout(() => {
+                splash.style.display = 'none';
+                app.classList.add('visible');
+            }, 800);
+        }
+
+        // Mostrar splash por pelo menos 1.5s (tempo da animação)
+        setTimeout(hideSplash, 1800);
+
         // ============================================================
         // 📚 DADOS
         // ============================================================
@@ -1477,7 +1639,6 @@
                     }
                 } catch (e) {}
             }
-            // Se não houver dados válidos, usar exemplos
             livros = JSON.parse(JSON.stringify(LIVROS_EXEMPLO));
             salvarDados();
         }
@@ -1513,7 +1674,8 @@
             const container = document.getElementById('listaLivrosConfig');
 
             if (livros.length === 0) {
-                container.innerHTML = `
+                container.innerHTML =
+                    `
                         <div class="sem-livros">
                             📭 Nenhum livro na estante
                         </div>
@@ -1540,7 +1702,6 @@
 
             container.innerHTML = html;
 
-            // Adicionar eventos de exclusão
             container.querySelectorAll('.btn-excluir-config').forEach(btn => {
                 btn.addEventListener('click', function(e) {
                     e.stopPropagation();
@@ -1555,54 +1716,39 @@
             if (!livro) return;
 
             if (confirm(`⚠️ Tem certeza que deseja excluir "${livro.titulo}" da estante?\n\nEsta ação não pode ser desfeita!`)) {
-                // Para áudio se estiver tocando
                 window.speechSynthesis.cancel();
                 audioAutomatico = false;
                 document.getElementById('btnAudioAutomatico').classList.remove('ativo-audio');
 
-                // Se o livro atual for o que está sendo excluído, voltar para estante
                 if (livroAtual === index) {
                     livroAtual = null;
                     mostrarTela('estante');
                 } else if (livroAtual !== null && livroAtual > index) {
-                    // Ajustar índice se o livro removido for antes do atual
                     livroAtual--;
                 }
 
                 livros.splice(index, 1);
                 salvarDados();
 
-                // Atualizar UI
                 renderizarEstante();
                 atualizarListaLivrosConfig();
 
-                // Se não houver mais livros, fechar config e voltar
                 if (livros.length === 0) {
                     fecharConfig();
                     mostrarTela('estante');
-                }
-
-                // Feedback visual
-                const btn = document.querySelector(`.btn-excluir-config[data-index="${index}"]`);
-                if (btn) {
-                    btn.textContent = '✓';
-                    btn.style.background = '#4CAF50';
-                    setTimeout(() => {
-                        btn.textContent = '✕';
-                        btn.style.background = '#e53935';
-                    }, 500);
                 }
             }
         }
 
         // ============================================================
-        // 🏠 ESTANTE DE MADEIRA COM COMPARTIMENTOS
+        // 🏠 ESTANTE
         // ============================================================
         function renderizarEstante() {
             const container = document.getElementById('estanteContainer');
 
             if (livros.length === 0) {
-                container.innerHTML = `
+                container.innerHTML =
+                    `
                         <div class="prateleira">
                             <div class="estante-vazia">
                                 <div class="icone">📚</div>
@@ -1683,7 +1829,6 @@
             if (!livro) return;
 
             if (confirm(`⚠️ Tem certeza que deseja excluir "${livro.titulo}" da estante?`)) {
-                // Para áudio se estiver tocando
                 window.speechSynthesis.cancel();
                 audioAutomatico = false;
                 document.getElementById('btnAudioAutomatico').classList.remove('ativo-audio');
@@ -1753,7 +1898,6 @@
                 if (elementoIngles) {
                     elementoIngles.classList.remove('falando');
                 }
-                // No modo automático, NÃO avança a página - só toca o áudio
             });
         }
 
@@ -1823,7 +1967,7 @@
         }
 
         // ============================================================
-        // 📤 IMPORTAÇÃO - SUPORTE A MÚLTIPLOS FORMATOS
+        // 📤 IMPORTAÇÃO - SUPORTE A MÚLTIPLOS FORMATOS (INCLUINDO PDF)
         // ============================================================
         function importarArquivo() {
             const titulo = document.getElementById('inputTitulo').value.trim();
@@ -1870,8 +2014,114 @@
                     processarLegendas(e.target.result, titulo, autor);
                 };
                 reader.readAsText(file, 'UTF-8');
+            } else if (extensao === 'pdf') {
+                // Processar PDF com PDF.js
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const arrayBuffer = e.target.result;
+                    processarPDF(arrayBuffer, titulo, autor);
+                };
+                reader.readAsArrayBuffer(file);
             } else {
-                alert('Formato não suportado. Use .txt, .docx, .csv, .json, .srt ou .vtt');
+                alert('Formato não suportado. Use .txt, .docx, .csv, .json, .srt, .vtt ou .pdf');
+            }
+        }
+
+        // ===== PROCESSAR PDF =====
+        async function processarPDF(arrayBuffer, titulo, autor) {
+            try {
+                const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                const totalPages = pdf.numPages;
+                let paginas = [];
+
+                for (let i = 1; i <= totalPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const textContent = await page.getTextContent();
+                    const texto = textContent.items.map(item => item.str).join(' ');
+
+                    if (texto.trim()) {
+                        // Tentar separar inglês e português por padrões comuns
+                        const linhas = texto.split(/\n|\.\s+/).filter(l => l.trim());
+
+                        // Tentar detectar se é inglês ou português
+                        const paginasSeparadas = linhas.map(linha => {
+                            const temPT = /[áàâãéêíóôõúç]/i.test(linha);
+                            const temEN = /[a-zA-Z]/i.test(linha) && !/[áàâãéêíóôõúç]/i.test(linha);
+
+                            if (temPT && temEN) {
+                                // Tentar separar por padrão de tradução
+                                const parts = linha.split(/[|;:–-]/);
+                                if (parts.length >= 2) {
+                                    return {
+                                        en: parts[0].trim().replace(/[^a-zA-Z\s.,!?']/g, '').trim(),
+                                        pt: parts[1].trim().replace(/[^a-zA-Záàâãéêíóôõúç\s.,!?']/g, '').trim()
+                                    };
+                                }
+                                // Se não conseguir separar, tenta identificar qual é qual
+                                const palavrasPT = /[áàâãéêíóôõúç]/i;
+                                const palavrasEN = /[a-zA-Z]/i;
+                                const ptCount = (linha.match(/[áàâãéêíóôõúç]/gi) || []).length;
+                                const enCount = (linha.match(/[a-zA-Z]/gi) || []).length;
+
+                                if (ptCount > enCount * 0.3) {
+                                    return { en: '', pt: linha.trim() };
+                                } else {
+                                    return { en: linha.trim(), pt: '' };
+                                }
+                            } else if (temPT) {
+                                return { en: '', pt: linha.trim() };
+                            } else if (temEN) {
+                                return { en: linha.trim(), pt: '' };
+                            }
+                            return { en: linha.trim(), pt: '' };
+                        });
+
+                        // Filtrar e juntar
+                        let enTexto = '';
+                        let ptTexto = '';
+                        paginasSeparadas.forEach(p => {
+                            if (p.en) enTexto += p.en + ' ';
+                            if (p.pt) ptTexto += p.pt + ' ';
+                        });
+
+                        // Se temos os dois textos, criar uma página
+                        if (enTexto.trim() || ptTexto.trim()) {
+                            // Se só tem um dos idiomas, tentar traduzir com padrões
+                            if (!enTexto.trim() && ptTexto.trim()) {
+                                // Tentar extrair inglês do texto em português
+                                const enExtraido = ptTexto.match(/[a-zA-Z][a-zA-Z\s.,!?']{3,}/g);
+                                if (enExtraido) {
+                                    enTexto = enExtraido.join(' ');
+                                    ptTexto = ptTexto.replace(/[a-zA-Z][a-zA-Z\s.,!?']{3,}/g, '').trim();
+                                }
+                            } else if (enTexto.trim() && !ptTexto.trim()) {
+                                // Tentar extrair português do texto em inglês
+                                const ptExtraido = ptTexto.match(/[a-zA-Záàâãéêíóôõúç][a-zA-Záàâãéêíóôõúç\s.,!?']{3,}/g);
+                                if (ptExtraido) {
+                                    ptTexto = ptExtraido.join(' ');
+                                    enTexto = enTexto.replace(/[a-zA-Záàâãéêíóôõúç][a-zA-Záàâãéêíóôõúç\s.,!?']{3,}/g, '')
+                                        .trim();
+                                }
+                            }
+
+                            paginas.push({
+                                en: enTexto.trim().substring(0, 500) || 'Texto em inglês não encontrado',
+                                pt: ptTexto.trim().substring(0, 500) || 'Texto em português não encontrado'
+                            });
+                        }
+                    }
+                }
+
+                if (paginas.length === 0) {
+                    alert('Não foi possível extrair texto do PDF. O PDF pode ser scaneado ou não conter texto.');
+                    return;
+                }
+
+                criarLivro(paginas, titulo, autor);
+
+            } catch (error) {
+                console.error('Erro ao processar PDF:', error);
+                alert('Erro ao processar PDF: ' + error.message);
             }
         }
 
@@ -2047,7 +2297,7 @@
 
         function abrirConfig() {
             document.getElementById('modalConfig').classList.add('ativo');
-            atualizarListaLivrosConfig(); // Atualizar lista ao abrir
+            atualizarListaLivrosConfig();
         }
 
         function fecharConfig() { document.getElementById('modalConfig').classList.remove('ativo'); }

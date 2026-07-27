@@ -15,7 +15,8 @@
             box-sizing: border-box;
         }
 
-        html, body {
+        html,
+        body {
             width: 100%;
             height: 100%;
             overflow: hidden;
@@ -30,7 +31,7 @@
             padding: 0;
             margin: 0;
             height: 100vh;
-            height: 100dvh; /* Para celulares modernos */
+            height: 100dvh;
             overflow: hidden;
         }
 
@@ -433,6 +434,10 @@
             color: #3D2B1A;
             flex: 1;
             text-align: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            padding: 0 4px;
         }
 
         .leitor-header .pagina-info {
@@ -547,8 +552,13 @@
         }
 
         @keyframes pulseAudio {
-            0%, 100% { background: #BBDEFB; }
-            50% { background: #90CAF9; }
+            0%,
+            100% {
+                background: #BBDEFB;
+            }
+            50% {
+                background: #90CAF9;
+            }
         }
 
         .pagina-item .divisor {
@@ -815,7 +825,7 @@
         .modal {
             background: #FFF;
             border-radius: 24px;
-            max-width: 400px;
+            max-width: 420px;
             width: 100%;
             padding: 24px;
             max-height: 90vh;
@@ -882,6 +892,17 @@
             color: #FFF;
         }
 
+        .modal .grupo .opcoes button.danger {
+            border-color: #e53935;
+            color: #e53935;
+        }
+
+        .modal .grupo .opcoes button.danger:hover {
+            background: #e53935;
+            color: #FFF;
+            border-color: #e53935;
+        }
+
         .modal .grupo .controle-fonte {
             display: flex;
             align-items: center;
@@ -908,6 +929,76 @@
             font-weight: 600;
             min-width: 36px;
             text-align: center;
+        }
+
+        .modal .grupo .lista-livros {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #E8DDD0;
+            border-radius: 8px;
+            padding: 4px;
+        }
+
+        .modal .grupo .item-livro {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            border-bottom: 1px solid #f0ece6;
+            gap: 8px;
+        }
+
+        .modal .grupo .item-livro:last-child {
+            border-bottom: none;
+        }
+
+        .modal .grupo .item-livro .info {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .modal .grupo .item-livro .info .titulo-item {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .modal .grupo .item-livro .info .autor-item {
+            font-size: 11px;
+            color: #888;
+        }
+
+        .modal .grupo .item-livro .btn-excluir-config {
+            background: #e53935;
+            border: none;
+            color: #FFF;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal .grupo .item-livro .btn-excluir-config:hover {
+            background: #c62828;
+            transform: scale(1.1);
+        }
+
+        .modal .grupo .sem-livros {
+            text-align: center;
+            padding: 20px;
+            color: #999;
+            font-size: 13px;
         }
 
         .modal .btn-fechar {
@@ -1122,7 +1213,6 @@
             }
         }
 
-        /* Ajuste para telas muito pequenas */
         @media (max-height: 600px) {
             .toolbar {
                 padding: 8px 12px;
@@ -1287,6 +1377,13 @@
                     </div>
                 </div>
 
+                <div class="grupo">
+                    <label>📚 Gerenciar Livros</label>
+                    <div class="lista-livros" id="listaLivrosConfig">
+                        <!-- Preenchido via JavaScript -->
+                    </div>
+                </div>
+
                 <button class="btn-fechar" id="btnFecharConfig">✅ Fechar</button>
             </div>
         </div>
@@ -1366,20 +1463,21 @@
             aplicarConfiguracoes();
             setupEventos();
             atualizarToolbar('estante');
+            atualizarListaLivrosConfig();
         }
 
         function carregarDados() {
             const dados = localStorage.getItem('youcan_livros');
             if (dados) {
                 try {
-                    livros = JSON.parse(dados);
-                    if (livros.length === 0) {
-                        livros = JSON.parse(JSON.stringify(LIVROS_EXEMPLO));
-                        salvarDados();
+                    const parsed = JSON.parse(dados);
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        livros = parsed;
+                        return;
                     }
-                    return;
                 } catch (e) {}
             }
+            // Se não houver dados válidos, usar exemplos
             livros = JSON.parse(JSON.stringify(LIVROS_EXEMPLO));
             salvarDados();
         }
@@ -1392,7 +1490,8 @@
             const dados = localStorage.getItem('youcan_config');
             if (dados) {
                 try {
-                    config = JSON.parse(dados);
+                    const parsed = JSON.parse(dados);
+                    config = parsed;
                     velocidadeVoz = config.velocidadeVoz || 1.0;
                     return;
                 } catch (e) {}
@@ -1405,6 +1504,95 @@
         function salvarConfig() {
             config.velocidadeVoz = velocidadeVoz;
             localStorage.setItem('youcan_config', JSON.stringify(config));
+        }
+
+        // ============================================================
+        // 📚 GERENCIAMENTO DE LIVROS NAS CONFIGURAÇÕES
+        // ============================================================
+        function atualizarListaLivrosConfig() {
+            const container = document.getElementById('listaLivrosConfig');
+
+            if (livros.length === 0) {
+                container.innerHTML = `
+                        <div class="sem-livros">
+                            📭 Nenhum livro na estante
+                        </div>
+                    `;
+                return;
+            }
+
+            let html = '';
+            livros.forEach((livro, index) => {
+                const total = livro.paginas.length;
+                const lidas = livro.paginaAtual || 0;
+                const percentual = total > 0 ? Math.round((lidas / total) * 100) : 0;
+
+                html += `
+                        <div class="item-livro">
+                            <div class="info">
+                                <div class="titulo-item">${livro.titulo}</div>
+                                <div class="autor-item">${livro.autor || 'Autor desconhecido'} • ${percentual}% lido • ${total} páginas</div>
+                            </div>
+                            <button class="btn-excluir-config" data-index="${index}" title="Excluir livro">✕</button>
+                        </div>
+                    `;
+            });
+
+            container.innerHTML = html;
+
+            // Adicionar eventos de exclusão
+            container.querySelectorAll('.btn-excluir-config').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const index = parseInt(this.dataset.index);
+                    excluirLivroConfig(index);
+                });
+            });
+        }
+
+        function excluirLivroConfig(index) {
+            const livro = livros[index];
+            if (!livro) return;
+
+            if (confirm(`⚠️ Tem certeza que deseja excluir "${livro.titulo}" da estante?\n\nEsta ação não pode ser desfeita!`)) {
+                // Para áudio se estiver tocando
+                window.speechSynthesis.cancel();
+                audioAutomatico = false;
+                document.getElementById('btnAudioAutomatico').classList.remove('ativo-audio');
+
+                // Se o livro atual for o que está sendo excluído, voltar para estante
+                if (livroAtual === index) {
+                    livroAtual = null;
+                    mostrarTela('estante');
+                } else if (livroAtual !== null && livroAtual > index) {
+                    // Ajustar índice se o livro removido for antes do atual
+                    livroAtual--;
+                }
+
+                livros.splice(index, 1);
+                salvarDados();
+
+                // Atualizar UI
+                renderizarEstante();
+                atualizarListaLivrosConfig();
+
+                // Se não houver mais livros, fechar config e voltar
+                if (livros.length === 0) {
+                    fecharConfig();
+                    mostrarTela('estante');
+                }
+
+                // Feedback visual
+                const btn = document.querySelector(`.btn-excluir-config[data-index="${index}"]`);
+                if (btn) {
+                    btn.textContent = '✓';
+                    btn.style.background = '#4CAF50';
+                    setTimeout(() => {
+                        btn.textContent = '✕';
+                        btn.style.background = '#e53935';
+                    }, 500);
+                }
+            }
         }
 
         // ============================================================
@@ -1491,11 +1679,30 @@
         }
 
         function excluirLivro(index) {
-            if (confirm(`Deseja excluir "${livros[index].titulo}" da estante?`)) {
+            const livro = livros[index];
+            if (!livro) return;
+
+            if (confirm(`⚠️ Tem certeza que deseja excluir "${livro.titulo}" da estante?`)) {
+                // Para áudio se estiver tocando
+                window.speechSynthesis.cancel();
+                audioAutomatico = false;
+                document.getElementById('btnAudioAutomatico').classList.remove('ativo-audio');
+
+                if (livroAtual === index) {
+                    livroAtual = null;
+                    mostrarTela('estante');
+                } else if (livroAtual !== null && livroAtual > index) {
+                    livroAtual--;
+                }
+
                 livros.splice(index, 1);
                 salvarDados();
                 renderizarEstante();
-                if (livros.length === 0) mostrarTela('estante');
+                atualizarListaLivrosConfig();
+
+                if (livros.length === 0) {
+                    mostrarTela('estante');
+                }
             }
         }
 
@@ -1546,10 +1753,7 @@
                 if (elementoIngles) {
                     elementoIngles.classList.remove('falando');
                 }
-                if (audioAutomatico) {
-                    // No modo automático, NÃO avança a página - só toca o áudio
-                    // O usuário precisa clicar em "Próximo" para avançar
-                }
+                // No modo automático, NÃO avança a página - só toca o áudio
             });
         }
 
@@ -1604,11 +1808,10 @@
                     </div>
                 `;
 
-            // Adicionar evento de clique na frase em inglês - APENAS ÁUDIO, não avança
             const elementoIngles = document.getElementById('fraseIngles');
             if (elementoIngles) {
                 elementoIngles.addEventListener('click', function(e) {
-                    e.stopPropagation(); // Evita propagação para o container
+                    e.stopPropagation();
                     falarFraseAtual();
                 });
             }
@@ -1616,6 +1819,7 @@
             livro.paginaAtual = paginaAtual;
             salvarDados();
             renderizarEstante();
+            atualizarListaLivrosConfig();
         }
 
         // ============================================================
@@ -1775,6 +1979,7 @@
             livros.push(novoLivro);
             salvarDados();
             renderizarEstante();
+            atualizarListaLivrosConfig();
 
             document.getElementById('inputTitulo').value = '';
             document.getElementById('inputAutor').value = '';
@@ -1840,7 +2045,10 @@
             salvarConfig();
         }
 
-        function abrirConfig() { document.getElementById('modalConfig').classList.add('ativo'); }
+        function abrirConfig() {
+            document.getElementById('modalConfig').classList.add('ativo');
+            atualizarListaLivrosConfig(); // Atualizar lista ao abrir
+        }
 
         function fecharConfig() { document.getElementById('modalConfig').classList.remove('ativo'); }
 
@@ -1860,8 +2068,9 @@
 
             document.getElementById('btnConfigEstante').addEventListener('click', abrirConfig);
             document.getElementById('btnFecharConfig').addEventListener('click', fecharConfig);
-            document.getElementById('modalConfig').addEventListener('click', (e) => { if (e.target === e.currentTarget)
-                    fecharConfig(); });
+            document.getElementById('modalConfig').addEventListener('click', (e) => {
+                if (e.target === e.currentTarget) fecharConfig();
+            });
 
             document.getElementById('btnAudioFrase').addEventListener('click', falarFraseAtual);
 
@@ -1869,7 +2078,6 @@
                 audioAutomatico = !audioAutomatico;
                 this.classList.toggle('ativo-audio', audioAutomatico);
                 if (audioAutomatico) {
-                    // No modo automático, apenas toca o áudio da página atual
                     setTimeout(falarFraseAtual, 300);
                 } else {
                     window.speechSynthesis.cancel();
@@ -1912,7 +2120,7 @@
             });
 
             document.getElementById('importArea').addEventListener('click', () => document.getElementById('fileInput')
-            .click());
+                .click());
             document.getElementById('fileInput').addEventListener('change', function() {
                 const nome = this.files[0] ? this.files[0].name : '';
                 document.getElementById('nomeArquivo').textContent = nome;
@@ -1960,11 +2168,6 @@
                     if (e.key === ' ') { e.preventDefault(); }
                 }
                 if (e.key === 'Escape') fecharConfig();
-            });
-
-            // Remove o clique na área para avançar página - apenas áudio na frase
-            document.getElementById('paginaContainer').addEventListener('click', function(e) {
-                // Não faz nada - apenas o clique na frase específica dispara o áudio
             });
 
             if (window.speechSynthesis) {

@@ -16,14 +16,14 @@
     </script>
 
     <style>
+        /* ===== RESET ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        html,
-        body {
+        html, body {
             width: 100%;
             height: 100%;
             overflow: hidden;
@@ -46,9 +46,7 @@
             -webkit-user-select: none;
         }
 
-        /* ================================================================
-                   🚀 SPLASH SCREEN
-                   ================================================================ */
+        /* ===== SPLASH SCREEN ===== */
         #splashScreen {
             position: fixed;
             top: 0;
@@ -135,9 +133,7 @@
             50% { transform: scale(1.02); }
         }
 
-        /* ================================================================
-                   APP CONTAINER
-                   ================================================================ */
+        /* ===== APP CONTAINER ===== */
         .app-container {
             width: 100%;
             height: 100vh;
@@ -285,7 +281,7 @@
         }
 
         /* ================================================================
-                   🏠 ESTANTE COM CAPAS GRANDES - 2 POR LINHA
+                   🏠 ESTANTE
                    ================================================================ */
         .estante-wrapper {
             flex: 1;
@@ -533,7 +529,7 @@
         }
 
         /* ================================================================
-                   📖 LEITOR - TRANSIÇÃO SUAVE
+                   📖 LEITOR - TEXTO OCUPA TODA LARGURA
                    ================================================================ */
         .pagina-container {
             flex: 1;
@@ -566,7 +562,7 @@
 
         .pagina-item {
             border-radius: 10px;
-            padding: 16px 18px;
+            padding: 12px 16px;
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
             border-left: 4px solid #5C3D2E;
             flex: 1;
@@ -580,25 +576,29 @@
         }
 
         .frase-item {
-            padding: 6px 4px;
+            padding: 4px 0;
             border-radius: 4px;
             transition: background 0.2s;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            margin: 4px 0;
+            margin: 2px 0;
+            width: 100%;
         }
 
+        /* TEXTO OCUPA TODA LARGURA - NÃO CENTRALIZADO */
         .frase-item .ingles {
             font-size: 17px;
             line-height: 1.5;
             font-weight: 600;
             cursor: pointer;
-            padding: 4px 6px;
+            padding: 2px 4px;
             border-radius: 4px;
             transition: background 0.2s, font-size 0.2s;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
+            width: 100%;
+            text-align: left;
         }
 
         .frase-item .ingles:active {
@@ -624,8 +624,10 @@
         .frase-item .portugues {
             font-size: 14px;
             line-height: 1.4;
-            padding: 4px 6px 6px 6px;
+            padding: 2px 4px 4px 4px;
             transition: color 0.2s, font-size 0.2s;
+            width: 100%;
+            text-align: left;
         }
 
         .frase-item .portugues.oculto {
@@ -635,8 +637,9 @@
         .frase-item .divisor-frase {
             height: 1px;
             background: linear-gradient(to right, #E8DDD0, transparent);
-            margin: 4px 0;
+            margin: 3px 0;
             transition: margin 0.2s;
+            width: 100%;
         }
 
         @keyframes pulseAudio {
@@ -949,7 +952,7 @@
         }
 
         /* ================================================================
-                   MODAL CONFIG - COM SELETOR ARCO-ÍRIS
+                   MODAL CONFIG - COM SELETOR ARCO-ÍRIS COMPLETO
                    ================================================================ */
         .modal-overlay {
             position: fixed;
@@ -1126,7 +1129,7 @@
             font-size: 10px;
         }
 
-        /* SELETOR DE COR ARCO-ÍRIS */
+        /* SELETOR DE COR ARCO-ÍRIS COMPLETO */
         .modal .grupo .cor-rainbow {
             display: flex;
             flex-direction: column;
@@ -1138,7 +1141,9 @@
             height: 30px;
             border-radius: 6px;
             background: linear-gradient(to right, 
-                #FF0000, #FF7F00, #FFFF00, #00FF00, #0000FF, #4B0082, #8B00FF, #FF0000);
+                #000000, #1a1a1a, #333333, #4d4d4d, #666666, #808080, #999999, 
+                #b3b3b3, #cccccc, #e6e6e6, #ffffff,
+                #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff, #ff0000);
             position: relative;
             cursor: pointer;
             touch-action: none;
@@ -1149,8 +1154,8 @@
             position: absolute;
             top: 50%;
             transform: translate(-50%, -50%);
-            width: 20px;
-            height: 20px;
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
             background: #FFF;
             border: 3px solid #5C3D2E;
@@ -1177,6 +1182,7 @@
             background: #f5f0eb;
             padding: 2px 8px;
             border-radius: 4px;
+            font-weight: 700;
         }
 
         .modal .btn-fechar {
@@ -1299,9 +1305,9 @@
         @media (max-width: 420px) {
             .frase-item .ingles { font-size: 15px; }
             .frase-item .portugues { font-size: 12px; }
-            .pagina-item { padding: 12px 14px; }
-            .frase-item { padding: 4px 3px; margin: 2px 0; }
-            .frase-item .divisor-frase { margin: 3px 0; }
+            .pagina-item { padding: 10px 12px; }
+            .frase-item { padding: 3px 0; margin: 1px 0; }
+            .frase-item .divisor-frase { margin: 2px 0; }
             .btn-voltar-flutuante { width: 56px; height: 56px; font-size: 30px; bottom: 20px; left: 14px; }
             .page-indicator { font-size: 10px; padding: 3px 12px; bottom: 14px; }
             .capa-livro .capa-titulo { font-size: 13px; }
@@ -1316,7 +1322,7 @@
             .frase-item .ingles { font-size: 13px; }
             .frase-item .portugues { font-size: 11px; }
             .pagina-item { padding: 8px 10px; }
-            .frase-item { padding: 3px 2px; margin: 2px 0; }
+            .frase-item { padding: 2px 0; margin: 1px 0; }
             .frase-item .divisor-frase { margin: 2px 0; }
             .btn-voltar-flutuante { width: 48px; height: 48px; font-size: 26px; bottom: 16px; left: 12px; }
             .toolbar-leitor .leitor-actions button { font-size: 7px; padding: 1px 4px; }
@@ -1332,7 +1338,7 @@
             .pagina-item { padding: 6px 8px; }
             .frase-item .ingles { font-size: 13px; }
             .frase-item .portugues { font-size: 11px; }
-            .frase-item { padding: 2px 2px; margin: 1px 0; }
+            .frase-item { padding: 2px 0; margin: 1px 0; }
             .frase-item .divisor-frase { margin: 2px 0; }
             .btn-voltar-flutuante { width: 48px; height: 48px; font-size: 26px; bottom: 16px; left: 12px; }
             .page-indicator { font-size: 9px; padding: 2px 10px; bottom: 10px; }
@@ -1348,9 +1354,9 @@
         @media (min-height: 800px) {
             .frase-item .ingles { font-size: 20px; }
             .frase-item .portugues { font-size: 17px; }
-            .frase-item { padding: 8px 6px; margin: 6px 0; }
-            .frase-item .divisor-frase { margin: 6px 0; }
-            .pagina-item { padding: 20px 24px; }
+            .frase-item { padding: 6px 0; margin: 3px 0; }
+            .frase-item .divisor-frase { margin: 4px 0; }
+            .pagina-item { padding: 16px 20px; }
             .capa-livro .capa-titulo { font-size: 20px; }
             .capa-livro .capa-autor { font-size: 13px; }
             .capa-livro { min-height: 200px; }
@@ -1359,9 +1365,9 @@
         @media (min-height: 900px) {
             .frase-item .ingles { font-size: 23px; }
             .frase-item .portugues { font-size: 19px; }
-            .frase-item { padding: 10px 8px; margin: 8px 0; }
-            .frase-item .divisor-frase { margin: 8px 0; }
-            .pagina-item { padding: 24px 28px; }
+            .frase-item { padding: 8px 0; margin: 4px 0; }
+            .frase-item .divisor-frase { margin: 5px 0; }
+            .pagina-item { padding: 20px 24px; }
             .capa-livro .capa-titulo { font-size: 24px; }
             .capa-livro .capa-autor { font-size: 15px; }
             .capa-livro { min-height: 240px; }
@@ -1620,12 +1626,168 @@
                 corFundo: '#FFFFFF'
             };
 
-            let FRASES_POR_PAGINA = 8;
+            let FRASES_POR_PAGINA = 10;
 
             // ================================================================
-            // 📖 DICIONÁRIO COMPLETO
+            // 📖 DICIONÁRIO EFICIENTE - APENAS PALAVRAS ESSENCIAIS
             // ================================================================
             const DICIONARIO = {
+                // PRONOMES
+                'i': 'eu',
+                'you': 'você',
+                'he': 'ele',
+                'she': 'ela',
+                'it': 'ele/ela',
+                'we': 'nós',
+                'they': 'eles/elas',
+                'me': 'mim',
+                'him': 'ele',
+                'her': 'ela',
+                'us': 'nós',
+                'them': 'eles/elas',
+                'my': 'meu/minha',
+                'your': 'seu/sua',
+                'his': 'dele',
+                'her': 'dela',
+                'its': 'dele/dela',
+                'our': 'nosso/nossa',
+                'their': 'deles/delas',
+                'mine': 'meu/minha',
+                'yours': 'seu/sua',
+                'ours': 'nosso/nossa',
+                'theirs': 'deles/delas',
+
+                // VERBOS COMUNS
+                'be': 'ser/estar',
+                'am': 'sou/estou',
+                'are': 'são/estão',
+                'is': 'é/está',
+                'was': 'era/estava',
+                'were': 'eram/estavam',
+                'have': 'ter',
+                'has': 'tem',
+                'had': 'tinha',
+                'do': 'fazer',
+                'does': 'faz',
+                'did': 'fez',
+                'say': 'dizer',
+                'said': 'disse',
+                'go': 'ir',
+                'went': 'foi',
+                'gone': 'ido',
+                'get': 'obter',
+                'got': 'obteve',
+                'make': 'fazer',
+                'made': 'fez',
+                'know': 'saber',
+                'knew': 'sabia',
+                'think': 'pensar',
+                'thought': 'pensou',
+                'see': 'ver',
+                'saw': 'viu',
+                'seen': 'visto',
+                'come': 'vir',
+                'came': 'veio',
+                'come': 'vir',
+                'want': 'querer',
+                'wanted': 'queria',
+                'look': 'olhar',
+                'looked': 'olhou',
+                'use': 'usar',
+                'used': 'usou',
+                'find': 'encontrar',
+                'found': 'encontrou',
+                'give': 'dar',
+                'gave': 'deu',
+                'tell': 'contar',
+                'told': 'contou',
+                'work': 'trabalhar',
+                'worked': 'trabalhou',
+                'call': 'chamar',
+                'called': 'chamou',
+                'try': 'tentar',
+                'tried': 'tentou',
+                'ask': 'perguntar',
+                'asked': 'perguntou',
+                'need': 'precisar',
+                'needed': 'precisou',
+                'feel': 'sentir',
+                'felt': 'sentiu',
+                'become': 'tornar-se',
+                'became': 'tornou-se',
+                'leave': 'sair',
+                'left': 'saiu',
+                'put': 'colocar',
+                'put': 'colocou',
+                'mean': 'significar',
+                'meant': 'significou',
+                'keep': 'manter',
+                'kept': 'manteve',
+                'let': 'deixar',
+                'let': 'deixou',
+                'begin': 'começar',
+                'began': 'começou',
+                'seem': 'parecer',
+                'seemed': 'pareceu',
+                'help': 'ajudar',
+                'helped': 'ajudou',
+                'talk': 'falar',
+                'talked': 'falou',
+                'turn': 'virar',
+                'turned': 'virou',
+                'start': 'começar',
+                'started': 'começou',
+                'show': 'mostrar',
+                'showed': 'mostrou',
+                'hear': 'ouvir',
+                'heard': 'ouviu',
+                'play': 'jogar/tocar',
+                'played': 'jogou/tocou',
+                'run': 'correr',
+                'ran': 'correu',
+                'move': 'mover',
+                'moved': 'moveu',
+                'like': 'gostar',
+                'liked': 'gostou',
+                'live': 'viver',
+                'lived': 'viveu',
+                'believe': 'acreditar',
+                'believed': 'acreditou',
+                'hold': 'segurar',
+                'held': 'segurou',
+                'bring': 'trazer',
+                'brought': 'trouxe',
+                'happen': 'acontecer',
+                'happened': 'aconteceu',
+                'write': 'escrever',
+                'wrote': 'escreveu',
+                'read': 'ler',
+                'read': 'leu',
+                'learn': 'aprender',
+                'learned': 'aprendeu',
+                'teach': 'ensinar',
+                'taught': 'ensinou',
+                'remember': 'lembrar',
+                'remembered': 'lembrou',
+                'forget': 'esquecer',
+                'forgot': 'esqueceu',
+                'change': 'mudar',
+                'changed': 'mudou',
+                'close': 'fechar',
+                'closed': 'fechou',
+                'open': 'abrir',
+                'opened': 'abriu',
+                'walk': 'andar',
+                'walked': 'andou',
+                'swim': 'nadar',
+                'swam': 'nadou',
+                'fly': 'voar',
+                'flew': 'voou',
+                'drive': 'dirigir',
+                'drove': 'dirigiu',
+                'cook': 'cozinhar',
+                'cooked': 'cozinhou',
+
                 // SAUDAÇÕES
                 'hello': 'olá',
                 'hi': 'oi',
@@ -1634,11 +1796,7 @@
                 'good evening': 'boa noite',
                 'good night': 'boa noite',
                 'how are you': 'como você está',
-                'how are you doing': 'como você está',
-                "what's up": 'e aí',
-                'how is it going': 'como vai',
                 'nice to meet you': 'prazer em conhecê-lo',
-                'pleasure': 'prazer',
                 'welcome': 'bem-vindo',
                 'bye': 'tchau',
                 'goodbye': 'adeus',
@@ -1647,7 +1805,6 @@
                 'see you tomorrow': 'até amanhã',
                 'take care': 'se cuide',
                 'have a nice day': 'tenha um bom dia',
-                'have a good day': 'tenha um bom dia',
                 'you promised': 'você prometeu',
                 'okay': 'ok',
                 'ok': 'ok',
@@ -1662,8 +1819,6 @@
                 'happy': 'feliz',
                 'angry': 'bravo',
                 'tired': 'cansado',
-                'hungry': 'com fome',
-                'thirsty': 'com sede',
                 'sorry': 'desculpe',
                 'thanks': 'obrigado',
                 'thank you': 'obrigado',
@@ -1671,24 +1826,6 @@
                 'you are welcome': 'de nada',
                 "you're welcome": 'de nada',
                 'no problem': 'sem problema',
-                'never mind': 'deixa pra lá',
-                'i understand': 'eu entendo',
-                "i don't understand": 'eu não entendo',
-                'i know': 'eu sei',
-                "i don't know": 'eu não sei',
-                'maybe': 'talvez',
-                'probably': 'provavelmente',
-                'certainly': 'certamente',
-                'absolutely': 'absolutamente',
-                'definitely': 'definitivamente',
-                'of course': 'claro',
-                'a bit of': 'um pouco de',
-                'going ape': 'enlouquecendo',
-                'acting like': 'agindo como',
-                'show you how': 'mostrar como',
-                'tick birds': 'pássaros carrapateiros',
-                'old pro': 'velho profissional',
-                'the buzz from the bees': 'o zumbido das abelhas',
 
                 // FAMÍLIA
                 'father': 'pai',
@@ -1715,48 +1852,33 @@
                 'friend': 'amigo',
                 'friends': 'amigos',
 
-                // PESSOAS
-                'person': 'pessoa',
-                'people': 'pessoas',
-                'man': 'homem',
-                'woman': 'mulher',
-                'men': 'homens',
-                'women': 'mulheres',
-                'boy': 'menino',
-                'girl': 'menina',
-                'child': 'criança',
-                'teacher': 'professor',
-                'student': 'estudante',
-                'doctor': 'médico',
-                'nurse': 'enfermeiro',
-                'driver': 'motorista',
-                'worker': 'trabalhador',
-                'boss': 'chefe',
-                'king': 'rei',
-                'queen': 'rainha',
-                'prince': 'príncipe',
-                'princess': 'princesa',
-
-                // CORPOS
-                'body': 'corpo',
-                'head': 'cabeça',
-                'hair': 'cabelo',
-                'eyes': 'olhos',
-                'eye': 'olho',
-                'nose': 'nariz',
-                'mouth': 'boca',
-                'ears': 'orelhas',
-                'ear': 'orelha',
-                'hands': 'mãos',
-                'hand': 'mão',
-                'arms': 'braços',
-                'arm': 'braço',
-                'legs': 'pernas',
-                'leg': 'perna',
-                'feet': 'pés',
-                'foot': 'pé',
-                'face': 'rosto',
-                'smile': 'sorriso',
+                // ANIMAIS
+                'animal': 'animal',
+                'dog': 'cachorro',
+                'cat': 'gato',
+                'horse': 'cavalo',
+                'cow': 'vaca',
+                'pig': 'porco',
+                'sheep': 'ovelha',
+                'bird': 'pássaro',
+                'fish': 'peixe',
+                'shark': 'tubarão',
+                'whale': 'baleia',
+                'dolphin': 'golfinho',
+                'turtle': 'tartaruga',
+                'lion': 'leão',
+                'tiger': 'tigre',
+                'elephant': 'elefante',
+                'monkey': 'macaco',
+                'rabbit': 'coelho',
+                'mouse': 'rato',
+                'snake': 'cobra',
+                'eagle': 'águia',
+                'butterfly': 'borboleta',
+                'bee': 'abelha',
+                'giraffe': 'girafa',
+                'leopard': 'leopardo',
+                'baboon': 'babuíno',
 
                 // COMIDAS
                 'food': 'comida',
@@ -1786,32 +1908,20 @@
                 'salt': 'sal',
                 'oil': 'óleo',
 
-                // ANIMAIS
-                'animal': 'animal',
-                'dog': 'cachorro',
-                'cat': 'gato',
-                'horse': 'cavalo',
-                'cow': 'vaca',
-                'pig': 'porco',
-                'sheep': 'ovelha',
-                'bird': 'pássaro',
-                'shark': 'tubarão',
-                'whale': 'baleia',
-                'dolphin': 'golfinho',
-                'turtle': 'tartaruga',
-                'lion': 'leão',
-                'tiger': 'tigre',
-                'elephant': 'elefante',
-                'monkey': 'macaco',
-                'rabbit': 'coelho',
-                'mouse': 'rato',
-                'snake': 'cobra',
-                'eagle': 'águia',
-                'butterfly': 'borboleta',
-                'bee': 'abelha',
-                'giraffe': 'girafa',
-                'leopard': 'leopardo',
-                'baboon': 'babuíno',
+                // CORES
+                'color': 'cor',
+                'red': 'vermelho',
+                'blue': 'azul',
+                'green': 'verde',
+                'yellow': 'amarelo',
+                'black': 'preto',
+                'white': 'branco',
+                'gray': 'cinza',
+                'pink': 'rosa',
+                'purple': 'roxo',
+                'brown': 'marrom',
+                'gold': 'dourado',
+                'silver': 'prateado',
 
                 // NATUREZA
                 'nature': 'natureza',
@@ -1842,20 +1952,28 @@
                 'beach': 'praia',
                 'island': 'ilha',
 
-                // CORES
-                'color': 'cor',
-                'red': 'vermelho',
-                'blue': 'azul',
-                'green': 'verde',
-                'yellow': 'amarelo',
-                'black': 'preto',
-                'white': 'branco',
-                'gray': 'cinza',
-                'pink': 'rosa',
-                'purple': 'roxo',
-                'brown': 'marrom',
-                'gold': 'dourado',
-                'silver': 'prateado',
+                // LUGARES
+                'house': 'casa',
+                'home': 'lar',
+                'school': 'escola',
+                'hospital': 'hospital',
+                'bank': 'banco',
+                'shop': 'loja',
+                'store': 'loja',
+                'market': 'mercado',
+                'restaurant': 'restaurante',
+                'hotel': 'hotel',
+                'airport': 'aeroporto',
+                'station': 'estação',
+                'church': 'igreja',
+                'park': 'parque',
+                'garden': 'jardim',
+                'city': 'cidade',
+                'town': 'cidade',
+                'village': 'vila',
+                'country': 'país',
+                'world': 'mundo',
+                'spot': 'lugar',
 
                 // TEMPO
                 'time': 'tempo',
@@ -1882,93 +2000,6 @@
                 'often': 'frequentemente',
                 'usually': 'geralmente',
                 'once': 'uma vez',
-
-                // LUGARES
-                'house': 'casa',
-                'home': 'lar',
-                'school': 'escola',
-                'hospital': 'hospital',
-                'bank': 'banco',
-                'shop': 'loja',
-                'store': 'loja',
-                'market': 'mercado',
-                'restaurant': 'restaurante',
-                'hotel': 'hotel',
-                'airport': 'aeroporto',
-                'station': 'estação',
-                'church': 'igreja',
-                'park': 'parque',
-                'garden': 'jardim',
-                'city': 'cidade',
-                'town': 'cidade',
-                'village': 'vila',
-                'country': 'país',
-                'world': 'mundo',
-                'spot': 'lugar',
-
-                // VERBOS
-                'be': 'ser/estar',
-                'have': 'ter',
-                'do': 'fazer',
-                'say': 'dizer',
-                'go': 'ir',
-                'get': 'obter',
-                'make': 'fazer',
-                'know': 'saber',
-                'think': 'pensar',
-                'see': 'ver',
-                'come': 'vir',
-                'want': 'querer',
-                'look': 'olhar',
-                'use': 'usar',
-                'find': 'encontrar',
-                'give': 'dar',
-                'tell': 'contar',
-                'work': 'trabalhar',
-                'call': 'chamar',
-                'try': 'tentar',
-                'ask': 'perguntar',
-                'need': 'precisar',
-                'feel': 'sentir',
-                'become': 'tornar-se',
-                'leave': 'sair',
-                'put': 'colocar',
-                'mean': 'significar',
-                'keep': 'manter',
-                'let': 'deixar',
-                'begin': 'começar',
-                'seem': 'parecer',
-                'help': 'ajudar',
-                'talk': 'falar',
-                'turn': 'virar',
-                'start': 'começar',
-                'show': 'mostrar',
-                'hear': 'ouvir',
-                'play': 'jogar/tocar',
-                'run': 'correr',
-                'move': 'mover',
-                'like': 'gostar',
-                'live': 'viver',
-                'believe': 'acreditar',
-                'hold': 'segurar',
-                'bring': 'trazer',
-                'happen': 'acontecer',
-                'write': 'escrever',
-                'read': 'ler',
-                'learn': 'aprender',
-                'teach': 'ensinar',
-                'remember': 'lembrar',
-                'forget': 'esquecer',
-                'change': 'mudar',
-                'close': 'fechar',
-                'open': 'abrir',
-                'walk': 'andar',
-                'swim': 'nadar',
-                'fly': 'voar',
-                'drive': 'dirigir',
-                'cook': 'cozinhar',
-                'act': 'agir',
-                'peck': 'bicar',
 
                 // ADJETIVOS
                 'good': 'bom',
@@ -2071,7 +2102,7 @@
                 'above': 'acima',
                 'below': 'abaixo',
 
-                // LIGAÇÃO
+                // CONJUNÇÕES
                 'and': 'e',
                 'but': 'mas',
                 'or': 'ou',
@@ -2091,37 +2122,7 @@
                 'whom': 'quem',
                 'whose': 'cujo',
 
-                // PRONOMES
-                'i': 'eu',
-                'you': 'você',
-                'he': 'ele',
-                'she': 'ela',
-                'it': 'ele/ela/isso',
-                'we': 'nós',
-                'they': 'eles/elas',
-                'me': 'mim',
-                'him': 'ele',
-                'her': 'ela',
-                'us': 'nós',
-                'them': 'eles/elas',
-                'my': 'meu/minha',
-                'your': 'seu/sua',
-                'his': 'dele',
-                'its': 'dele/dela',
-                'our': 'nosso/nossa',
-                'their': 'deles/delas',
-                'mine': 'meu/minha',
-                'yours': 'seu/sua',
-                'ours': 'nosso/nossa',
-                'theirs': 'deles/delas',
-                'myself': 'eu mesmo',
-                'yourself': 'você mesmo',
-                'himself': 'ele mesmo',
-                'herself': 'ela mesma',
-                'ourselves': 'nós mesmos',
-                'themselves': 'eles mesmos',
-
-                // ARTIGOS E DEMONSTRATIVOS
+                // ARTIGOS
                 'the': 'o/a/os/as',
                 'a': 'um/uma',
                 'an': 'um/uma',
@@ -2173,7 +2174,20 @@
                 'yes': 'sim',
                 'no': 'não',
                 'ok': 'ok',
-                'okay': 'ok'
+                'okay': 'ok',
+                'maybe': 'talvez',
+                'probably': 'provavelmente',
+                'certainly': 'certamente',
+                'absolutely': 'absolutamente',
+                'definitely': 'definitivamente',
+                'of course': 'claro',
+                'a bit of': 'um pouco de',
+                'going ape': 'enlouquecendo',
+                'acting like': 'agindo como',
+                'show you how': 'mostrar como',
+                'tick birds': 'pássaros carrapateiros',
+                'old pro': 'velho profissional',
+                'the buzz from the bees': 'o zumbido das abelhas'
             };
 
             // ================================================================
@@ -2187,29 +2201,11 @@
                 let contadorPT = 0;
                 let contadorEN = 0;
 
-                // Verifica palavras especiais primeiro
-                const palavrasEspeciais = {
-                    'olá': 'pt',
-                    'bom dia': 'pt',
-                    'tudo bem': 'pt',
-                    'hello': 'en',
-                    'good morning': 'en',
-                    'how are you': 'en'
-                };
-
-                for (let [chave, idioma] of Object.entries(palavrasEspeciais)) {
-                    if (textoLower.includes(chave)) {
-                        if (idioma === 'pt') contadorPT += 5;
-                        else contadorEN += 5;
-                    }
-                }
-
                 palavras.forEach(palavra => {
                     const palavraLimpa = palavra.replace(/[.,!?;:'"()]/g, '');
                     const entrada = DICIONARIO[palavraLimpa];
                     if (entrada) {
-                        // Verifica se a tradução contém a palavra original (inglês)
-                        if (entrada === palavraLimpa) {
+                        if (entrada === palavraLimpa || entrada.includes(palavraLimpa)) {
                             contadorPT++;
                         } else {
                             contadorEN++;
@@ -2223,7 +2219,6 @@
                     }
                 });
 
-                // Palavras comuns em português
                 const palavrasPTComuns = ['de', 'do', 'da', 'que', 'se', 'não', 'sim', 'para', 'com', 'por', 'um', 'uma', 'os',
                     'as', 'em', 'no', 'na'
                 ];
@@ -2247,9 +2242,9 @@
             function traduzirFrase(texto, idiomaOrigem) {
                 if (!texto || texto.trim() === '') return '';
 
+                // Tenta traduzir expressões completas primeiro
                 let fraseTraduzida = texto;
 
-                // Tenta traduzir expressões completas primeiro
                 for (let [chave, valor] of Object.entries(DICIONARIO)) {
                     if (idiomaOrigem === 'ingles') {
                         const regex = new RegExp('\\b' + chave + '\\b', 'gi');
@@ -2285,7 +2280,6 @@
                         traducao = traducao || palavraSemPontuacao;
                     }
 
-                    // Preserva maiúsculas
                     if (palavraSemPontuacao.length > 0) {
                         const primeiraMaiuscula = palavraSemPontuacao[0] === palavraSemPontuacao[0].toUpperCase();
                         if (primeiraMaiuscula && traducao.length > 0) {
@@ -2308,7 +2302,6 @@
                 linhas.forEach(linha => {
                     const linhaLimpa = linha.trim();
 
-                    // Verifica se já tem separador
                     if (linhaLimpa.includes('||')) {
                         const partes = linhaLimpa.split('||');
                         frases.push({
@@ -2318,7 +2311,6 @@
                         return;
                     }
 
-                    // Detecta idioma da linha
                     const idiomaLinha = detectarIdioma(linhaLimpa);
 
                     if (idiomaLinha === 'ingles' || idiomaLinha === 'portugues') {
@@ -2336,7 +2328,6 @@
                             });
                         }
                     } else {
-                        // Tenta traduzir para ambos os idiomas
                         const traducaoEn = traduzirFrase(linhaLimpa, 'portugues');
                         const traducaoPt = traduzirFrase(linhaLimpa, 'ingles');
                         frases.push({
@@ -2350,96 +2341,9 @@
             }
 
             // ================================================================
-            // 📚 LIVROS DE EXEMPLO
+            // 📚 SEM LIVROS DE EXEMPLO - ARRAY VAZIO
             // ================================================================
-            const LIVROS_EXEMPLO = [{
-                id: 1,
-                titulo: 'Finding Dory',
-                autor: 'Disney',
-                cor: '#1a5276',
-                capa: '🐠',
-                paginas: [
-                    [
-                        { en: 'Hi.', pt: 'Olá.' },
-                        { en: "I'm Dory.", pt: 'Eu sou a Dory.' },
-                        { en: 'I suffer from short-term memory loss.',
-                            pt: 'Eu sofro de perda de memória de curto prazo.' },
-                        { en: 'Yes!', pt: 'Sim!' },
-                        { en: "- That's exactly what you say.",
-                            pt: '- Isso é exatamente o que você diz.' },
-                        { en: 'Okay, okay.', pt: 'Ok, ok.' },
-                        { en: "We'll pretend to be the other kids now.",
-                            pt: 'Vamos fingir ser as outras crianças agora.' },
-                        { en: 'No, no.', pt: 'Não, não.' },
-                        { en: 'Not daddy.', pt: 'Não papai.' },
-                        { en: "I'm the nice fish who wants to be your friend.",
-                            pt: 'Eu sou o peixe legal que quer ser seu amigo.' }
-                    ],
-                    [
-                        { en: 'You are not my father.', pt: 'Você não é meu pai.' },
-                        { en: 'My father is not a fish.', pt: 'Meu pai não é um peixe.' },
-                        { en: 'He is a man.', pt: 'Ele é um homem.' },
-                        { en: 'I have to find my parents.',
-                            pt: 'Eu preciso encontrar meus pais.' },
-                        { en: 'Do you know where they are?',
-                            pt: 'Você sabe onde eles estão?' }
-                    ]
-                ],
-                paginaAtual: 0
-            }, {
-                id: 2,
-                titulo: 'The Lion King',
-                autor: 'Disney',
-                cor: '#b71c1c',
-                capa: '🦁',
-                paginas: [
-                    [
-                        { en: 'Dad! Dad! Whoa!', pt: 'Pai! Pai! Uau!' },
-                        { en: 'You promised!', pt: 'Você prometeu!' },
-                        { en: 'Okay, okay. I\'m up. I\'m up.',
-                            pt: 'Ok, ok. Estou acordado. Estou acordado.' },
-                        { en: 'Yeah! Simba. Everything the light touches is our kingdom.',
-                            pt: 'Sim! Simba. Tudo o que a luz toca é nosso reino.' },
-                        { en: 'A King\'s time as ruler rises and falls like the Sun.',
-                            pt: 'O tempo de um rei como governante sobe e desce como o Sol.' }
-                    ],
-                    [
-                        { en: 'One day Simba, the sun will set on my time here and will rise with you as the new king.',
-                            pt: 'Um dia Simba, o sol vai se pôr no meu tempo aqui e vai nascer com você como o novo rei.' },
-                        { en: 'And this will all be mine?',
-                            pt: 'E tudo isso vai ser meu?' },
-                        { en: 'Everything.', pt: 'Tudo.' },
-                        { en: 'Everything the light touches.',
-                            pt: 'Tudo o que a luz toca.' }
-                    ]
-                ],
-                paginaAtual: 0
-            }, {
-                id: 3,
-                titulo: 'Jungle Animals',
-                autor: 'YouCan',
-                cor: '#1b5e20',
-                capa: '🌿',
-                paginas: [
-                    [
-                        { en: 'Well! The buzz from the bees is that the leopards are in a bit of a spot.',
-                            pt: 'Bem! O zumbido das abelhas é que os leopardos estão em apuros.' },
-                        { en: 'Oh, really?', pt: 'Oh, realmente?' },
-                        { en: 'And the baboons are going ape over this.',
-                            pt: 'E os babuínos estão enlouquecendo com isso.' },
-                        { en: 'What are you doing, son?', pt: 'O que você está fazendo, filho?' }
-                    ],
-                    [
-                        { en: 'Of course, the giraffes are acting like they\'re above it all.',
-                            pt: 'Claro, as girafas estão agindo como se estivessem acima de tudo.' },
-                        { en: 'The tick birds are pecking on the elephants.',
-                            pt: 'Os pássaros carrapateiros estão bicando os elefantes.' },
-                        { en: 'Let an old pro show you how it\'s done.',
-                            pt: 'Deixe um velho profissional te mostrar como se faz.' }
-                    ]
-                ],
-                paginaAtual: 0
-            }];
+            const LIVROS_EXEMPLO = [];
 
             // ================================================================
             // 🔧 FUNÇÕES DE PERSISTÊNCIA
@@ -2509,9 +2413,8 @@
                 const altura = window.innerHeight || 800;
                 const alturaUtil = altura - 120;
                 const tamanhoFonte = config.tamanhoFonte || 17;
-                // Espaçamento reduzido pela metade
-                const espacamento = tamanhoFonte * 0.9;
-                const alturaLinha = (tamanhoFonte * 1.6) + espacamento;
+                const espacamento = tamanhoFonte * 0.7;
+                const alturaLinha = (tamanhoFonte * 1.5) + espacamento;
 
                 let estimativa = Math.floor(alturaUtil / alturaLinha);
                 estimativa = Math.max(4, Math.min(estimativa, 12));
@@ -2536,15 +2439,17 @@
                     const rect = track.getBoundingClientRect();
                     const percent = Math.max(0, Math.min(1, (posX - rect.left) / rect.width));
                     const hue = percent * 360;
-                    const color = `hsl(${hue}, 100%, 50%)`;
+                    const saturation = percent < 0.5 ? 0 : 100;
+                    const lightness = percent < 0.1 ? 10 : (percent < 0.3 ? 30 : (percent < 0.7 ? 50 : (percent < 0.9 ? 70 :
+                        90)));
+                    const color = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
                     return color;
                 }
 
-                function getHexFromHue(hue) {
-                    // Converte HSL para Hex
+                function getHexFromHsl(hue, sat, light) {
                     const h = hue / 360;
-                    const s = 1;
-                    const l = 0.5;
+                    const s = sat / 100;
+                    const l = light / 100;
                     let r, g, b;
                     if (s === 0) {
                         r = g = b = l;
@@ -2575,7 +2480,10 @@
                     const percent = Math.max(0, Math.min(1, (posX - rect.left) / rect.width));
                     handle.style.left = (percent * 100) + '%';
                     const hue = percent * 360;
-                    const hex = getHexFromHue(hue);
+                    const sat = percent < 0.1 ? 0 : (percent < 0.4 ? 50 : 100);
+                    const light = percent < 0.1 ? 10 : (percent < 0.3 ? 30 : (percent < 0.6 ? 50 : (percent < 0.8 ? 70 :
+                    90)));
+                    const hex = getHexFromHsl(hue, sat, light);
                     if (label) label.textContent = hex.toUpperCase();
                     callback(hex);
                 }
@@ -2604,9 +2512,8 @@
                 document.addEventListener('touchmove', handleMove, { passive: false });
                 document.addEventListener('touchend', handleEnd);
 
-                // Inicializar com a cor
                 if (corInicial) {
-                    // Converte hex para posição aproximada
+                    // Posiciona aproximadamente
                     const hex = corInicial.replace('#', '');
                     const r = parseInt(hex.substring(0, 2), 16) / 255;
                     const g = parseInt(hex.substring(2, 4), 16) / 255;
@@ -2951,8 +2858,7 @@
                 const corFundo = config.corFundo || '#FFFFFF';
                 const tamanhoFonte = config.tamanhoFonte || 17;
 
-                // Espaçamento reduzido pela metade
-                const espacamento = tamanhoFonte * 0.9;
+                const espacamento = tamanhoFonte * 0.7;
 
                 // Criar wrapper para animação
                 const wrapper = document.createElement('div');
@@ -2963,26 +2869,30 @@
                     wrapper.classList.add('slide-right');
                 }
 
-                let html = `<div class="pagina-item" style="background-color: ${corFundo} !important; padding: ${espacamento * 0.7}px ${espacamento * 1}px;">`;
+                let html = `<div class="pagina-item" style="background-color: ${corFundo} !important; padding: ${espacamento * 0.6}px ${espacamento * 0.8}px;">`;
 
                 pagina.forEach((frase, idx) => {
                     html += `
-                            <div class="frase-item" style="padding: ${espacamento * 0.2}px ${espacamento * 0.15}px; margin: ${espacamento * 0.25}px 0;">
+                            <div class="frase-item" style="padding: ${espacamento * 0.15}px 0; margin: ${espacamento * 0.15}px 0;">
                                 <div class="ingles" data-frase-index="${idx}" 
                                      style="color: ${corIngles} !important; 
                                             font-size: ${tamanhoFonte}px !important; 
-                                            line-height: ${tamanhoFonte * 1.5}px !important;
-                                            padding: ${espacamento * 0.1}px ${espacamento * 0.15}px;">
+                                            line-height: ${tamanhoFonte * 1.4}px !important;
+                                            padding: ${espacamento * 0.1}px ${espacamento * 0.15}px;
+                                            text-align: left !important;
+                                            width: 100% !important;">
                                     ${frase.en || ''}
                                 </div>
                                 <div class="portugues ${ptClass}" 
                                      style="color: ${corPortugues} !important; 
                                             font-size: ${tamanhoFonte * 0.85}px !important; 
-                                            line-height: ${tamanhoFonte * 1.4}px !important;
-                                            padding: ${espacamento * 0.08}px ${espacamento * 0.15}px ${espacamento * 0.15}px ${espacamento * 0.15}px;">
+                                            line-height: ${tamanhoFonte * 1.3}px !important;
+                                            padding: ${espacamento * 0.08}px ${espacamento * 0.15}px ${espacamento * 0.15}px ${espacamento * 0.15}px;
+                                            text-align: left !important;
+                                            width: 100% !important;">
                                     ${frase.pt || ''}
                                 </div>
-                                ${idx < pagina.length - 1 ? '<div class="divisor-frase" style="margin: ' + (espacamento * 0.2) + 'px 0; height: 1px;"></div>' : ''}
+                                ${idx < pagina.length - 1 ? '<div class="divisor-frase" style="margin: ' + (espacamento * 0.15) + 'px 0; height: 1px; width: 100%;"></div>' : ''}
                             </div>
                         `;
                 });
@@ -2990,11 +2900,9 @@
                 html += '</div>';
                 wrapper.innerHTML = html;
 
-                // Limpar container e adicionar novo
                 container.innerHTML = '';
                 container.appendChild(wrapper);
 
-                // Forçar reflow para animação
                 if (direcao === 'left' || direcao === 'right') {
                     requestAnimationFrame(() => {
                         wrapper.classList.remove('slide-left', 'slide-right');
@@ -3005,13 +2913,17 @@
                 document.querySelectorAll('.frase-item .ingles').forEach(el => {
                     el.style.setProperty('color', corIngles, 'important');
                     el.style.setProperty('font-size', tamanhoFonte + 'px', 'important');
-                    el.style.setProperty('line-height', (tamanhoFonte * 1.5) + 'px', 'important');
+                    el.style.setProperty('line-height', (tamanhoFonte * 1.4) + 'px', 'important');
+                    el.style.setProperty('text-align', 'left', 'important');
+                    el.style.setProperty('width', '100%', 'important');
                 });
 
                 document.querySelectorAll('.frase-item .portugues').forEach(el => {
                     el.style.setProperty('color', corPortugues, 'important');
                     el.style.setProperty('font-size', (tamanhoFonte * 0.85) + 'px', 'important');
-                    el.style.setProperty('line-height', (tamanhoFonte * 1.4) + 'px', 'important');
+                    el.style.setProperty('line-height', (tamanhoFonte * 1.3) + 'px', 'important');
+                    el.style.setProperty('text-align', 'left', 'important');
+                    el.style.setProperty('width', '100%', 'important');
                 });
 
                 document.querySelectorAll('.pagina-item').forEach(el => {
@@ -3038,7 +2950,6 @@
                 renderizarEstante();
                 atualizarListaLivrosConfig();
 
-                // Mostrar indicador
                 mostrarIndicador(`${paginaAtual + 1}/${total}`);
             }
 
@@ -3053,18 +2964,22 @@
                 const corIngles = config.corIngles || '#1A237E';
                 const corPortugues = config.corPortugues || '#4CAF50';
                 const corFundo = config.corFundo || '#FFFFFF';
-                const espacamento = tamanho * 0.9;
+                const espacamento = tamanho * 0.7;
 
                 // Aplicar em TODOS os elementos existentes
                 document.querySelectorAll('.frase-item .ingles').forEach(el => {
                     el.style.setProperty('color', corIngles, 'important');
                     el.style.setProperty('font-size', tamanho + 'px', 'important');
-                    el.style.setProperty('line-height', (tamanho * 1.5) + 'px', 'important');
+                    el.style.setProperty('line-height', (tamanho * 1.4) + 'px', 'important');
+                    el.style.setProperty('text-align', 'left', 'important');
+                    el.style.setProperty('width', '100%', 'important');
                 });
                 document.querySelectorAll('.frase-item .portugues').forEach(el => {
                     el.style.setProperty('color', corPortugues, 'important');
                     el.style.setProperty('font-size', (tamanho * 0.85) + 'px', 'important');
-                    el.style.setProperty('line-height', (tamanho * 1.4) + 'px', 'important');
+                    el.style.setProperty('line-height', (tamanho * 1.3) + 'px', 'important');
+                    el.style.setProperty('text-align', 'left', 'important');
+                    el.style.setProperty('width', '100%', 'important');
                 });
 
                 document.querySelectorAll('.pagina-item').forEach(el => {
@@ -3072,16 +2987,16 @@
                 });
 
                 document.querySelectorAll('.frase-item').forEach(el => {
-                    el.style.padding = (espacamento * 0.2) + 'px ' + (espacamento * 0.15) + 'px';
-                    el.style.margin = (espacamento * 0.25) + 'px 0';
+                    el.style.padding = (espacamento * 0.15) + 'px 0';
+                    el.style.margin = (espacamento * 0.15) + 'px 0';
                 });
 
                 document.querySelectorAll('.pagina-item').forEach(el => {
-                    el.style.padding = (espacamento * 0.7) + 'px ' + (espacamento * 1) + 'px';
+                    el.style.padding = (espacamento * 0.6) + 'px ' + (espacamento * 0.8) + 'px';
                 });
 
                 document.querySelectorAll('.divisor-frase').forEach(el => {
-                    el.style.margin = (espacamento * 0.2) + 'px 0';
+                    el.style.margin = (espacamento * 0.15) + 'px 0';
                 });
 
                 const fonteTamanho = document.getElementById('fonteTamanho');
@@ -3090,7 +3005,6 @@
                 const velocidadeEl = document.getElementById('velocidadeVoz');
                 if (velocidadeEl) velocidadeEl.textContent = velocidadeVoz.toFixed(1);
 
-                // Atualizar labels dos seletores arco-íris
                 const corInglesLabel = document.getElementById('corInglesLabel');
                 const corPortuguesLabel = document.getElementById('corPortuguesLabel');
                 const corFundoLabel = document.getElementById('corFundoLabel');
@@ -3424,7 +3338,7 @@
             }
 
             // ================================================================
-            // 📖 NAVEGAÇÃO POR SWIPE COM TRANSIÇÃO SUAVE
+            // 📖 NAVEGAÇÃO POR SWIPE
             // ================================================================
             function setupSwipe() {
                 const container = document.getElementById('paginaContainer');
@@ -3433,10 +3347,6 @@
                 container.addEventListener('touchstart', function(e) {
                     if (isTransitioning) return;
                     touchStartX = e.changedTouches[0].screenX;
-                }, { passive: true });
-
-                container.addEventListener('touchmove', function(e) {
-                    // Opcional: feedback visual durante o arraste
                 }, { passive: true });
 
                 container.addEventListener('touchend', function(e) {
@@ -3647,7 +3557,6 @@
                 }
 
                 // ===== ÁUDIO - CORES (ARCO-ÍRIS) =====
-                // Configurar seletores arco-íris
                 criarRainbowPicker('rainbowIngles', 'handleIngles', 'corInglesLabel', config.corIngles, function(hex) {
                     config.corIngles = hex;
                     aplicarConfiguracoes();

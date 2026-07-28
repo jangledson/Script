@@ -29,6 +29,7 @@
             overflow: hidden;
             background: #5C3D2E;
             -webkit-tap-highlight-color: transparent;
+            touch-action: none;
         }
 
         body {
@@ -160,7 +161,7 @@
         /* ===== TOOLBAR ===== */
         .toolbar {
             background: #5C3D2E;
-            padding: 10px 16px;
+            padding: 6px 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -168,21 +169,21 @@
             position: sticky;
             top: 0;
             z-index: 10;
-            min-height: 50px;
+            min-height: 36px;
         }
 
         .toolbar h1 {
             color: #FFF;
-            font-size: 17px;
+            font-size: 13px;
             font-weight: bold;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
         }
 
         .toolbar-actions {
             display: flex;
-            gap: 6px;
+            gap: 4px;
             align-items: center;
         }
 
@@ -191,9 +192,9 @@
             border: none;
             color: #FFF;
             border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            font-size: 15px;
+            width: 26px;
+            height: 26px;
+            font-size: 12px;
             cursor: pointer;
             transition: background 0.2s;
             display: flex;
@@ -206,10 +207,68 @@
             transform: scale(0.95);
         }
 
+        .toolbar-leitor {
+            background: #5C3D2E;
+            padding: 4px 10px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            min-height: 32px;
+        }
+
+        .toolbar-leitor .leitor-actions {
+            display: flex;
+            gap: 3px;
+            align-items: center;
+            flex-wrap: wrap;
+            width: 100%;
+            justify-content: flex-start;
+        }
+
+        .toolbar-leitor .leitor-actions button {
+            padding: 2px 6px;
+            border: none;
+            border-radius: 10px;
+            font-size: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: rgba(255, 255, 255, 0.15);
+            color: #FFF;
+            white-space: nowrap;
+        }
+
+        .toolbar-leitor .leitor-actions button:active {
+            transform: scale(0.95);
+        }
+
+        .toolbar-leitor .leitor-actions button.ativo {
+            background: #4CAF50;
+            color: #FFF;
+        }
+
+        .toolbar-leitor .leitor-actions button.primario {
+            background: rgba(255, 255, 255, 0.25);
+            color: #FFF;
+        }
+
+        .toolbar-leitor .leitor-actions button.btn-audio {
+            background: #2196F3;
+            color: #FFF;
+        }
+
+        .toolbar-leitor .leitor-actions button.btn-audio.ativo-audio {
+            background: #FF5722;
+        }
+
         /* ===== TELAS ===== */
         .tela {
             display: none;
-            padding: 10px 12px;
+            padding: 6px 8px;
             overflow-y: auto;
             flex: 1;
             animation: fadeIn 0.3s ease;
@@ -226,21 +285,21 @@
         }
 
         /* ================================================================
-                   🏠 ESTANTE
+                   🏠 ESTANTE COM CAPAS
                    ================================================================ */
         .estante-wrapper {
             flex: 1;
             overflow-y: auto;
-            padding: 4px 4px 70px 4px;
+            padding: 4px 4px 50px 4px;
             background: #DCCFC0;
             height: 100%;
         }
 
         .prateleira {
             background: #8B6F4C;
-            border-radius: 10px 10px 0 0;
-            padding: 12px 10px 8px 10px;
-            margin-bottom: 18px;
+            border-radius: 8px 8px 0 0;
+            padding: 8px 6px 4px 6px;
+            margin-bottom: 14px;
             position: relative;
             box-shadow: 0 -4px 0 #6B553A, 0 6px 25px rgba(0, 0, 0, 0.2);
             border: 1px solid #7A5F3F;
@@ -254,17 +313,17 @@
             right: 0;
             height: 100%;
             background: linear-gradient(to bottom, rgba(255, 255, 255, 0.05), transparent);
-            border-radius: 10px 10px 0 0;
+            border-radius: 8px 8px 0 0;
             pointer-events: none;
         }
 
         .prateleira::after {
             content: '';
             position: absolute;
-            bottom: -14px;
+            bottom: -12px;
             left: -2px;
             right: -2px;
-            height: 16px;
+            height: 14px;
             background: linear-gradient(to bottom, #7A5F3F, #5C4A30);
             border-radius: 0 0 6px 6px;
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
@@ -276,7 +335,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
             padding: 0 2px;
             position: relative;
             z-index: 1;
@@ -284,33 +343,33 @@
 
         .prateleira-header .titulo {
             color: #F5EDE0;
-            font-size: 11px;
+            font-size: 9px;
             font-weight: 700;
-            letter-spacing: 1.5px;
+            letter-spacing: 1px;
             text-transform: uppercase;
             text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
             background: rgba(0, 0, 0, 0.2);
-            padding: 3px 10px;
-            border-radius: 12px;
+            padding: 2px 6px;
+            border-radius: 8px;
         }
 
         .prateleira-header .contador {
             color: #F5EDE0;
-            font-size: 9px;
+            font-size: 7px;
             opacity: 0.6;
             background: rgba(0, 0, 0, 0.15);
-            padding: 2px 8px;
-            border-radius: 10px;
+            padding: 2px 6px;
+            border-radius: 6px;
         }
 
         .compartimentos {
             display: flex;
-            gap: 6px;
+            gap: 8px;
             align-items: flex-end;
             flex-wrap: nowrap;
             overflow-x: auto;
-            padding: 4px 2px 8px 2px;
-            min-height: 160px;
+            padding: 4px 2px 6px 2px;
+            min-height: 130px;
             scrollbar-width: thin;
             scrollbar-color: #5C3D2E transparent;
             position: relative;
@@ -318,7 +377,7 @@
         }
 
         .compartimentos::-webkit-scrollbar {
-            height: 4px;
+            height: 3px;
         }
 
         .compartimentos::-webkit-scrollbar-track {
@@ -343,7 +402,7 @@
         .compartimento::after {
             content: '';
             position: absolute;
-            right: -3px;
+            right: -5px;
             top: 0;
             bottom: 0;
             width: 2px;
@@ -357,7 +416,7 @@
 
         .livro-card {
             flex: 0 0 auto;
-            width: 50px;
+            width: 60px;
             cursor: pointer;
             transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
             position: relative;
@@ -371,81 +430,94 @@
             transform: translateY(-8px) scale(0.95);
         }
 
-        .lombada {
+        .capa-livro {
             width: 100%;
-            aspect-ratio: 1/3.0;
-            border-radius: 4px 4px 0 0;
+            aspect-ratio: 2/3;
+            border-radius: 4px;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             color: #FFF;
-            font-size: 7px;
-            font-weight: 700;
             text-align: center;
-            padding: 4px 2px;
+            padding: 6px 4px;
             font-family: 'Georgia', serif;
             text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
-            word-break: break-word;
-            line-height: 1.2;
-            letter-spacing: 0.3px;
-            writing-mode: vertical-rl;
-            text-orientation: mixed;
             position: relative;
-            box-shadow: -3px 0 10px rgba(0, 0, 0, 0.15), 2px 0 8px rgba(0, 0, 0, 0.08);
+            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.15), 2px 0 8px rgba(0, 0, 0, 0.08);
             transition: all 0.2s;
-            min-height: 90px;
-            max-height: 130px;
             border: 1px solid rgba(255, 255, 255, 0.08);
+            overflow: hidden;
+            min-height: 90px;
         }
 
-        .lombada::before {
-            content: '';
+        .capa-livro img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .capa-livro .capa-texto {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 4px;
+        }
+
+        .capa-livro .capa-titulo {
+            font-size: 9px;
+            font-weight: 700;
+            line-height: 1.2;
+            word-break: break-word;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+        }
+
+        .capa-livro .capa-autor {
+            font-size: 6px;
+            opacity: 0.8;
+            margin-top: 2px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+        }
+
+        .capa-livro .capa-progresso {
+            position: absolute;
+            bottom: 2px;
+            right: 4px;
+            font-size: 7px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.9);
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+            z-index: 3;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 1px 6px;
+            border-radius: 8px;
+            backdrop-filter: blur(4px);
+        }
+
+        .capa-livro .capa-badge {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            font-size: 14px;
+            z-index: 3;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+        }
+
+        .capa-livro .capa-overlay {
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            height: 35%;
-            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.2), transparent);
-            border-radius: 4px 4px 0 0;
-            pointer-events: none;
-        }
-
-        .lombada::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 15%;
-            right: 15%;
-            height: 5px;
-            background: rgba(0, 0, 0, 0.25);
-            border-radius: 0 0 50% 50%;
-            filter: blur(3px);
-        }
-
-        .livro-info {
-            width: 100%;
-            padding: 2px 2px 0;
-            text-align: center;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 0 0 3px 3px;
-        }
-
-        .livro-info .titulo-card {
-            font-size: 5px;
-            font-weight: 600;
-            color: #3D2B1A;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 100%;
-            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
-        }
-
-        .livro-info .progresso-card {
-            font-size: 5px;
-            color: #4CAF50;
-            font-weight: 700;
-            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
+            bottom: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.3));
+            z-index: 1;
         }
 
         .btn-excluir-livro {
@@ -471,6 +543,10 @@
             display: flex;
         }
 
+        .btn-excluir-livro:hover {
+            background: #C62828;
+        }
+
         .estante-vazia {
             text-align: center;
             padding: 30px 20px;
@@ -491,129 +567,51 @@
         }
 
         /* ================================================================
-                   📖 LEITOR - VÁRIAS FRASES POR PÁGINA
+                   📖 LEITOR
                    ================================================================ */
-        .leitor-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 8px;
-            border-bottom: 2px solid #E8DDD0;
-            flex-shrink: 0;
-        }
-
-        .leitor-header .voltar {
-            background: none;
-            border: none;
-            font-size: 26px;
-            cursor: pointer;
-            color: #5C3D2E;
-            padding: 4px 6px;
-        }
-
-        .leitor-header .voltar:active {
-            transform: scale(0.9);
-        }
-
-        .leitor-header .titulo-leitor {
-            font-size: 14px;
-            font-weight: 700;
-            color: #3D2B1A;
-            flex: 1;
-            text-align: center;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            padding: 0 4px;
-        }
-
-        .leitor-header .pagina-info {
-            font-size: 12px;
-            color: #888;
-            font-weight: 500;
-        }
-
-        .leitor-actions {
-            display: flex;
-            gap: 5px;
-            align-items: center;
-            padding: 6px 0;
-            flex-shrink: 0;
-            flex-wrap: wrap;
-        }
-
-        .leitor-actions button {
-            padding: 4px 10px;
-            border: none;
-            border-radius: 14px;
-            font-size: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            background: #E8DDD0;
-            color: #3D2B1A;
-            white-space: nowrap;
-        }
-
-        .leitor-actions button:active {
-            transform: scale(0.95);
-        }
-
-        .leitor-actions button.ativo {
-            background: #4CAF50;
-            color: #FFF;
-        }
-
-        .leitor-actions button.primario {
-            background: #5C3D2E;
-            color: #FFF;
-        }
-
-        .leitor-actions button.btn-audio {
-            background: #2196F3;
-            color: #FFF;
-        }
-
-        .leitor-actions button.btn-audio.ativo-audio {
-            background: #FF5722;
-        }
-
         .pagina-container {
             flex: 1;
-            overflow-y: auto;
-            padding: 6px 0 8px;
+            overflow: hidden;
+            padding: 0;
             min-height: 0;
+            display: flex;
+            flex-direction: column;
+            touch-action: none;
+            position: relative;
+            height: 100%;
         }
 
         .pagina-item {
             background: #FFF;
-            border-radius: 14px;
-            padding: 14px 18px;
-            margin-bottom: 8px;
+            border-radius: 10px;
+            padding: 8px 12px;
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
             border-left: 4px solid #5C3D2E;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            min-height: 100%;
+            height: 100%;
         }
 
-        /* ESTILO PARA VÁRIAS FRASES - MAIS COMPACTO PARA CABER MAIS */
         .frase-item {
-            padding: 6px 8px;
-            margin-bottom: 4px;
-            border-radius: 6px;
+            padding: 2px 4px;
+            border-radius: 4px;
             transition: background 0.2s;
-            border-bottom: 1px solid #f0ece6;
-        }
-
-        .frase-item:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 0;
         }
 
         .frase-item .ingles {
-            font-size: 18px;
-            line-height: 1.5;
+            font-size: 16px;
+            line-height: 1.3;
             font-weight: 600;
             cursor: pointer;
-            padding: 3px 6px;
+            padding: 2px 4px;
             border-radius: 4px;
             transition: background 0.2s;
             user-select: none;
@@ -626,74 +624,99 @@
 
         .frase-item .ingles::after {
             content: ' 🔊';
-            font-size: 12px;
-            opacity: 0.25;
+            font-size: 10px;
+            opacity: 0.15;
             transition: opacity 0.2s;
         }
 
-        .frase-item .ingles:hover::after {
-            opacity: 0.7;
+        .frase-item .ingles:active::after {
+            opacity: 0.6;
         }
 
         .frase-item .ingles.falando {
-            background: #BBDEFB;
+            background: #BBDEFB !important;
             animation: pulseAudio 0.8s ease-in-out infinite;
         }
 
-        .frase-item .divisor-frase {
-            height: 1px;
-            background: linear-gradient(to right, #E8DDD0, transparent);
-            margin: 5px 0;
-        }
-
         .frase-item .portugues {
-            font-size: 15px;
-            line-height: 1.4;
-            padding: 3px 6px 6px 6px;
+            font-size: 13px;
+            line-height: 1.2;
+            padding: 2px 4px 2px 4px;
+            transition: color 0.2s;
         }
 
         .frase-item .portugues.oculto {
             display: none;
         }
 
+        .frase-item .divisor-frase {
+            height: 1px;
+            background: linear-gradient(to right, #E8DDD0, transparent);
+            margin: 1px 0;
+        }
+
         @keyframes pulseAudio {
-            0%, 100% { background: #BBDEFB; }
-            50% { background: #90CAF9; }
+            0%, 100% { background: #BBDEFB !important; }
+            50% { background: #90CAF9 !important; }
         }
 
-        .pagina-nav {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0 4px;
-            flex-shrink: 0;
-            gap: 10px;
-        }
-
-        .pagina-nav button {
-            flex: 1;
-            padding: 8px;
-            border: none;
-            border-radius: 10px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            background: #E8DDD0;
-            color: #3D2B1A;
-        }
-
-        .pagina-nav button:active:not(:disabled) {
-            transform: scale(0.97);
-        }
-
-        .pagina-nav button:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-
-        .pagina-nav button.primario {
-            background: #5C3D2E;
+        .btn-voltar-flutuante {
+            position: fixed;
+            top: 12px;
+            left: 12px;
+            background: rgba(92, 61, 46, 0.85);
             color: #FFF;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 22px;
+            cursor: pointer;
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            touch-action: none;
+        }
+
+        .btn-voltar-flutuante.visivel {
+            display: flex;
+            animation: fadeInBtn 0.3s ease;
+        }
+
+        .btn-voltar-flutuante:active {
+            transform: scale(0.85);
+        }
+
+        @keyframes fadeInBtn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .page-indicator {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.6);
+            color: #FFF;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            z-index: 50;
+            backdrop-filter: blur(8px);
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .page-indicator.visivel {
+            display: block;
+            opacity: 1;
         }
 
         /* ================================================================
@@ -701,15 +724,15 @@
                    ================================================================ */
         .btn-config {
             position: absolute;
-            bottom: 16px;
-            right: 16px;
+            bottom: 10px;
+            right: 10px;
             background: #5C3D2E;
             color: #FFF;
             border: none;
             border-radius: 50%;
-            width: 44px;
-            height: 44px;
-            font-size: 20px;
+            width: 36px;
+            height: 36px;
+            font-size: 16px;
             cursor: pointer;
             box-shadow: 0 4px 16px rgba(92, 61, 46, 0.45);
             transition: all 0.25s;
@@ -725,15 +748,15 @@
 
         .fab {
             position: sticky;
-            bottom: 14px;
+            bottom: 10px;
             align-self: flex-end;
             background: #5C3D2E;
             color: #FFF;
             border: none;
             border-radius: 50%;
-            width: 48px;
-            height: 48px;
-            font-size: 24px;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
             cursor: pointer;
             box-shadow: 0 4px 16px rgba(92, 61, 46, 0.4);
             transition: transform 0.2s;
@@ -754,12 +777,12 @@
                    ================================================================ */
         .import-area {
             border: 2px dashed #D5CCC2;
-            border-radius: 14px;
-            padding: 20px 14px;
+            border-radius: 10px;
+            padding: 14px 10px;
             text-align: center;
             cursor: pointer;
             transition: all 0.2s;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             background: #FAF8F5;
         }
 
@@ -773,37 +796,37 @@
         }
 
         .import-area .icone {
-            font-size: 36px;
-            margin-bottom: 4px;
+            font-size: 28px;
+            margin-bottom: 2px;
         }
 
         .import-area p {
             color: #888;
-            font-size: 12px;
+            font-size: 10px;
         }
 
         .import-area .nome-arquivo {
             color: #4CAF50;
             font-weight: 600;
-            margin-top: 4px;
-            font-size: 12px;
+            margin-top: 2px;
+            font-size: 10px;
         }
 
         .import-form label {
             font-weight: 600;
-            font-size: 12px;
+            font-size: 10px;
             color: #555;
             display: block;
-            margin-bottom: 3px;
+            margin-bottom: 2px;
         }
 
         .import-form input[type="text"] {
             width: 100%;
-            padding: 8px 12px;
+            padding: 6px 8px;
             border: 2px solid #E8DDD0;
-            border-radius: 8px;
-            font-size: 12px;
-            margin-bottom: 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            margin-bottom: 6px;
             transition: border 0.2s;
             background: #FAF8F5;
         }
@@ -815,12 +838,12 @@
 
         .import-form .btn-importar {
             width: 100%;
-            padding: 10px;
+            padding: 6px;
             border: none;
-            border-radius: 10px;
+            border-radius: 6px;
             background: #4CAF50;
             color: #FFF;
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
@@ -838,17 +861,17 @@
 
         .import-form .formatos-aceitos {
             display: flex;
-            gap: 4px;
+            gap: 3px;
             flex-wrap: wrap;
-            margin-top: 4px;
+            margin-top: 3px;
             justify-content: center;
         }
 
         .import-form .formatos-aceitos span {
             background: #E8DDD0;
-            padding: 2px 10px;
-            border-radius: 10px;
-            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-size: 7px;
             font-weight: 600;
             color: #555;
         }
@@ -859,17 +882,82 @@
         }
 
         .import-form .dica {
-            margin-top: 10px;
-            padding: 12px;
+            margin-top: 6px;
+            padding: 8px;
             background: #F5F0EB;
-            border-radius: 10px;
-            font-size: 11px;
+            border-radius: 6px;
+            font-size: 9px;
             color: #888;
-            line-height: 1.5;
+            line-height: 1.4;
         }
 
         .import-form .dica strong {
             color: #555;
+        }
+
+        .import-capa-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+            padding: 8px;
+            background: #FAF8F5;
+            border-radius: 8px;
+            border: 2px solid #E8DDD0;
+        }
+
+        .import-capa-area .capa-preview {
+            width: 50px;
+            height: 75px;
+            border-radius: 4px;
+            background: #D5CCC2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .import-capa-area .capa-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .import-capa-area .capa-input-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .import-capa-area .capa-input-area input[type="file"] {
+            display: none;
+        }
+
+        .import-capa-area .capa-input-area .btn-capa {
+            padding: 4px 10px;
+            background: #5C3D2E;
+            color: #FFF;
+            border: none;
+            border-radius: 4px;
+            font-size: 9px;
+            cursor: pointer;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .import-capa-area .capa-input-area .btn-capa:active {
+            transform: scale(0.95);
+        }
+
+        .import-capa-area .capa-input-area .capa-nome {
+            font-size: 8px;
+            color: #888;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         /* ================================================================
@@ -887,7 +975,7 @@
             align-items: center;
             justify-content: center;
             z-index: 1000;
-            padding: 16px;
+            padding: 14px;
         }
 
         .modal-overlay.ativo {
@@ -896,10 +984,10 @@
 
         .modal {
             background: #FFF;
-            border-radius: 20px;
-            max-width: 400px;
+            border-radius: 16px;
+            max-width: 360px;
             width: 100%;
-            padding: 20px;
+            padding: 16px;
             max-height: 90vh;
             overflow-y: auto;
             animation: modalIn 0.3s ease;
@@ -911,36 +999,36 @@
         }
 
         .modal h2 {
-            font-size: 17px;
+            font-size: 14px;
             color: #5C3D2E;
-            margin-bottom: 14px;
+            margin-bottom: 10px;
         }
 
         .modal .grupo {
-            margin-bottom: 14px;
+            margin-bottom: 10px;
         }
 
         .modal .grupo label {
             display: block;
-            font-size: 11px;
+            font-size: 9px;
             font-weight: 600;
             color: #555;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
         }
 
         .modal .grupo .opcoes {
             display: flex;
-            gap: 5px;
+            gap: 3px;
             flex-wrap: wrap;
         }
 
         .modal .grupo .opcoes button {
-            padding: 5px 12px;
+            padding: 3px 8px;
             border: 2px solid #E8DDD0;
-            border-radius: 6px;
+            border-radius: 4px;
             background: #FFF;
             cursor: pointer;
-            font-size: 11px;
+            font-size: 9px;
             transition: all 0.2s;
             color: #333;
         }
@@ -958,16 +1046,16 @@
         .modal .grupo .controle-fonte {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .modal .grupo .controle-fonte button {
-            width: 32px;
-            height: 32px;
+            width: 24px;
+            height: 24px;
             border: none;
-            border-radius: 6px;
+            border-radius: 4px;
             background: #E8DDD0;
-            font-size: 16px;
+            font-size: 12px;
             cursor: pointer;
         }
 
@@ -976,27 +1064,27 @@
         }
 
         .modal .grupo .controle-fonte span {
-            font-size: 15px;
+            font-size: 12px;
             font-weight: 600;
-            min-width: 32px;
+            min-width: 24px;
             text-align: center;
         }
 
         .modal .grupo .lista-livros {
-            max-height: 150px;
+            max-height: 100px;
             overflow-y: auto;
             border: 1px solid #E8DDD0;
-            border-radius: 6px;
-            padding: 4px;
+            border-radius: 4px;
+            padding: 3px;
         }
 
         .modal .grupo .item-livro {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 6px 10px;
+            padding: 3px 6px;
             border-bottom: 1px solid #f0ece6;
-            gap: 6px;
+            gap: 4px;
         }
 
         .modal .grupo .item-livro:last-child {
@@ -1011,7 +1099,7 @@
         }
 
         .modal .grupo .item-livro .info .titulo-item {
-            font-size: 12px;
+            font-size: 10px;
             font-weight: 600;
             color: #333;
             overflow: hidden;
@@ -1020,7 +1108,7 @@
         }
 
         .modal .grupo .item-livro .info .autor-item {
-            font-size: 10px;
+            font-size: 8px;
             color: #888;
         }
 
@@ -1029,9 +1117,9 @@
             border: none;
             color: #FFF;
             border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            font-size: 12px;
+            width: 18px;
+            height: 18px;
+            font-size: 9px;
             cursor: pointer;
             flex-shrink: 0;
             display: flex;
@@ -1045,22 +1133,22 @@
 
         .modal .grupo .sem-livros {
             text-align: center;
-            padding: 16px;
+            padding: 10px;
             color: #999;
-            font-size: 12px;
+            font-size: 10px;
         }
 
         .modal .grupo .cor-picker {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 6px;
         }
 
         .modal .grupo .cor-picker input[type="color"] {
-            width: 40px;
-            height: 40px;
+            width: 30px;
+            height: 30px;
             border: 2px solid #E8DDD0;
-            border-radius: 8px;
+            border-radius: 4px;
             cursor: pointer;
             padding: 2px;
             background: #FFF;
@@ -1071,18 +1159,18 @@
         }
 
         .modal .grupo .cor-picker span {
-            font-size: 12px;
+            font-size: 9px;
             color: #555;
         }
 
         .modal .btn-fechar {
             width: 100%;
-            padding: 10px;
+            padding: 6px;
             border: none;
-            border-radius: 10px;
+            border-radius: 6px;
             background: #5C3D2E;
             color: #FFF;
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 600;
             cursor: pointer;
             margin-top: 4px;
@@ -1096,18 +1184,18 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 4px 0;
+            padding: 2px 0;
         }
 
         .modal .toggle-row span {
-            font-size: 13px;
+            font-size: 11px;
             color: #333;
         }
 
         .switch {
             position: relative;
-            width: 40px;
-            height: 22px;
+            width: 32px;
+            height: 18px;
             flex-shrink: 0;
         }
 
@@ -1125,15 +1213,15 @@
             right: 0;
             bottom: 0;
             background: #CCC;
-            border-radius: 22px;
+            border-radius: 18px;
             transition: 0.3s;
         }
 
         .switch .slider::before {
             content: '';
             position: absolute;
-            height: 16px;
-            width: 16px;
+            height: 12px;
+            width: 12px;
             left: 3px;
             bottom: 3px;
             background: #FFF;
@@ -1146,7 +1234,7 @@
         }
 
         .switch input:checked+.slider::before {
-            transform: translateX(18px);
+            transform: translateX(14px);
         }
 
         /* ================================================================
@@ -1181,68 +1269,68 @@
         }
 
         ::-webkit-scrollbar {
-            width: 3px;
+            width: 2px;
         }
         ::-webkit-scrollbar-track {
             background: #E8DDD0;
         }
         ::-webkit-scrollbar-thumb {
             background: #C4B5A0;
-            border-radius: 3px;
+            border-radius: 2px;
         }
 
         /* ===== RESPONSIVO ===== */
         @media (max-width: 420px) {
-            .livro-card { width: 44px; }
-            .lombada { font-size: 6px; min-height: 80px; max-height: 110px; }
-            .livro-info .titulo-card { font-size: 5px; }
-            .livro-info .progresso-card { font-size: 4px; }
-            .btn-config { width: 38px; height: 38px; font-size: 16px; bottom: 12px; right: 12px; }
-            .fab { width: 42px; height: 42px; font-size: 20px; }
-            .frase-item .ingles { font-size: 15px; }
-            .frase-item .portugues { font-size: 13px; }
-            .modal { padding: 16px; }
-            .compartimento { padding: 0 2px; }
-            .prateleira-header .titulo { font-size: 9px; padding: 2px 8px; }
-            .toolbar h1 { font-size: 15px; }
-            .leitor-actions button { font-size: 9px; padding: 3px 8px; }
-            .pagina-item { padding: 12px 14px; }
-            .frase-item { padding: 4px 6px; }
-            .pagina-nav button { font-size: 11px; padding: 6px; }
-            #splashScreen .logo-icon { font-size: 60px; width: 100px; height: 100px; padding: 16px; }
-            #splashScreen .logo-text { font-size: 20px; }
+            .frase-item .ingles { font-size: 14px; }
+            .frase-item .portugues { font-size: 12px; }
+            .pagina-item { padding: 6px 8px; }
+            .frase-item { padding: 1px 2px; }
+            .btn-voltar-flutuante { width: 34px; height: 34px; font-size: 18px; top: 8px; left: 8px; }
+            .page-indicator { font-size: 10px; padding: 3px 12px; bottom: 14px; }
+            .livro-card { width: 50px; }
+            .capa-livro { min-height: 75px; }
+            .capa-livro .capa-titulo { font-size: 7px; }
+            #splashScreen .logo-icon { font-size: 50px; width: 80px; height: 80px; padding: 12px; }
+            #splashScreen .logo-text { font-size: 18px; }
         }
 
         @media (max-width: 360px) {
-            .livro-card { width: 38px; }
-            .lombada { font-size: 5px; min-height: 70px; max-height: 90px; }
-            .compartimentos { gap: 4px; }
-            .compartimento::after { right: -2px; width: 1px; }
-            .compartimento { padding: 0 1px; }
-            .prateleira { padding: 8px 6px 6px 6px; }
-            .frase-item .ingles { font-size: 13px; }
-            .frase-item .portugues { font-size: 12px; }
-            .pagina-item { padding: 10px 12px; }
-            .frase-item { padding: 3px 5px; }
+            .frase-item .ingles { font-size: 12px; }
+            .frase-item .portugues { font-size: 10px; }
+            .pagina-item { padding: 4px 6px; }
+            .frase-item { padding: 1px 2px; }
+            .livro-card { width: 44px; }
+            .capa-livro { min-height: 66px; }
+            .capa-livro .capa-titulo { font-size: 6px; }
+            .toolbar-leitor .leitor-actions button { font-size: 7px; padding: 1px 4px; }
         }
 
         @media (max-height: 600px) {
-            .toolbar { padding: 6px 12px; min-height: 40px; }
-            .toolbar h1 { font-size: 14px; }
-            .leitor-header { padding-bottom: 4px; }
-            .leitor-actions { padding: 3px 0; }
-            .leitor-actions button { font-size: 8px; padding: 2px 6px; }
-            .pagina-nav { padding: 4px 0 2px; }
-            .pagina-nav button { font-size: 10px; padding: 4px; }
-            .pagina-item { padding: 8px 12px; }
-            .frase-item .ingles { font-size: 13px; }
-            .frase-item .portugues { font-size: 11px; }
-            .frase-item { padding: 3px 5px; }
-            #splashScreen .logo-icon { font-size: 40px; width: 70px; height: 70px; padding: 12px; }
-            #splashScreen .logo-text { font-size: 16px; }
-            #splashScreen .logo-subtext { font-size: 10px; }
-            .btn-config { width: 34px; height: 34px; font-size: 14px; bottom: 10px; right: 10px; }
-            .fab { width: 38px; height: 38px; font-size: 18px; }
+            .toolbar-leitor { padding: 2px 6px; min-height: 26px; }
+            .toolbar-leitor .leitor-actions button { font-size: 7px; padding: 1px 4px; }
+            .pagina-item { padding: 4px 6px; }
+            .frase-item .ingles { font-size: 12px; }
+            .frase-item .portugues { font-size: 10px; }
+            .frase-item { padding: 1px 2px; }
+            .btn-voltar-flutuante { width: 30px; height: 30px; font-size: 16px; top: 6px; left: 6px; }
+            .page-indicator { font-size: 9px; padding: 2px 10px; bottom: 10px; }
+            .livro-card { width: 44px; }
+            .capa-livro { min-height: 66px; }
+            #splashScreen .logo-icon { font-size: 35px; width: 60px; height: 60px; padding: 10px; }
+            #splashScreen .logo-text { font-size: 14px; }
+            #splashScreen .logo-subtext { font-size: 8px; }
+        }
+
+        @media (min-height: 800px) {
+            .frase-item .ingles { font-size: 20px; }
+            .frase-item .portugues { font-size: 17px; }
+            .frase-item { padding: 4px 3px; }
+        }
+
+        @media (min-height: 900px) {
+            .frase-item .ingles { font-size: 23px; }
+            .frase-item .portugues { font-size: 19px; }
+            .frase-item { padding: 6px 3px; }
         }
     </style>
 </head>
@@ -1265,10 +1353,20 @@
     <!-- ===== APP ===== -->
     <div class="app-container" id="appContainer">
 
-        <div class="toolbar">
+        <div class="toolbar" id="toolbarEstante">
             <h1 id="toolbarTitulo">📚 Minha Estante</h1>
             <div class="toolbar-actions">
                 <button id="btnImportarTop" title="Importar livro">📤</button>
+            </div>
+        </div>
+
+        <div class="toolbar-leitor" id="toolbarLeitor" style="display:none;">
+            <div class="leitor-actions">
+                <button id="btnTogglePT" class="ativo">🇧🇷 PT</button>
+                <button id="btnAudioFrase" class="btn-audio">🔊 Falar Tudo</button>
+                <button id="btnAudioAutomatico" class="btn-audio">🔁 Auto</button>
+                <button id="btnAnterior">◀</button>
+                <button id="btnProximo" class="primario">▶</button>
             </div>
         </div>
 
@@ -1282,36 +1380,23 @@
         </div>
 
         <!-- ===== LEITOR ===== -->
-        <div id="telaLeitor" class="tela">
-            <div class="leitor-header">
-                <button class="voltar" id="btnVoltarLeitor">‹</button>
-                <span class="titulo-leitor" id="leitorTitulo">Título</span>
-                <span class="pagina-info" id="leitorPagina">1/10</span>
-            </div>
-
-            <div class="leitor-actions">
-                <button id="btnTogglePT" class="ativo">🇧🇷 PT</button>
-                <button id="btnAudioFrase" class="btn-audio">🔊 Falar Tudo</button>
-                <button id="btnAudioAutomatico" class="btn-audio">🔁 Auto</button>
-                <button id="btnAnterior">◀</button>
-                <button id="btnProximo" class="primario">▶</button>
-            </div>
-
-            <div class="pagina-container" id="paginaContainer">
-                <div id="paginasLeitor"></div>
-            </div>
-
-            <div class="pagina-nav">
-                <button id="btnAnterior2">◀ Anterior</button>
-                <button id="btnProximo2" class="primario">Próximo ▶</button>
+        <div id="telaLeitor" class="tela" style="padding:4px 6px; flex:1; display:none; flex-direction:column;">
+            <div class="pagina-container" id="paginaContainer" style="flex:1; height:100%;">
+                <div id="paginasLeitor" style="flex:1; height:100%;"></div>
             </div>
         </div>
 
+        <!-- ===== BOTÃO VOLTAR FLUTUANTE ===== -->
+        <button class="btn-voltar-flutuante" id="btnVoltarFlutuante" title="Voltar">‹</button>
+
+        <!-- ===== INDICADOR DE PÁGINA ===== -->
+        <div class="page-indicator" id="pageIndicator">1/10</div>
+
         <!-- ===== IMPORTAÇÃO ===== -->
         <div id="telaImportar" class="tela">
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-                <button class="voltar" id="btnVoltarImportar" style="background:none;border:none;font-size:24px;cursor:pointer;color:#5C3D2E;">‹</button>
-                <h2 style="font-size:16px;color:#5C3D2E;">📤 Importar Livro</h2>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                <button class="voltar" id="btnVoltarImportar" style="background:none;border:none;font-size:20px;cursor:pointer;color:#5C3D2E;">‹</button>
+                <h2 style="font-size:14px;color:#5C3D2E;">📤 Importar Livro</h2>
             </div>
 
             <div class="import-form">
@@ -1324,7 +1409,7 @@
                 <div class="import-area" id="importArea">
                     <input type="file" id="fileInput" accept=".txt,.docx,.csv,.json,.srt,.vtt,.pdf" />
                     <div class="icone">📄</div>
-                    <p>Clique para selecionar um arquivo</p>
+                    <p>Clique para selecionar o arquivo do livro</p>
                     <div class="nome-arquivo" id="nomeArquivo"></div>
                     <div class="formatos-aceitos">
                         <span class="suportado">📝 .TXT</span>
@@ -1337,16 +1422,22 @@
                     </div>
                 </div>
 
+                <div class="import-capa-area">
+                    <div class="capa-preview" id="capaPreview">📖</div>
+                    <div class="capa-input-area">
+                        <label class="btn-capa" id="btnCapa">📷 Adicionar Capa</label>
+                        <input type="file" id="capaInput" accept="image/*" />
+                        <span class="capa-nome" id="capaNome">Nenhuma imagem selecionada</span>
+                    </div>
+                </div>
+
                 <button class="btn-importar" id="btnImportarArquivo" disabled>📚 IMPORTAR</button>
 
                 <div class="dica">
-                    💡 <strong>Formatos suportados:</strong><br />
-                    <strong>.TXT / .DOCX:</strong> Cada linha: <strong>Inglês||Português</strong><br />
-                    <strong>.CSV:</strong> Separado por vírgula: <em>Inglês,Português</em><br />
-                    <strong>.JSON:</strong> Array com objetos "en" e "pt"<br />
-                    <strong>.SRT / .VTT:</strong> Legendas com texto em inglês e português<br />
-                    <strong>.PDF:</strong> Extrai texto das páginas<br /><br />
-                    🔊 <strong>Clique em qualquer frase em inglês</strong> para ouvir a pronúncia!
+                    💡 <strong>Tradução automática ativada!</strong><br />
+                    O aplicativo detecta automaticamente se o arquivo está em inglês ou português<br />
+                    e gera o livro com ambos os idiomas!<br /><br />
+                    📷 <strong>Adicione uma capa</strong> para o livro aparecer na estante!
                 </div>
             </div>
         </div>
@@ -1360,7 +1451,7 @@
                     <label>📏 Tamanho da Fonte</label>
                     <div class="controle-fonte">
                         <button id="btnFonteMenos">−</button>
-                        <span id="fonteTamanho">20</span>
+                        <span id="fonteTamanho">16</span>
                         <button id="btnFonteMais">+</button>
                     </div>
                 </div>
@@ -1389,7 +1480,7 @@
                     <label>🎨 Cor do Texto em Inglês</label>
                     <div class="cor-picker">
                         <input type="color" id="corIngles" value="#1A237E" />
-                        <span id="corInglesLabel">Azul escuro</span>
+                        <span id="corInglesLabel">#1A237E</span>
                     </div>
                 </div>
 
@@ -1397,7 +1488,7 @@
                     <label>🎨 Cor do Texto em Português</label>
                     <div class="cor-picker">
                         <input type="color" id="corPortugues" value="#4CAF50" />
-                        <span id="corPortuguesLabel">Verde</span>
+                        <span id="corPortuguesLabel">#4CAF50</span>
                     </div>
                 </div>
 
@@ -1418,8 +1509,14 @@
                 </div>
 
                 <div class="grupo">
+                    <button id="btnImportarConfig" style="width:100%;padding:6px;border:none;border-radius:6px;background:#2196F3;color:#FFF;font-size:12px;font-weight:600;cursor:pointer;">
+                        📤 Importar Novo Livro
+                    </button>
+                </div>
+
+                <div class="grupo">
                     <label>ℹ️ Sobre</label>
-                    <div style="padding:6px 10px;background:#f5f0eb;border-radius:6px;font-size:11px;color:#666;">
+                    <div style="padding:4px 8px;background:#f5f0eb;border-radius:4px;font-size:9px;color:#666;">
                         <strong>YouCan Leitor</strong> v1.0.0<br />
                         Aprenda inglês lendo frases traduzidas
                     </div>
@@ -1449,9 +1546,14 @@
             let audioAutomatico = false;
             let velocidadeVoz = 1.0;
             let audioFalando = false;
+            let touchStartX = 0;
+            let touchEndX = 0;
+            let timeoutSeta = null;
+            let timeoutIndicador = null;
+            let capaImagem = null;
 
             let config = {
-                tamanhoFonte: 18,
+                tamanhoFonte: 16,
                 negrito: false,
                 fonte: 'fonte-arial',
                 velocidadeVoz: 1.0,
@@ -1459,17 +1561,735 @@
                 corPortugues: '#4CAF50'
             };
 
-            // FRASES POR PÁGINA - AUMENTADO PARA OCUPAR MAIS TELA
-            const FRASES_POR_PAGINA = 8;
+            let FRASES_POR_PAGINA = 20;
 
             // ================================================================
-            // 📚 LIVROS DE EXEMPLO COM VÁRIAS FRASES
+            // 📖 DICIONÁRIO INGLÊS ↔ PORTUGUÊS
+            // ================================================================
+            const DICIONARIO = {
+                // SAUDAÇÕES
+                'hello': 'olá',
+                'hi': 'oi',
+                'good morning': 'bom dia',
+                'good afternoon': 'boa tarde',
+                'good evening': 'boa noite',
+                'good night': 'boa noite',
+                'how are you': 'como você está',
+                'how are you doing': 'como você está',
+                "what's up": 'e aí',
+                'how is it going': 'como vai',
+                'nice to meet you': 'prazer em conhecê-lo',
+                'pleasure': 'prazer',
+                'welcome': 'bem-vindo',
+                'bye': 'tchau',
+                'goodbye': 'adeus',
+                'see you': 'até logo',
+                'see you later': 'até mais tarde',
+                'see you tomorrow': 'até amanhã',
+                'take care': 'se cuide',
+                'have a nice day': 'tenha um bom dia',
+                'have a good day': 'tenha um bom dia',
+
+                // PERGUNTAS
+                'what': 'o que',
+                'who': 'quem',
+                'where': 'onde',
+                'when': 'quando',
+                'why': 'por que',
+                'how': 'como',
+                'which': 'qual',
+                'what is': 'o que é',
+                'what are': 'o que são',
+                'who is': 'quem é',
+                'where is': 'onde está',
+                'when is': 'quando é',
+                'why is': 'por que é',
+                'how is': 'como está',
+                'how much': 'quanto',
+                'how many': 'quantos',
+                'can you': 'você pode',
+                'could you': 'você poderia',
+                'would you': 'você gostaria',
+                'do you': 'você',
+                'are you': 'você está',
+                'is it': 'é',
+                'is that': 'é isso',
+                'is this': 'é este',
+                'what time': 'que horas',
+                'what day': 'que dia',
+
+                // RESPOSTAS
+                'yes': 'sim',
+                'no': 'não',
+                'ok': 'ok',
+                'okay': 'ok',
+                'alright': 'tudo bem',
+                'fine': 'bem',
+                'good': 'bom',
+                'great': 'ótimo',
+                'excellent': 'excelente',
+                'wonderful': 'maravilhoso',
+                'terrible': 'terrível',
+                'bad': 'ruim',
+                'sad': 'triste',
+                'happy': 'feliz',
+                'angry': 'bravo',
+                'tired': 'cansado',
+                'hungry': 'com fome',
+                'thirsty': 'com sede',
+                'sorry': 'desculpe',
+                'thanks': 'obrigado',
+                'thank you': 'obrigado',
+                'thank you very much': 'muito obrigado',
+                'you are welcome': 'de nada',
+                'you\'re welcome': 'de nada',
+                'no problem': 'sem problema',
+                'never mind': 'deixa pra lá',
+                'i understand': 'eu entendo',
+                'i don\'t understand': 'eu não entendo',
+                'i know': 'eu sei',
+                'i don\'t know': 'eu não sei',
+                'maybe': 'talvez',
+                'probably': 'provavelmente',
+                'certainly': 'certamente',
+                'absolutely': 'absolutamente',
+                'definitely': 'definitivamente',
+
+                // FAMÍLIA
+                'father': 'pai',
+                'dad': 'pai',
+                'daddy': 'papai',
+                'mother': 'mãe',
+                'mom': 'mãe',
+                'mommy': 'mamãe',
+                'brother': 'irmão',
+                'sister': 'irmã',
+                'son': 'filho',
+                'daughter': 'filha',
+                'uncle': 'tio',
+                'aunt': 'tia',
+                'grandfather': 'avô',
+                'grandmother': 'avó',
+                'grandma': 'vovó',
+                'grandpa': 'vovô',
+                'family': 'família',
+                'parents': 'pais',
+                'children': 'crianças',
+                'kid': 'criança',
+                'baby': 'bebê',
+                'friend': 'amigo',
+                'friends': 'amigos',
+
+                // PESSOAS
+                'person': 'pessoa',
+                'people': 'pessoas',
+                'man': 'homem',
+                'woman': 'mulher',
+                'men': 'homens',
+                'women': 'mulheres',
+                'boy': 'menino',
+                'girl': 'menina',
+                'child': 'criança',
+                'children': 'crianças',
+                'teacher': 'professor',
+                'student': 'estudante',
+                'doctor': 'médico',
+                'nurse': 'enfermeiro',
+                'driver': 'motorista',
+                'worker': 'trabalhador',
+                'boss': 'chefe',
+                'king': 'rei',
+                'queen': 'rainha',
+                'prince': 'príncipe',
+                'princess': 'princesa',
+
+                // CORPOS
+                'body': 'corpo',
+                'head': 'cabeça',
+                'hair': 'cabelo',
+                'eyes': 'olhos',
+                'eye': 'olho',
+                'nose': 'nariz',
+                'mouth': 'boca',
+                'ears': 'orelhas',
+                'ear': 'orelha',
+                'hands': 'mãos',
+                'hand': 'mão',
+                'arms': 'braços',
+                'arm': 'braço',
+                'legs': 'pernas',
+                'leg': 'perna',
+                'feet': 'pés',
+                'foot': 'pé',
+                'face': 'rosto',
+                'smile': 'sorriso',
+
+                // COMIDAS
+                'food': 'comida',
+                'water': 'água',
+                'coffee': 'café',
+                'tea': 'chá',
+                'juice': 'suco',
+                'milk': 'leite',
+                'bread': 'pão',
+                'rice': 'arroz',
+                'beans': 'feijão',
+                'meat': 'carne',
+                'chicken': 'frango',
+                'fish': 'peixe',
+                'egg': 'ovo',
+                'fruits': 'frutas',
+                'apple': 'maçã',
+                'banana': 'banana',
+                'orange': 'laranja',
+                'lemon': 'limão',
+                'strawberry': 'morango',
+                'grape': 'uva',
+                'watermelon': 'melancia',
+                'cake': 'bolo',
+                'ice cream': 'sorvete',
+                'chocolate': 'chocolate',
+                'sugar': 'açúcar',
+                'salt': 'sal',
+                'oil': 'óleo',
+
+                // ANIMAIS
+                'animal': 'animal',
+                'dog': 'cachorro',
+                'cat': 'gato',
+                'horse': 'cavalo',
+                'cow': 'vaca',
+                'pig': 'porco',
+                'sheep': 'ovelha',
+                'bird': 'pássaro',
+                'fish': 'peixe',
+                'shark': 'tubarão',
+                'whale': 'baleia',
+                'dolphin': 'golfinho',
+                'turtle': 'tartaruga',
+                'lion': 'leão',
+                'tiger': 'tigre',
+                'elephant': 'elefante',
+                'monkey': 'macaco',
+                'rabbit': 'coelho',
+                'mouse': 'rato',
+                'snake': 'cobra',
+                'eagle': 'águia',
+                'butterfly': 'borboleta',
+                'bee': 'abelha',
+
+                // NATUREZA
+                'nature': 'natureza',
+                'sun': 'sol',
+                'moon': 'lua',
+                'star': 'estrela',
+                'sky': 'céu',
+                'cloud': 'nuvem',
+                'rain': 'chuva',
+                'wind': 'vento',
+                'storm': 'tempestade',
+                'snow': 'neve',
+                'ice': 'gelo',
+                'fire': 'fogo',
+                'water': 'água',
+                'earth': 'terra',
+                'sea': 'mar',
+                'ocean': 'oceano',
+                'river': 'rio',
+                'lake': 'lago',
+                'forest': 'floresta',
+                'mountain': 'montanha',
+                'hill': 'colina',
+                'tree': 'árvore',
+                'flower': 'flor',
+                'grass': 'grama',
+                'rock': 'pedra',
+                'sand': 'areia',
+                'beach': 'praia',
+                'island': 'ilha',
+
+                // CORES
+                'color': 'cor',
+                'red': 'vermelho',
+                'blue': 'azul',
+                'green': 'verde',
+                'yellow': 'amarelo',
+                'black': 'preto',
+                'white': 'branco',
+                'gray': 'cinza',
+                'pink': 'rosa',
+                'purple': 'roxo',
+                'orange': 'laranja',
+                'brown': 'marrom',
+                'gold': 'dourado',
+                'silver': 'prateado',
+
+                // TEMPO
+                'time': 'tempo',
+                'day': 'dia',
+                'week': 'semana',
+                'month': 'mês',
+                'year': 'ano',
+                'today': 'hoje',
+                'tomorrow': 'amanhã',
+                'yesterday': 'ontem',
+                'morning': 'manhã',
+                'afternoon': 'tarde',
+                'evening': 'noite',
+                'night': 'noite',
+                'hour': 'hora',
+                'minute': 'minuto',
+                'second': 'segundo',
+                'now': 'agora',
+                'later': 'depois',
+                'soon': 'em breve',
+                'always': 'sempre',
+                'never': 'nunca',
+                'sometimes': 'às vezes',
+                'often': 'frequentemente',
+                'usually': 'geralmente',
+
+                // LUGARES
+                'house': 'casa',
+                'home': 'lar',
+                'school': 'escola',
+                'hospital': 'hospital',
+                'bank': 'banco',
+                'shop': 'loja',
+                'store': 'loja',
+                'market': 'mercado',
+                'restaurant': 'restaurante',
+                'hotel': 'hotel',
+                'airport': 'aeroporto',
+                'station': 'estação',
+                'church': 'igreja',
+                'park': 'parque',
+                'garden': 'jardim',
+                'city': 'cidade',
+                'town': 'cidade',
+                'village': 'vila',
+                'country': 'país',
+                'world': 'mundo',
+
+                // VERBOS COMUNS
+                'be': 'ser/estar',
+                'have': 'ter',
+                'do': 'fazer',
+                'say': 'dizer',
+                'go': 'ir',
+                'get': 'obter',
+                'make': 'fazer',
+                'know': 'saber',
+                'think': 'pensar',
+                'see': 'ver',
+                'come': 'vir',
+                'want': 'querer',
+                'look': 'olhar',
+                'use': 'usar',
+                'find': 'encontrar',
+                'give': 'dar',
+                'tell': 'contar',
+                'work': 'trabalhar',
+                'call': 'chamar',
+                'try': 'tentar',
+                'ask': 'perguntar',
+                'need': 'precisar',
+                'feel': 'sentir',
+                'become': 'tornar-se',
+                'leave': 'sair',
+                'put': 'colocar',
+                'mean': 'significar',
+                'keep': 'manter',
+                'let': 'deixar',
+                'begin': 'começar',
+                'seem': 'parecer',
+                'help': 'ajudar',
+                'talk': 'falar',
+                'turn': 'virar',
+                'start': 'começar',
+                'show': 'mostrar',
+                'hear': 'ouvir',
+                'play': 'jogar/tocar',
+                'run': 'correr',
+                'move': 'mover',
+                'like': 'gostar',
+                'live': 'viver',
+                'believe': 'acreditar',
+                'hold': 'segurar',
+                'bring': 'trazer',
+                'happen': 'acontecer',
+                'write': 'escrever',
+                'read': 'ler',
+                'learn': 'aprender',
+                'teach': 'ensinar',
+                'remember': 'lembrar',
+                'forget': 'esquecer',
+                'change': 'mudar',
+                'close': 'fechar',
+                'open': 'abrir',
+                'walk': 'andar',
+                'swim': 'nadar',
+                'fly': 'voar',
+                'drive': 'dirigir',
+                'cook': 'cozinhar',
+
+                // ADJETIVOS COMUNS
+                'good': 'bom',
+                'great': 'ótimo',
+                'excellent': 'excelente',
+                'bad': 'ruim',
+                'terrible': 'terrível',
+                'beautiful': 'bonito',
+                'pretty': 'bonito',
+                'handsome': 'bonito',
+                'ugly': 'feio',
+                'big': 'grande',
+                'small': 'pequeno',
+                'large': 'grande',
+                'little': 'pequeno',
+                'tall': 'alto',
+                'short': 'baixo',
+                'long': 'longo',
+                'new': 'novo',
+                'old': 'velho',
+                'young': 'jovem',
+                'fast': 'rápido',
+                'slow': 'lento',
+                'easy': 'fácil',
+                'difficult': 'difícil',
+                'hard': 'duro/difícil',
+                'soft': 'macio',
+                'heavy': 'pesado',
+                'light': 'leve',
+                'hot': 'quente',
+                'cold': 'frio',
+                'warm': 'morno',
+                'cool': 'legal/fresco',
+                'happy': 'feliz',
+                'sad': 'triste',
+                'angry': 'bravo',
+                'calm': 'calmo',
+                'nervous': 'nervoso',
+                'scared': 'assustado',
+                'brave': 'corajoso',
+                'kind': 'gentil',
+                'mean': 'mau',
+                'funny': 'engraçado',
+                'boring': 'chato',
+                'interesting': 'interessante',
+                'important': 'importante',
+                'special': 'especial',
+                'common': 'comum',
+                'different': 'diferente',
+                'same': 'mesmo',
+                'simple': 'simples',
+                'complex': 'complexo',
+                'clean': 'limpo',
+                'dirty': 'sujo',
+                'bright': 'brilhante',
+                'dark': 'escuro',
+
+                // ADVÉRBIOS
+                'very': 'muito',
+                'really': 'realmente',
+                'so': 'tão',
+                'too': 'também/demais',
+                'quite': 'bastante',
+                'just': 'apenas',
+                'only': 'somente',
+                'almost': 'quase',
+                'already': 'já',
+                'still': 'ainda',
+                'yet': 'ainda/já',
+                'again': 'novamente',
+                'also': 'também',
+                'well': 'bem',
+                'badly': 'mal',
+                'quickly': 'rapidamente',
+                'slowly': 'lentamente',
+                'carefully': 'cuidadosamente',
+                'easily': 'facilmente',
+                'hardly': 'dificilmente',
+                'probably': 'provavelmente',
+                'certainly': 'certamente',
+                'maybe': 'talvez',
+
+                // PREPOSIÇÕES
+                'in': 'em',
+                'on': 'em/sobre',
+                'at': 'em',
+                'to': 'para',
+                'for': 'para/por',
+                'with': 'com',
+                'without': 'sem',
+                'by': 'por',
+                'from': 'de/desde',
+                'of': 'de',
+                'about': 'sobre',
+                'over': 'sobre/acima',
+                'under': 'sob/abaixo',
+                'between': 'entre',
+                'among': 'entre',
+                'through': 'através',
+                'across': 'através',
+                'around': 'ao redor',
+                'near': 'perto',
+                'far': 'longe',
+                'up': 'cima',
+                'down': 'baixo',
+
+                // PALAVRAS DE LIGAÇÃO
+                'and': 'e',
+                'but': 'mas',
+                'or': 'ou',
+                'because': 'porque',
+                'so': 'então',
+                'if': 'se',
+                'when': 'quando',
+                'while': 'enquanto',
+                'although': 'embora',
+                'however': 'no entanto',
+                'therefore': 'portanto',
+                'thus': 'assim',
+                'then': 'então',
+                'than': 'do que',
+                'that': 'que/isso',
+                'which': 'que/o qual',
+                'who': 'quem/que',
+                'whom': 'quem',
+                'whose': 'cujo',
+
+                // PRONOMES
+                'i': 'eu',
+                'you': 'você',
+                'he': 'ele',
+                'she': 'ela',
+                'it': 'ele/ela/isso',
+                'we': 'nós',
+                'they': 'eles/elas',
+                'me': 'mim',
+                'him': 'ele',
+                'her': 'ela',
+                'us': 'nós',
+                'them': 'eles/elas',
+                'my': 'meu/minha',
+                'your': 'seu/sua',
+                'his': 'dele',
+                'her': 'dela',
+                'its': 'dele/dela',
+                'our': 'nosso/nossa',
+                'their': 'deles/delas',
+                'mine': 'meu/minha',
+                'yours': 'seu/sua',
+                'his': 'dele',
+                'hers': 'dela',
+                'ours': 'nosso/nossa',
+                'theirs': 'deles/delas',
+                'myself': 'eu mesmo',
+                'yourself': 'você mesmo',
+                'himself': 'ele mesmo',
+                'herself': 'ela mesma',
+                'ourselves': 'nós mesmos',
+                'themselves': 'eles mesmos'
+            };
+
+            // ================================================================
+            // 🔧 FUNÇÕES DE DICIONÁRIO
+            // ================================================================
+            function detectarIdioma(texto) {
+                if (!texto || texto.trim() === '') return 'desconhecido';
+                
+                const textoLower = texto.toLowerCase();
+                const palavras = textoLower.split(/\s+/);
+                let contadorPT = 0;
+                let contadorEN = 0;
+
+                palavras.forEach(palavra => {
+                    // Remove pontuação
+                    const palavraLimpa = palavra.replace(/[.,!?;:'"()]/g, '');
+                    
+                    // Verifica no dicionário
+                    const entrada = DICIONARIO[palavraLimpa];
+                    if (entrada) {
+                        // Se a palavra está no dicionário, verifica se é uma tradução
+                        // Para simplificar, consideramos que se a palavra é igual à entrada, é português
+                        if (entrada === palavraLimpa) {
+                            contadorPT++;
+                        } else {
+                            contadorEN++;
+                        }
+                    } else {
+                        // Verifica se tem caracteres acentuados (português)
+                        if (/[áàâãéêíóôõúç]/i.test(palavra)) {
+                            contadorPT++;
+                        } else if (/[a-zA-Z]/.test(palavra)) {
+                            contadorEN++;
+                        }
+                    }
+                });
+
+                // Verifica palavras comuns em português
+                const palavrasPTComuns = ['de', 'do', 'da', 'que', 'se', 'não', 'sim', 'para', 'com', 'por', 'um', 'uma', 'os', 'as'];
+                const palavrasENComuns = ['the', 'of', 'and', 'to', 'for', 'with', 'on', 'at', 'by', 'from', 'up', 'down', 'in', 'out'];
+
+                palavras.forEach(palavra => {
+                    const limpa = palavra.replace(/[.,!?;:'"()]/g, '');
+                    if (palavrasPTComuns.includes(limpa)) contadorPT += 2;
+                    if (palavrasENComuns.includes(limpa)) contadorEN += 2;
+                });
+
+                // Detecção de palavras-chave
+                if (textoLower.includes('olá') || textoLower.includes('bom dia') || textoLower.includes('tudo bem')) {
+                    contadorPT += 5;
+                }
+                if (textoLower.includes('hello') || textoLower.includes('good morning') || textoLower.includes('how are you')) {
+                    contadorEN += 5;
+                }
+
+                const total = contadorPT + contadorEN;
+                if (total === 0) return 'desconhecido';
+                
+                const percentualPT = (contadorPT / total) * 100;
+                return percentualPT > 60 ? 'portugues' : 'ingles';
+            }
+
+            function traduzirFrase(texto, idiomaOrigem) {
+                if (!texto || texto.trim() === '') return '';
+                
+                const palavras = texto.split(/\s+/);
+                const traduzidas = palavras.map(palavra => {
+                    const limpa = palavra.replace(/[.,!?;:'"()]/g, '');
+                    const pontuacao = palavra.match(/[.,!?;:'"()]+$/)?.[0] || '';
+                    const palavraSemPontuacao = palavra.replace(/[.,!?;:'"()]+$/, '');
+                    
+                    let traducao = '';
+                    
+                    if (idiomaOrigem === 'ingles') {
+                        // Inglês -> Português
+                        const entrada = DICIONARIO[palavraSemPontuacao.toLowerCase()];
+                        traducao = entrada || palavraSemPontuacao;
+                    } else {
+                        // Português -> Inglês
+                        // Procurar a chave correspondente ao valor
+                        for (let [chave, valor] of Object.entries(DICIONARIO)) {
+                            if (valor === palavraSemPontuacao.toLowerCase()) {
+                                traducao = chave;
+                                break;
+                            }
+                        }
+                        traducao = traducao || palavraSemPontuacao;
+                    }
+                    
+                    return traducao + pontuacao;
+                });
+                
+                return traduzidas.join(' ');
+            }
+
+            function processarComTraducao(texto, idiomaDetectado) {
+                const linhas = texto.split('\n').filter(l => l.trim() !== '');
+                if (linhas.length === 0) return [];
+
+                const frases = [];
+                
+                linhas.forEach(linha => {
+                    const linhaLimpa = linha.trim();
+                    
+                    // Verifica se já tem separador
+                    if (linhaLimpa.includes('||')) {
+                        const partes = linhaLimpa.split('||');
+                        frases.push({
+                            en: partes[0].trim(),
+                            pt: partes[1].trim()
+                        });
+                        return;
+                    }
+                    
+                    // Detecta idioma da linha
+                    const idiomaLinha = detectarIdioma(linhaLimpa);
+                    
+                    if (idiomaLinha === 'ingles' || idiomaLinha === 'portugues') {
+                        if (idiomaLinha === 'ingles') {
+                            frases.push({
+                                en: linhaLimpa,
+                                pt: traduzirFrase(linhaLimpa, 'ingles')
+                            });
+                        } else {
+                            frases.push({
+                                en: traduzirFrase(linhaLimpa, 'portugues'),
+                                pt: linhaLimpa
+                            });
+                        }
+                    } else {
+                        // Se não detectou idioma, assume inglês
+                        frases.push({
+                            en: linhaLimpa,
+                            pt: traduzirFrase(linhaLimpa, 'ingles')
+                        });
+                    }
+                });
+                
+                return frases;
+            }
+
+            // ================================================================
+            // 📚 LIVROS DE EXEMPLO
             // ================================================================
             const LIVROS_EXEMPLO = [{
                 id: 1,
+                titulo: 'Finding Dory',
+                autor: 'Disney',
+                cor: '#1a5276',
+                capa: '🐠',
+                paginas: [
+                    [
+                        { en: 'Hi.', pt: 'Olá.' },
+                        { en: "I'm Dory.", pt: 'Eu sou a Dory.' },
+                        { en: 'I suffer from short-term memory loss.',
+                            pt: 'Eu sofro de perda de memória de curto prazo.' },
+                        { en: 'Yes!', pt: 'Sim!' },
+                        { en: "- That's exactly what you say.",
+                            pt: '- Isso é exatamente o que você diz.' },
+                        { en: 'Okay, okay.', pt: 'Ok, ok.' },
+                        { en: "We'll pretend to be the other kids now.",
+                            pt: 'Vamos fingir ser as outras crianças agora.' },
+                        { en: 'No, no.', pt: 'Não, não.' },
+                        { en: 'Not daddy.', pt: 'Não papai.' },
+                        { en: "I'm the nice fish who wants to be your friend.",
+                            pt: 'Eu sou o peixe legal que quer ser seu amigo.' },
+                        { en: 'You are not my father.', pt: 'Você não é meu pai.' },
+                        { en: 'My father is not a fish.', pt: 'Meu pai não é um peixe.' },
+                        { en: 'He is a man.', pt: 'Ele é um homem.' },
+                        { en: 'I have to find my parents.',
+                            pt: 'Eu preciso encontrar meus pais.' },
+                        { en: 'Do you know where they are?',
+                            pt: 'Você sabe onde eles estão?' }
+                    ],
+                    [
+                        { en: 'I am lost and I need help.',
+                            pt: 'Estou perdida e preciso de ajuda.' },
+                        { en: 'Can you help me find my family?',
+                            pt: 'Você pode me ajudar a encontrar minha família?' },
+                        { en: 'I remember something about a cliff.',
+                            pt: 'Eu me lembro de algo sobre um penhasco.' },
+                        { en: 'There was a big blue ocean.',
+                            pt: 'Havia um grande oceano azul.' },
+                        { en: 'And many colorful fish swimming around.',
+                            pt: 'E muitos peixes coloridos nadando por perto.' },
+                        { en: 'My parents were there.',
+                            pt: 'Meus pais estavam lá.' },
+                        { en: 'They taught me how to swim.',
+                            pt: 'Eles me ensinaram a nadar.' },
+                        { en: 'We were happy together.', pt: 'Éramos felizes juntos.' }
+                    ]
+                ],
+                paginaAtual: 0
+            }, {
+                id: 2,
                 titulo: 'The Little Prince',
                 autor: 'Antoine de Saint-Exupéry',
-                cor: '#DC3232',
+                cor: '#6a1b4d',
+                capa: '👑',
                 paginas: [
                     [
                         { en: 'Once when I was six years old I saw a magnificent picture in a book.',
@@ -1481,58 +2301,14 @@
                         { en: 'In the book it said: "Boa constrictors swallow their prey whole".',
                             pt: 'No livro dizia: "As jiboias engolem a presa inteira".' },
                         { en: 'I thought a lot about the adventures in the jungle.',
-                            pt: 'Pensei muito sobre as aventuras na selva.' },
+                            pt: 'Pensei muito sobre as aventuras na selva.' }
+                    ],
+                    [
                         { en: 'And I drew my first drawing.', pt: 'E desenhei meu primeiro desenho.' },
                         { en: 'My drawing was not a picture of a hat.',
                             pt: 'Meu desenho não era uma imagem de um chapéu.' },
                         { en: 'It was a picture of a boa constrictor digesting an elephant.',
                             pt: 'Era uma imagem de uma jiboia digerindo um elefante.' }
-                    ],
-                    [
-                        { en: 'But the grown-ups could not understand it.',
-                            pt: 'Mas os adultos não conseguiam entender.' },
-                        { en: 'They always needed explanations.',
-                            pt: 'Eles sempre precisavam de explicações.' },
-                        { en: 'So I showed my drawing to the grown-ups.',
-                            pt: 'Então mostrei meu desenho aos adultos.' },
-                        { en: 'I asked them if they were afraid.',
-                            pt: 'Perguntei se eles estavam com medo.' },
-                        { en: 'They said: "Why would we be afraid of a hat?"',
-                            pt: 'Eles disseram: "Por que teríamos medo de um chapéu?"' },
-                        { en: 'I was very sad that they could not see the truth.',
-                            pt: 'Fiquei muito triste por eles não verem a verdade.' }
-                    ]
-                ],
-                paginaAtual: 0
-            }, {
-                id: 2,
-                titulo: 'English Short Stories',
-                autor: 'YouCan',
-                cor: '#3278DC',
-                paginas: [
-                    [
-                        { en: 'The sun was setting behind the mountains.',
-                            pt: 'O sol estava se pondo atrás das montanhas.' },
-                        { en: 'A gentle breeze moved through the trees.',
-                            pt: 'Uma brisa suave movia-se entre as árvores.' },
-                        { en: 'Sarah sat on the old wooden bench.',
-                            pt: 'Sarah sentou-se no velho banco de madeira.' },
-                        { en: 'She had a book in her hands.', pt: 'Ela tinha um livro em suas mãos.' },
-                        { en: 'It was her favorite place in the world.',
-                            pt: 'Era seu lugar favorito no mundo.' },
-                        { en: 'She opened the book and began to read.',
-                            pt: 'Ela abriu o livro e começou a ler.' }
-                    ],
-                    [
-                        { en: 'The story was about a magical forest.',
-                            pt: 'A história era sobre uma floresta mágica.' },
-                        { en: 'In the forest, animals could talk.',
-                            pt: 'Na floresta, os animais podiam falar.' },
-                        { en: 'Sarah imagined herself in that forest.',
-                            pt: 'Sarah se imaginava naquela floresta.' },
-                        { en: 'She could see the colorful birds singing.',
-                            pt: 'Ela podia ver os pássaros coloridos cantando.' },
-                        { en: 'She felt happy and free.', pt: 'Ela se sentia feliz e livre.' }
                     ]
                 ],
                 paginaAtual: 0
@@ -1540,7 +2316,8 @@
                 id: 3,
                 titulo: 'Daily English',
                 autor: 'YouCan',
-                cor: '#32B464',
+                cor: '#1b5e20',
+                capa: '📚',
                 paginas: [
                     [
                         { en: 'Good morning! How are you today?',
@@ -1551,19 +2328,15 @@
                         { en: 'I need to go to the supermarket.',
                             pt: 'Eu preciso ir ao supermercado.' },
                         { en: 'Can you help me with this?',
-                            pt: 'Você pode me ajudar com isso?' },
-                        { en: 'Thank you very much for your help.',
-                            pt: 'Muito obrigado pela sua ajuda.' }
+                            pt: 'Você pode me ajudar com isso?' }
                     ],
                     [
+                        { en: 'Thank you very much for your help.',
+                            pt: 'Muito obrigado pela sua ajuda.' },
                         { en: 'See you tomorrow at the office.',
                             pt: 'Vejo você amanhã no escritório.' },
                         { en: 'Have a nice day!', pt: 'Tenha um bom dia!' },
-                        { en: 'I will call you later.', pt: 'Eu ligo para você mais tarde.' },
-                        { en: 'Could you send me the report?',
-                            pt: 'Você poderia me enviar o relatório?' },
-                        { en: 'I will send it by email.',
-                            pt: 'Eu enviarei por e-mail.' }
+                        { en: 'I will call you later.', pt: 'Eu ligo para você mais tarde.' }
                     ]
                 ],
                 paginaAtual: 0
@@ -1618,7 +2391,7 @@
                     console.warn('Erro ao carregar config:', e);
                 }
                 config = {
-                    tamanhoFonte: 18,
+                    tamanhoFonte: 16,
                     negrito: false,
                     fonte: 'fonte-arial',
                     velocidadeVoz: 1.0,
@@ -1627,6 +2400,50 @@
                 };
                 velocidadeVoz = 1.0;
                 salvarConfig();
+            }
+
+            // ================================================================
+            // 📐 CALCULAR FRASES POR PÁGINA
+            // ================================================================
+            function calcularFrasesPorPagina() {
+                const altura = window.innerHeight || 800;
+                const alturaUtil = altura - 80;
+                const tamanhoFonte = config.tamanhoFonte || 16;
+                const alturaLinha = tamanhoFonte * 2.2;
+                
+                let estimativa = Math.floor(alturaUtil / alturaLinha);
+                estimativa = Math.max(10, Math.min(estimativa, 30));
+                
+                FRASES_POR_PAGINA = estimativa;
+                return FRASES_POR_PAGINA;
+            }
+
+            // ================================================================
+            // 🔄 FUNÇÕES DA SETA FLUTUANTE
+            // ================================================================
+            function mostrarSeta() {
+                const seta = document.getElementById('btnVoltarFlutuante');
+                seta.classList.add('visivel');
+                clearTimeout(timeoutSeta);
+                timeoutSeta = setTimeout(() => {
+                    seta.classList.remove('visivel');
+                }, 3000);
+            }
+
+            function esconderSeta() {
+                const seta = document.getElementById('btnVoltarFlutuante');
+                seta.classList.remove('visivel');
+                clearTimeout(timeoutSeta);
+            }
+
+            function mostrarIndicador(texto) {
+                const indicador = document.getElementById('pageIndicator');
+                indicador.textContent = texto;
+                indicador.classList.add('visivel');
+                clearTimeout(timeoutIndicador);
+                timeoutIndicador = setTimeout(() => {
+                    indicador.classList.remove('visivel');
+                }, 1500);
             }
 
             // ================================================================
@@ -1714,6 +2531,7 @@
                                 if (livro && paginaAtual < livro.paginas.length - 1) {
                                     paginaAtual++;
                                     renderizarPagina();
+                                    mostrarIndicador(`${paginaAtual + 1}/${livro.paginas.length}`);
                                     setTimeout(() => {
                                         falarFraseAtual(0);
                                     }, 500);
@@ -1781,20 +2599,21 @@
                                         const lidas = livro.paginaAtual || 0;
                                         const percentual = total > 0 ? Math.round((lidas / total) * 100) : 0;
 
-                                        let tituloAbreviado = livro.titulo || 'Sem título';
-                                        if (tituloAbreviado.length > 14) {
-                                            tituloAbreviado = tituloAbreviado.substring(0, 12) + '…';
-                                        }
+                                        const temCapa = livro.capa && livro.capa.startsWith('data:');
+                                        const iconeCapa = livro.capa && !temCapa ? livro.capa : '📖';
 
                                         return `
                                             <div class="compartimento">
                                                 <div class="livro-card" data-index="${indexGlobal}">
-                                                    <div class="lombada" style="background:${livro.cor || '#5C3D2E'}">
-                                                        ${tituloAbreviado}
-                                                    </div>
-                                                    <div class="livro-info">
-                                                        <div class="titulo-card">${livro.titulo || 'Sem título'}</div>
-                                                        <div class="progresso-card">${percentual}%</div>
+                                                    <div class="capa-livro" style="background: ${livro.cor || '#5C3D2E'}">
+                                                        ${temCapa ? `<img src="${livro.capa}" alt="Capa do livro" />` : ''}
+                                                        <div class="capa-overlay"></div>
+                                                        <div class="capa-texto">
+                                                            ${!temCapa ? `<span class="capa-titulo">${livro.titulo || 'Sem título'}</span>` : ''}
+                                                            ${!temCapa ? `<span class="capa-autor">${livro.autor || ''}</span>` : ''}
+                                                        </div>
+                                                        ${!temCapa ? `<span class="capa-badge">${iconeCapa}</span>` : ''}
+                                                        <span class="capa-progresso">${percentual}%</span>
                                                     </div>
                                                     <button class="btn-excluir-livro" data-index="${indexGlobal}">✕</button>
                                                 </div>
@@ -1855,7 +2674,7 @@
             }
 
             // ================================================================
-            // 📖 LEITOR - VÁRIAS FRASES POR PÁGINA
+            // 📖 LEITOR
             // ================================================================
             function abrirLeitor(index) {
                 if (index < 0 || index >= livros.length) return;
@@ -1874,18 +2693,23 @@
                 paginaAtual = livro.paginaAtual || 0;
                 mostrarPT = true;
 
-                const tituloEl = document.getElementById('leitorTitulo');
-                if (tituloEl) tituloEl.textContent = livro.titulo || 'Sem título';
-
                 const btnPT = document.getElementById('btnTogglePT');
                 if (btnPT) {
                     btnPT.textContent = '🇧🇷 PT';
                     btnPT.classList.add('ativo');
                 }
 
+                document.getElementById('toolbarEstante').style.display = 'none';
+                document.getElementById('toolbarLeitor').style.display = 'flex';
+                document.getElementById('telaLeitor').style.display = 'flex';
+
+                calcularFrasesPorPagina();
+
                 mostrarTela('leitor');
                 renderizarPagina();
                 aplicarConfiguracoes();
+
+                esconderSeta();
             }
 
             function renderizarPagina() {
@@ -1901,31 +2725,25 @@
                 const pagina = livro.paginas[paginaAtual];
                 if (!pagina || !Array.isArray(pagina)) return;
 
-                const paginaInfo = document.getElementById('leitorPagina');
-                if (paginaInfo) paginaInfo.textContent = `${paginaAtual + 1}/${total}`;
-
                 const btnAnt = document.getElementById('btnAnterior');
-                const btnAnt2 = document.getElementById('btnAnterior2');
                 const btnProx = document.getElementById('btnProximo');
-                const btnProx2 = document.getElementById('btnProximo2');
-
                 if (btnAnt) btnAnt.disabled = paginaAtual === 0;
-                if (btnAnt2) btnAnt2.disabled = paginaAtual === 0;
                 if (btnProx) btnProx.disabled = paginaAtual >= total - 1;
-                if (btnProx2) btnProx2.disabled = paginaAtual >= total - 1;
 
                 const container = document.getElementById('paginasLeitor');
                 if (!container) return;
 
                 const ptClass = mostrarPT ? '' : 'oculto';
+                const corIngles = config.corIngles || '#1A237E';
+                const corPortugues = config.corPortugues || '#4CAF50';
 
                 let html = '<div class="pagina-item">';
 
                 pagina.forEach((frase, idx) => {
                     html += `
                             <div class="frase-item" data-index="${idx}">
-                                <div class="ingles" data-frase-index="${idx}">${frase.en || ''}</div>
-                                <div class="portugues ${ptClass}">${frase.pt || ''}</div>
+                                <div class="ingles" data-frase-index="${idx}" style="color: ${corIngles} !important;">${frase.en || ''}</div>
+                                <div class="portugues ${ptClass}" style="color: ${corPortugues} !important;">${frase.pt || ''}</div>
                                 ${idx < pagina.length - 1 ? '<div class="divisor-frase"></div>' : ''}
                             </div>
                         `;
@@ -1934,8 +2752,13 @@
                 html += '</div>';
                 container.innerHTML = html;
 
-                // Aplicar cores
-                aplicarCores();
+                document.querySelectorAll('.frase-item .ingles').forEach(el => {
+                    el.style.setProperty('color', corIngles, 'important');
+                });
+
+                document.querySelectorAll('.frase-item .portugues').forEach(el => {
+                    el.style.setProperty('color', corPortugues, 'important');
+                });
 
                 container.querySelectorAll('.frase-item .ingles').forEach((el) => {
                     el.addEventListener('click', function(e) {
@@ -1965,14 +2788,13 @@
                 const corPortugues = config.corPortugues || '#4CAF50';
 
                 document.querySelectorAll('.frase-item .ingles').forEach(el => {
-                    el.style.color = corIngles;
+                    el.style.setProperty('color', corIngles, 'important');
                 });
 
                 document.querySelectorAll('.frase-item .portugues').forEach(el => {
-                    el.style.color = corPortugues;
+                    el.style.setProperty('color', corPortugues, 'important');
                 });
 
-                // Atualizar labels das cores
                 const labelIngles = document.getElementById('corInglesLabel');
                 const labelPortugues = document.getElementById('corPortuguesLabel');
                 const inputIngles = document.getElementById('corIngles');
@@ -2061,7 +2883,7 @@
             }
 
             // ================================================================
-            // 📤 IMPORTAÇÃO
+            // 📤 IMPORTAÇÃO COM TRADUÇÃO AUTOMÁTICA
             // ================================================================
             function importarArquivo() {
                 const titulo = document.getElementById('inputTitulo');
@@ -2079,16 +2901,38 @@
 
                 const extensao = file.name.split('.').pop().toLowerCase();
 
+                const processarConteudo = function(texto) {
+                    // Detecta o idioma principal do texto
+                    const idiomaDetectado = detectarIdioma(texto);
+                    console.log('🔍 Idioma detectado:', idiomaDetectado);
+                    
+                    // Processa as frases com tradução
+                    const frases = processarComTraducao(texto, idiomaDetectado);
+                    
+                    if (frases.length === 0) {
+                        alert('Nenhuma frase válida encontrada no arquivo.');
+                        return;
+                    }
+                    
+                    // Cria as páginas
+                    const paginas = [];
+                    for (let i = 0; i < frases.length; i += FRASES_POR_PAGINA) {
+                        paginas.push(frases.slice(i, i + FRASES_POR_PAGINA));
+                    }
+                    
+                    criarLivro(paginas, tituloValue, autorValue, idiomaDetectado);
+                };
+
                 if (extensao === 'txt' || extensao === 'docx') {
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         if (extensao === 'docx') {
                             mammoth.extractRawText({ arrayBuffer: e.target.result })
-                                .then(r => processarTextoComMultiplasFrases(r.value, tituloValue, autorValue))
+                                .then(r => processarConteudo(r.value))
                                 .catch(err => alert('Erro ao ler DOCX: ' + err.message));
                             return;
                         }
-                        processarTextoComMultiplasFrases(e.target.result, tituloValue, autorValue);
+                        processarConteudo(e.target.result);
                     };
                     if (extensao === 'docx') {
                         reader.readAsArrayBuffer(file);
@@ -2098,25 +2942,25 @@
                 } else if (extensao === 'csv') {
                     const reader = new FileReader();
                     reader.onload = function(e) {
-                        processarCSVComMultiplasFrases(e.target.result, tituloValue, autorValue);
+                        processarConteudo(e.target.result);
                     };
                     reader.readAsText(file, 'UTF-8');
                 } else if (extensao === 'json') {
                     const reader = new FileReader();
                     reader.onload = function(e) {
-                        processarJSONComMultiplasFrases(e.target.result, tituloValue, autorValue);
+                        processarConteudo(e.target.result);
                     };
                     reader.readAsText(file, 'UTF-8');
                 } else if (extensao === 'srt' || extensao === 'vtt') {
                     const reader = new FileReader();
                     reader.onload = function(e) {
-                        processarLegendasComMultiplasFrases(e.target.result, tituloValue, autorValue);
+                        processarConteudo(e.target.result);
                     };
                     reader.readAsText(file, 'UTF-8');
                 } else if (extensao === 'pdf') {
                     const reader = new FileReader();
                     reader.onload = function(e) {
-                        processarPDFComMultiplasFrases(e.target.result, tituloValue, autorValue);
+                        processarPDF(e.target.result, tituloValue, autorValue);
                     };
                     reader.readAsArrayBuffer(file);
                 } else {
@@ -2124,186 +2968,33 @@
                 }
             }
 
-            function processarTextoComMultiplasFrases(texto, titulo, autor) {
-                const linhas = texto.split('\n').filter(l => l.trim() !== '');
-                if (linhas.length === 0) { alert('Arquivo vazio!'); return; }
-
-                const todasFrases = [];
-
-                linhas.forEach(linha => {
-                    const partes = linha.split('||');
-                    if (partes.length >= 2) {
-                        todasFrases.push({ en: partes[0].trim(), pt: partes[1].trim() });
-                    } else {
-                        todasFrases.push({ en: linha.trim(), pt: '' });
-                    }
-                });
-
-                const paginas = [];
-                for (let i = 0; i < todasFrases.length; i += FRASES_POR_PAGINA) {
-                    paginas.push(todasFrases.slice(i, i + FRASES_POR_PAGINA));
-                }
-
-                criarLivroComMultiplasFrases(paginas, titulo, autor);
-            }
-
-            function processarCSVComMultiplasFrases(texto, titulo, autor) {
-                const linhas = texto.split('\n').filter(l => l.trim() !== '');
-                if (linhas.length === 0) { alert('Arquivo vazio!'); return; }
-
-                const todasFrases = [];
-
-                linhas.forEach(linha => {
-                    let partes;
-                    if (linha.includes(';')) {
-                        partes = linha.split(';');
-                    } else {
-                        partes = linha.split(',');
-                    }
-                    if (partes.length >= 2) {
-                        todasFrases.push({
-                            en: partes[0].trim().replace(/^"|"$/g, ''),
-                            pt: partes[1].trim().replace(/^"|"$/g, '')
-                        });
-                    } else {
-                        todasFrases.push({ en: linha.trim(), pt: '' });
-                    }
-                });
-
-                const paginas = [];
-                for (let i = 0; i < todasFrases.length; i += FRASES_POR_PAGINA) {
-                    paginas.push(todasFrases.slice(i, i + FRASES_POR_PAGINA));
-                }
-
-                criarLivroComMultiplasFrases(paginas, titulo, autor);
-            }
-
-            function processarJSONComMultiplasFrases(texto, titulo, autor) {
-                try {
-                    const dados = JSON.parse(texto);
-                    if (!Array.isArray(dados)) { alert('JSON deve ser um array de objetos.'); return; }
-
-                    const todasFrases = dados.map(item => ({
-                        en: item.en || item.english || item.English || item.text || '',
-                        pt: item.pt || item.portuguese || item.Portuguese || item.traducao || ''
-                    })).filter(p => p.en || p.pt);
-
-                    if (todasFrases.length === 0) { alert('Nenhum dado válido encontrado no JSON.'); return; }
-
-                    const paginas = [];
-                    for (let i = 0; i < todasFrases.length; i += FRASES_POR_PAGINA) {
-                        paginas.push(todasFrases.slice(i, i + FRASES_POR_PAGINA));
-                    }
-
-                    criarLivroComMultiplasFrases(paginas, titulo, autor);
-                } catch (e) {
-                    alert('Erro ao ler JSON: ' + e.message);
-                }
-            }
-
-            function processarLegendasComMultiplasFrases(texto, titulo, autor) {
-                const linhas = texto.split('\n').filter(l => l.trim() !== '');
-                const todasFrases = [];
-                let textoIngles = '';
-                let textoPortugues = '';
-
-                for (let i = 0; i < linhas.length; i++) {
-                    const linha = linhas[i].trim();
-
-                    if (linha.match(/^\d+$/) || linha.match(/^\d{2}:\d{2}:\d{2}/) || linha.match(/^\d{2}:\d{2}/) || linha
-                        .includes('-->')) {
-                        continue;
-                    }
-
-                    if (linha && !linha.match(/^WEBVTT|^Kindle|^Language/)) {
-                        const temPT = /[áàâãéêíóôõúç]/i.test(linha);
-                        if (temPT) {
-                            textoPortugues = linha;
-                        } else {
-                            textoIngles = linha;
-                        }
-
-                        if (textoIngles && textoPortugues) {
-                            todasFrases.push({ en: textoIngles, pt: textoPortugues });
-                            textoIngles = '';
-                            textoPortugues = '';
-                        }
-                    }
-                }
-
-                if (textoIngles || textoPortugues) {
-                    todasFrases.push({ en: textoIngles || textoPortugues, pt: textoPortugues || textoIngles });
-                }
-
-                if (todasFrases.length === 0) { alert('Nenhuma legenda válida encontrada.'); return; }
-
-                const paginas = [];
-                for (let i = 0; i < todasFrases.length; i += FRASES_POR_PAGINA) {
-                    paginas.push(todasFrases.slice(i, i + FRASES_POR_PAGINA));
-                }
-
-                criarLivroComMultiplasFrases(paginas, titulo, autor);
-            }
-
-            async function processarPDFComMultiplasFrases(arrayBuffer, titulo, autor) {
+            async function processarPDF(arrayBuffer, titulo, autor) {
                 try {
                     const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
                     const totalPages = pdf.numPages;
-                    const todasFrases = [];
+                    let textoCompleto = '';
 
                     for (let i = 1; i <= totalPages; i++) {
                         const page = await pdf.getPage(i);
                         const textContent = await page.getTextContent();
                         const texto = textContent.items.map(item => item.str).join(' ');
-
-                        if (texto.trim()) {
-                            const frases = texto.split(/\n|\.\s+/).filter(l => l.trim());
-                            let enTexto = '';
-                            let ptTexto = '';
-
-                            frases.forEach(frase => {
-                                const temPT = /[áàâãéêíóôõúç]/i.test(frase);
-                                const temEN = /[a-zA-Z]/i.test(frase) && !/[áàâãéêíóôõúç]/i.test(frase);
-
-                                if (temPT && temEN) {
-                                    const parts = frase.split(/[|;:–-]/);
-                                    if (parts.length >= 2) {
-                                        todasFrases.push({
-                                            en: parts[0].trim().replace(/[^a-zA-Z\s.,!?']/g, '').trim(),
-                                            pt: parts[1].trim().replace(/[^a-zA-Záàâãéêíóôõúç\s.,!?']/g, '')
-                                            .trim()
-                                        });
-                                        return;
-                                    }
-                                }
-
-                                if (temPT) {
-                                    ptTexto += frase.trim() + ' ';
-                                } else if (temEN) {
-                                    enTexto += frase.trim() + ' ';
-                                }
-                            });
-
-                            if (enTexto.trim() || ptTexto.trim()) {
-                                todasFrases.push({
-                                    en: enTexto.trim().substring(0, 300) || 'Texto em inglês',
-                                    pt: ptTexto.trim().substring(0, 300) || 'Texto em português'
-                                });
-                            }
-                        }
+                        textoCompleto += texto + '\n';
                     }
 
-                    if (todasFrases.length === 0) {
+                    const idiomaDetectado = detectarIdioma(textoCompleto);
+                    const frases = processarComTraducao(textoCompleto, idiomaDetectado);
+                    
+                    if (frases.length === 0) {
                         alert('Não foi possível extrair texto do PDF.');
                         return;
                     }
-
+                    
                     const paginas = [];
-                    for (let i = 0; i < todasFrases.length; i += FRASES_POR_PAGINA) {
-                        paginas.push(todasFrases.slice(i, i + FRASES_POR_PAGINA));
+                    for (let i = 0; i < frases.length; i += FRASES_POR_PAGINA) {
+                        paginas.push(frases.slice(i, i + FRASES_POR_PAGINA));
                     }
-
-                    criarLivroComMultiplasFrases(paginas, titulo, autor);
+                    
+                    criarLivro(paginas, titulo, autor, idiomaDetectado);
 
                 } catch (error) {
                     console.error('Erro ao processar PDF:', error);
@@ -2311,23 +3002,31 @@
                 }
             }
 
-            function criarLivroComMultiplasFrases(paginas, titulo, autor) {
-                const cores = ['#DC3232', '#3278DC', '#32B464', '#C89632', '#9632C8', '#32C8C8', '#DC6432', '#C83296',
-                    '#2E7D32',
-                    '#AD1457', '#1565C0', '#E65100', '#4E342E', '#00695C', '#8D6E63', '#D81B60', '#7B1FA2'
-                ];
+            function criarLivro(paginas, titulo, autor, idiomaDetectado) {
+                const cores = ['#1a5276', '#6a1b4d', '#1b5e20', '#b71c1c', '#004d40', '#4a148c', 
+                    '#e65100', '#0d47a1', '#4e342e', '#33691e', '#880e4f', '#006064'];
+
+                const capaFinal = capaImagem || '📖';
 
                 const novoLivro = {
                     id: Date.now(),
                     titulo: titulo,
                     autor: autor,
                     cor: cores[Math.floor(Math.random() * cores.length)],
+                    capa: capaFinal,
                     paginas: paginas,
-                    paginaAtual: 0
+                    paginaAtual: 0,
+                    idiomaOriginal: idiomaDetectado || 'desconhecido'
                 };
 
                 livros.push(novoLivro);
                 salvarDados();
+
+                capaImagem = null;
+                document.getElementById('capaPreview').innerHTML = '📖';
+                document.getElementById('capaNome').textContent = 'Nenhuma imagem selecionada';
+                document.getElementById('capaInput').value = '';
+
                 renderizarEstante();
                 atualizarListaLivrosConfig();
 
@@ -2345,8 +3044,31 @@
                 if (btnImportar) btnImportar.disabled = true;
 
                 const totalFrases = paginas.reduce((acc, p) => acc + p.length, 0);
-                alert(`📚 "${titulo}" importado com sucesso!\n📄 ${paginas.length} páginas\n📝 ${totalFrases} frases`);
+                const idiomaMsg = idiomaDetectado === 'portugues' ? 'Português' : 'Inglês';
+                alert(`📚 "${titulo}" importado com sucesso!\n📄 ${paginas.length} páginas\n📝 ${totalFrases} frases\n🌐 Idioma original: ${idiomaMsg}`);
+
+                const progressoSalvo = localStorage.getItem('youcan_progresso_' + novoLivro.id);
+                if (progressoSalvo) {
+                    const progresso = JSON.parse(progressoSalvo);
+                    const livroIndex = livros.findIndex(l => l.id === novoLivro.id);
+                    if (livroIndex !== -1) {
+                        livros[livroIndex].paginaAtual = progresso.pagina || 0;
+                        salvarDados();
+                    }
+                }
+
                 mostrarTela('estante');
+            }
+
+            // ================================================================
+            // 💾 SALVAR PROGRESSO
+            // ================================================================
+            function salvarProgresso(livroId, pagina) {
+                try {
+                    localStorage.setItem('youcan_progresso_' + livroId, JSON.stringify({ pagina: pagina }));
+                } catch (e) {
+                    console.warn('Erro ao salvar progresso:', e);
+                }
             }
 
             // ================================================================
@@ -2361,6 +3083,13 @@
                     audioFalando = false;
                     const btnAuto = document.getElementById('btnAudioAutomatico');
                     if (btnAuto) btnAuto.classList.remove('ativo-audio');
+                    
+                    document.getElementById('toolbarEstante').style.display = 'flex';
+                    document.getElementById('toolbarLeitor').style.display = 'none';
+                    document.getElementById('telaLeitor').style.display = 'none';
+                    
+                    esconderSeta();
+                    document.getElementById('pageIndicator').classList.remove('visivel');
                 }
 
                 document.querySelectorAll('.tela').forEach(el => el.classList.remove('ativa'));
@@ -2371,7 +3100,10 @@
                     atualizarToolbar('estante');
                 } else if (tela === 'leitor') {
                     const el = document.getElementById('telaLeitor');
-                    if (el) el.classList.add('ativa');
+                    if (el) {
+                        el.classList.add('ativa');
+                        el.style.display = 'flex';
+                    }
                     atualizarToolbar('leitor');
                 } else {
                     const el = document.getElementById('telaImportar');
@@ -2385,8 +3117,108 @@
                 if (!titulo) return;
 
                 if (tela === 'estante') titulo.textContent = '📚 Minha Estante';
-                else if (tela === 'leitor') titulo.textContent = '📖 Lendo...';
+                else if (tela === 'leitor') titulo.textContent = '';
                 else titulo.textContent = '📤 Importar';
+            }
+
+            // ================================================================
+            // 📖 NAVEGAÇÃO POR SWIPE
+            // ================================================================
+            function setupSwipe() {
+                const container = document.getElementById('paginaContainer');
+                if (!container) return;
+
+                container.addEventListener('touchstart', function(e) {
+                    touchStartX = e.changedTouches[0].screenX;
+                }, { passive: true });
+
+                container.addEventListener('touchend', function(e) {
+                    touchEndX = e.changedTouches[0].screenX;
+                    handleSwipe();
+                }, { passive: true });
+
+                let mouseDown = false;
+                let mouseStartX = 0;
+
+                container.addEventListener('mousedown', function(e) {
+                    mouseDown = true;
+                    mouseStartX = e.screenX;
+                });
+
+                container.addEventListener('mouseup', function(e) {
+                    if (mouseDown) {
+                        mouseDown = false;
+                        const diff = mouseStartX - e.screenX;
+                        if (Math.abs(diff) > 50) {
+                            if (diff > 0) {
+                                proximaPagina();
+                            } else {
+                                paginaAnterior();
+                            }
+                        }
+                    }
+                });
+
+                container.addEventListener('mouseleave', function() {
+                    mouseDown = false;
+                });
+            }
+
+            function handleSwipe() {
+                const diff = touchStartX - touchEndX;
+                const threshold = 50;
+
+                if (Math.abs(diff) > threshold) {
+                    if (diff > 0) {
+                        proximaPagina();
+                    } else {
+                        paginaAnterior();
+                    }
+                }
+            }
+
+            function proximaPagina() {
+                if (livroAtual !== null && livroAtual < livros.length) {
+                    const livro = livros[livroAtual];
+                    if (livro && paginaAtual < livro.paginas.length - 1) {
+                        if (audioAutomatico || audioFalando) {
+                            audioAutomatico = false;
+                            audioFalando = false;
+                            const btnAuto = document.getElementById('btnAudioAutomatico');
+                            if (btnAuto) btnAuto.classList.remove('ativo-audio');
+                            try { window.speechSynthesis.cancel(); } catch (e) {}
+                        }
+                        paginaAtual++;
+                        renderizarPagina();
+                        mostrarIndicador(`${paginaAtual + 1}/${livro.paginas.length}`);
+                        mostrarSeta();
+                        if (livro.id) {
+                            salvarProgresso(livro.id, paginaAtual);
+                        }
+                    }
+                }
+            }
+
+            function paginaAnterior() {
+                if (paginaAtual > 0) {
+                    if (audioAutomatico || audioFalando) {
+                        audioAutomatico = false;
+                        audioFalando = false;
+                        const btnAuto = document.getElementById('btnAudioAutomatico');
+                        if (btnAuto) btnAuto.classList.remove('ativo-audio');
+                        try { window.speechSynthesis.cancel(); } catch (e) {}
+                    }
+                    paginaAtual--;
+                    renderizarPagina();
+                    const livro = livros[livroAtual];
+                    if (livro) {
+                        mostrarIndicador(`${paginaAtual + 1}/${livro.paginas.length}`);
+                        if (livro.id) {
+                            salvarProgresso(livro.id, paginaAtual);
+                        }
+                    }
+                    mostrarSeta();
+                }
             }
 
             // ================================================================
@@ -2396,11 +3228,23 @@
                 const container = document.getElementById('appContainer');
                 if (!container) return;
 
-                const tamanho = config.tamanhoFonte || 18;
+                const tamanho = config.tamanhoFonte || 16;
+                const corIngles = config.corIngles || '#1A237E';
+                const corPortugues = config.corPortugues || '#4CAF50';
 
-                document.querySelectorAll('.frase-item .ingles').forEach(el => el.style.fontSize = tamanho + 'px');
-                document.querySelectorAll('.frase-item .portugues').forEach(el => el.style.fontSize = (tamanho * 0.85) +
-                    'px');
+                document.querySelectorAll('.frase-item .ingles').forEach(el => {
+                    el.style.fontSize = tamanho + 'px';
+                });
+                document.querySelectorAll('.frase-item .portugues').forEach(el => {
+                    el.style.fontSize = (tamanho * 0.85) + 'px';
+                });
+
+                document.querySelectorAll('.frase-item .ingles').forEach(el => {
+                    el.style.setProperty('color', corIngles, 'important');
+                });
+                document.querySelectorAll('.frase-item .portugues').forEach(el => {
+                    el.style.setProperty('color', corPortugues, 'important');
+                });
 
                 const fonteTamanho = document.getElementById('fonteTamanho');
                 if (fonteTamanho) fonteTamanho.textContent = tamanho;
@@ -2421,9 +3265,17 @@
                     btn.classList.toggle('selecionado', btn.dataset.fonte === config.fonte);
                 });
 
-                // Aplicar cores
-                aplicarCores();
+                const labelIngles = document.getElementById('corInglesLabel');
+                const labelPortugues = document.getElementById('corPortuguesLabel');
+                const inputIngles = document.getElementById('corIngles');
+                const inputPortugues = document.getElementById('corPortugues');
 
+                if (inputIngles) inputIngles.value = corIngles;
+                if (inputPortugues) inputPortugues.value = corPortugues;
+                if (labelIngles) labelIngles.textContent = corIngles.toUpperCase();
+                if (labelPortugues) labelPortugues.textContent = corPortugues.toUpperCase();
+
+                calcularFrasesPorPagina();
                 salvarConfig();
             }
 
@@ -2460,27 +3312,69 @@
             // 🎯 EVENTOS
             // ================================================================
             function setupEventos() {
-                // IMPORTAR
-                const btnImportar = document.getElementById('btnImportar');
-                const btnImportarTop = document.getElementById('btnImportarTop');
-                const btnVoltarImportar = document.getElementById('btnVoltarImportar');
-                const btnVoltarLeitor = document.getElementById('btnVoltarLeitor');
+                // ===== CAPA NA IMPORTAÇÃO =====
+                const btnCapa = document.getElementById('btnCapa');
+                const capaInput = document.getElementById('capaInput');
+                const capaPreview = document.getElementById('capaPreview');
+                const capaNome = document.getElementById('capaNome');
 
-                if (btnImportar) btnImportar.addEventListener('click', () => mostrarTela('importar'));
-                if (btnImportarTop) btnImportarTop.addEventListener('click', () => mostrarTela('importar'));
-                if (btnVoltarImportar) btnVoltarImportar.addEventListener('click', () => mostrarTela('estante'));
-                if (btnVoltarLeitor) {
-                    btnVoltarLeitor.addEventListener('click', function() {
-                        try { window.speechSynthesis.cancel(); } catch (e) {}
-                        audioAutomatico = false;
-                        audioFalando = false;
-                        const btnAuto = document.getElementById('btnAudioAutomatico');
-                        if (btnAuto) btnAuto.classList.remove('ativo-audio');
-                        mostrarTela('estante');
+                if (btnCapa && capaInput) {
+                    btnCapa.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        capaInput.click();
                     });
                 }
 
-                // CONFIG
+                if (capaInput) {
+                    capaInput.addEventListener('change', function(e) {
+                        const file = this.files[0];
+                        if (file) {
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                capaPreview.innerHTML = `<img src="${e.target.result}" alt="Capa" />`;
+                                capaNome.textContent = file.name;
+                                capaImagem = e.target.result;
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    });
+                }
+
+                // ===== BOTÃO VOLTAR FLUTUANTE =====
+                const btnVoltar = document.getElementById('btnVoltarFlutuante');
+                if (btnVoltar) {
+                    btnVoltar.addEventListener('click', function() {
+                        mostrarTela('estante');
+                        esconderSeta();
+                    });
+                }
+
+                // ===== TOQUE NA TELA PARA MOSTRAR SETA =====
+                const paginaContainer = document.getElementById('paginaContainer');
+                if (paginaContainer) {
+                    paginaContainer.addEventListener('click', function(e) {
+                        if (e.target.closest('.ingles')) return;
+                        if (document.getElementById('telaLeitor').classList.contains('ativa')) {
+                            mostrarSeta();
+                        }
+                    });
+                }
+
+                // ===== IMPORTAÇÃO =====
+                const btnImportar = document.getElementById('btnImportar');
+                const btnImportarTop = document.getElementById('btnImportarTop');
+                const btnImportarConfig = document.getElementById('btnImportarConfig');
+                const btnVoltarImportar = document.getElementById('btnVoltarImportar');
+
+                if (btnImportar) btnImportar.addEventListener('click', () => mostrarTela('importar'));
+                if (btnImportarTop) btnImportarTop.addEventListener('click', () => mostrarTela('importar'));
+                if (btnImportarConfig) btnImportarConfig.addEventListener('click', () => {
+                    fecharConfig();
+                    setTimeout(() => mostrarTela('importar'), 300);
+                });
+                if (btnVoltarImportar) btnVoltarImportar.addEventListener('click', () => mostrarTela('estante'));
+
+                // ===== CONFIG =====
                 const btnConfig = document.getElementById('btnConfigEstante');
                 const btnFecharConfig = document.getElementById('btnFecharConfig');
                 const modalConfig = document.getElementById('modalConfig');
@@ -2493,7 +3387,7 @@
                     });
                 }
 
-                // ÁUDIO - CORES
+                // ===== ÁUDIO - CORES =====
                 const corInglesInput = document.getElementById('corIngles');
                 const corPortuguesInput = document.getElementById('corPortugues');
 
@@ -2504,6 +3398,9 @@
                         if (label) label.textContent = this.value.toUpperCase();
                         aplicarCores();
                         salvarConfig();
+                        document.querySelectorAll('.frase-item .ingles').forEach(el => {
+                            el.style.setProperty('color', config.corIngles, 'important');
+                        });
                     });
                 }
 
@@ -2514,10 +3411,13 @@
                         if (label) label.textContent = this.value.toUpperCase();
                         aplicarCores();
                         salvarConfig();
+                        document.querySelectorAll('.frase-item .portugues').forEach(el => {
+                            el.style.setProperty('color', config.corPortugues, 'important');
+                        });
                     });
                 }
 
-                // ÁUDIO - Falar Tudo
+                // ===== ÁUDIO - Falar Tudo =====
                 const btnAudioFrase = document.getElementById('btnAudioFrase');
                 if (btnAudioFrase) {
                     btnAudioFrase.addEventListener('click', function() {
@@ -2533,7 +3433,7 @@
                     });
                 }
 
-                // ÁUDIO - Auto
+                // ===== ÁUDIO - Auto =====
                 const btnAudioAuto = document.getElementById('btnAudioAutomatico');
                 if (btnAudioAuto) {
                     btnAudioAuto.addEventListener('click', function() {
@@ -2554,51 +3454,23 @@
                     });
                 }
 
-                // NAVEGAÇÃO
-                ['btnAnterior', 'btnAnterior2'].forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) {
-                        el.addEventListener('click', function() {
-                            if (paginaAtual > 0) {
-                                if (audioAutomatico || audioFalando) {
-                                    audioAutomatico = false;
-                                    audioFalando = false;
-                                    const btnAuto = document.getElementById(
-                                    'btnAudioAutomatico');
-                                    if (btnAuto) btnAuto.classList.remove('ativo-audio');
-                                    try { window.speechSynthesis.cancel(); } catch (e) {}
-                                }
-                                paginaAtual--;
-                                renderizarPagina();
-                            }
-                        });
-                    }
-                });
+                // ===== NAVEGAÇÃO POR BOTÕES =====
+                const btnAnt = document.getElementById('btnAnterior');
+                const btnProx = document.getElementById('btnProximo');
 
-                ['btnProximo', 'btnProximo2'].forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) {
-                        el.addEventListener('click', function() {
-                            if (livroAtual !== null && livroAtual < livros.length) {
-                                const livro = livros[livroAtual];
-                                if (livro && paginaAtual < livro.paginas.length - 1) {
-                                    if (audioAutomatico || audioFalando) {
-                                        audioAutomatico = false;
-                                        audioFalando = false;
-                                        const btnAuto = document.getElementById(
-                                            'btnAudioAutomatico');
-                                        if (btnAuto) btnAuto.classList.remove('ativo-audio');
-                                        try { window.speechSynthesis.cancel(); } catch (e) {}
-                                    }
-                                    paginaAtual++;
-                                    renderizarPagina();
-                                }
-                            }
-                        });
-                    }
-                });
+                if (btnAnt) {
+                    btnAnt.addEventListener('click', function() {
+                        paginaAnterior();
+                    });
+                }
 
-                // TOGGLE PT
+                if (btnProx) {
+                    btnProx.addEventListener('click', function() {
+                        proximaPagina();
+                    });
+                }
+
+                // ===== TOGGLE PT =====
                 const btnTogglePT = document.getElementById('btnTogglePT');
                 if (btnTogglePT) {
                     btnTogglePT.addEventListener('click', function() {
@@ -2609,7 +3481,7 @@
                     });
                 }
 
-                // IMPORTAÇÃO ARQUIVO
+                // ===== IMPORTAÇÃO ARQUIVO =====
                 const importArea = document.getElementById('importArea');
                 const fileInput = document.getElementById('fileInput');
                 const btnImportarArquivo = document.getElementById('btnImportarArquivo');
@@ -2634,7 +3506,7 @@
                     btnImportarArquivo.addEventListener('click', importarArquivo);
                 }
 
-                // CONFIGURAÇÕES
+                // ===== CONFIGURAÇÕES =====
                 const btnFonteMais = document.getElementById('btnFonteMais');
                 const btnFonteMenos = document.getElementById('btnFonteMenos');
 
@@ -2643,6 +3515,9 @@
                         if (config.tamanhoFonte < 40) {
                             config.tamanhoFonte += 2;
                             aplicarConfiguracoes();
+                            if (document.getElementById('telaLeitor').classList.contains('ativa')) {
+                                renderizarPagina();
+                            }
                         }
                     });
                 }
@@ -2652,6 +3527,9 @@
                         if (config.tamanhoFonte > 10) {
                             config.tamanhoFonte -= 2;
                             aplicarConfiguracoes();
+                            if (document.getElementById('telaLeitor').classList.contains('ativa')) {
+                                renderizarPagina();
+                            }
                         }
                     });
                 }
@@ -2692,22 +3570,23 @@
                     });
                 });
 
-                // TECLADO
+                // ===== TECLADO =====
                 document.addEventListener('keydown', function(e) {
                     const leitorAtivo = document.getElementById('telaLeitor')?.classList.contains('ativa');
                     if (leitorAtivo) {
                         if (e.key === 'ArrowRight') { e.preventDefault();
-                            document.getElementById('btnProximo')?.click(); }
+                            proximaPagina(); }
                         if (e.key === 'ArrowLeft') { e.preventDefault();
-                            document.getElementById('btnAnterior')?.click(); }
+                            paginaAnterior(); }
                         if (e.key === 'f' || e.key === 'F') { e.preventDefault();
                             falarTudoPagina(); }
                         if (e.key === ' ') { e.preventDefault(); }
+                        if (e.key === 'Escape') { mostrarTela('estante'); }
                     }
                     if (e.key === 'Escape') fecharConfig();
                 });
 
-                // VOZES
+                // ===== VOZES =====
                 if (window.speechSynthesis) {
                     const carregarVozes = function() {
                         const vozes = window.speechSynthesis.getVoices();
@@ -2737,6 +3616,35 @@
                         window.speechSynthesis.getVoices();
                     }
                 }, { once: true });
+
+                // ===== REDIMENSIONAMENTO =====
+                let resizeTimeout;
+                window.addEventListener('resize', function() {
+                    clearTimeout(resizeTimeout);
+                    resizeTimeout = setTimeout(function() {
+                        calcularFrasesPorPagina();
+                        if (document.getElementById('telaLeitor').classList.contains('ativa')) {
+                            renderizarPagina();
+                        }
+                    }, 300);
+                });
+
+                // ===== SWIPE =====
+                setupSwipe();
+
+                // ===== CARREGAR PROGRESSO SALVO =====
+                setTimeout(function() {
+                    const livrosComProgresso = livros.filter(l => l.id && l.paginaAtual > 0);
+                    if (livrosComProgresso.length > 0) {
+                        const ultimoLivro = livrosComProgresso[livrosComProgresso.length - 1];
+                        const index = livros.findIndex(l => l.id === ultimoLivro.id);
+                        if (index !== -1) {
+                            setTimeout(() => {
+                                abrirLeitor(index);
+                            }, 500);
+                        }
+                    }
+                }, 1000);
             }
 
             // ================================================================
@@ -2751,11 +3659,17 @@
                 atualizarToolbar('estante');
                 atualizarListaLivrosConfig();
 
+                calcularFrasesPorPagina();
+
                 setTimeout(hideSplash, 1500);
 
                 console.log('📚 YouCan Leitor v' + APP_VERSION + ' iniciado!');
                 console.log('📚 Livros carregados:', livros.length);
                 console.log('🔊 Áudio: ' + (window.speechSynthesis ? 'Disponível' : 'Indisponível'));
+                console.log('📐 Frases por página: ' + FRASES_POR_PAGINA);
+                console.log('📖 Dicionário carregado com ' + Object.keys(DICIONARIO).length + ' palavras');
+                console.log('🎨 Cor Inglês: ' + config.corIngles);
+                console.log('🎨 Cor Português: ' + config.corPortugues);
             }
 
             if (document.readyState === 'loading') {

@@ -395,7 +395,6 @@
             transform: translateY(-8px) scale(0.96);
         }
 
-        /* CAPA GRANDE DO LIVRO */
         .capa-livro {
             width: 100%;
             aspect-ratio: 2/3;
@@ -534,7 +533,7 @@
         }
 
         /* ================================================================
-                   📖 LEITOR
+                   📖 LEITOR - COM ESPAÇAMENTO DINÂMICO
                    ================================================================ */
         .pagina-container {
             flex: 1;
@@ -551,7 +550,7 @@
         .pagina-item {
             background: #FFF;
             border-radius: 10px;
-            padding: 8px 12px;
+            padding: 10px 14px;
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
             border-left: 4px solid #5C3D2E;
             flex: 1;
@@ -563,7 +562,7 @@
         }
 
         .frase-item {
-            padding: 2px 4px;
+            padding: 4px 6px;
             border-radius: 4px;
             transition: background 0.2s;
             flex: 1;
@@ -575,12 +574,12 @@
 
         .frase-item .ingles {
             font-size: 16px;
-            line-height: 1.3;
+            line-height: 1.4;
             font-weight: 600;
             cursor: pointer;
             padding: 2px 4px;
             border-radius: 4px;
-            transition: background 0.2s;
+            transition: background 0.2s, font-size 0.2s;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
@@ -607,9 +606,9 @@
 
         .frase-item .portugues {
             font-size: 13px;
-            line-height: 1.2;
-            padding: 2px 4px 2px 4px;
-            transition: color 0.2s;
+            line-height: 1.3;
+            padding: 2px 4px 4px 4px;
+            transition: color 0.2s, font-size 0.2s;
         }
 
         .frase-item .portugues.oculto {
@@ -619,7 +618,8 @@
         .frase-item .divisor-frase {
             height: 1px;
             background: linear-gradient(to right, #E8DDD0, transparent);
-            margin: 1px 0;
+            margin: 2px 0;
+            transition: margin 0.2s;
         }
 
         @keyframes pulseAudio {
@@ -628,7 +628,7 @@
         }
 
         /* ================================================================
-                   BOTÃO VOLTAR - INFERIOR ESQUERDO E 2x MAIOR
+                   BOTÃO VOLTAR - INFERIOR ESQUERDO
                    ================================================================ */
         .btn-voltar-flutuante {
             position: fixed;
@@ -1254,8 +1254,8 @@
         @media (max-width: 420px) {
             .frase-item .ingles { font-size: 14px; }
             .frase-item .portugues { font-size: 12px; }
-            .pagina-item { padding: 6px 8px; }
-            .frase-item { padding: 1px 2px; }
+            .pagina-item { padding: 8px 10px; }
+            .frase-item { padding: 2px 3px; }
             .btn-voltar-flutuante { width: 56px; height: 56px; font-size: 30px; bottom: 20px; left: 14px; }
             .page-indicator { font-size: 10px; padding: 3px 12px; bottom: 14px; }
             .capa-livro .capa-titulo { font-size: 13px; }
@@ -1269,7 +1269,7 @@
         @media (max-width: 360px) {
             .frase-item .ingles { font-size: 12px; }
             .frase-item .portugues { font-size: 10px; }
-            .pagina-item { padding: 4px 6px; }
+            .pagina-item { padding: 6px 8px; }
             .frase-item { padding: 1px 2px; }
             .btn-voltar-flutuante { width: 48px; height: 48px; font-size: 26px; bottom: 16px; left: 12px; }
             .toolbar-leitor .leitor-actions button { font-size: 7px; padding: 1px 4px; }
@@ -1282,7 +1282,7 @@
         @media (max-height: 600px) {
             .toolbar-leitor { padding: 2px 6px; min-height: 26px; }
             .toolbar-leitor .leitor-actions button { font-size: 7px; padding: 1px 4px; }
-            .pagina-item { padding: 4px 6px; }
+            .pagina-item { padding: 6px 8px; }
             .frase-item .ingles { font-size: 12px; }
             .frase-item .portugues { font-size: 10px; }
             .frase-item { padding: 1px 2px; }
@@ -1300,7 +1300,8 @@
         @media (min-height: 800px) {
             .frase-item .ingles { font-size: 20px; }
             .frase-item .portugues { font-size: 17px; }
-            .frase-item { padding: 4px 3px; }
+            .frase-item { padding: 6px 4px; }
+            .pagina-item { padding: 14px 18px; }
             .capa-livro .capa-titulo { font-size: 20px; }
             .capa-livro .capa-autor { font-size: 13px; }
             .capa-livro { min-height: 200px; }
@@ -1309,7 +1310,8 @@
         @media (min-height: 900px) {
             .frase-item .ingles { font-size: 23px; }
             .frase-item .portugues { font-size: 19px; }
-            .frase-item { padding: 6px 3px; }
+            .frase-item { padding: 8px 6px; }
+            .pagina-item { padding: 18px 22px; }
             .capa-livro .capa-titulo { font-size: 24px; }
             .capa-livro .capa-autor { font-size: 15px; }
             .capa-livro { min-height: 240px; }
@@ -1546,7 +1548,7 @@
             let FRASES_POR_PAGINA = 20;
 
             // ================================================================
-            // 📖 DICIONÁRIO INGLÊS ↔ PORTUGUÊS
+            // 📖 DICIONÁRIO INGLÊS ↔ PORTUGUÊS (RESUMIDO PARA ECONOMIZAR ESPAÇO)
             // ================================================================
             const DICIONARIO = {
                 'hello': 'olá', 'hi': 'oi', 'good morning': 'bom dia',
@@ -1852,29 +1854,33 @@
                 paginaAtual: 0
             }, {
                 id: 2,
-                titulo: 'The Little Prince',
-                autor: 'Antoine de Saint-Exupéry',
-                cor: '#6a1b4d',
-                capa: '👑',
+                titulo: 'The Lion King',
+                autor: 'Disney',
+                cor: '#b71c1c',
+                capa: '🦁',
                 paginas: [
                     [
-                        { en: 'Once when I was six years old I saw a magnificent picture in a book.',
-                            pt: 'Uma vez, quando eu tinha seis anos, vi uma imagem magnífica em um livro.' },
-                        { en: 'The book was called "True Stories from Nature".',
-                            pt: 'O livro chamava-se "Histórias Verdadeiras da Natureza".' },
-                        { en: 'It showed a boa constrictor swallowing a beast.',
-                            pt: 'Mostrava uma jiboia engolindo um animal.' },
-                        { en: 'In the book it said: "Boa constrictors swallow their prey whole".',
-                            pt: 'No livro dizia: "As jiboias engolem a presa inteira".' },
-                        { en: 'I thought a lot about the adventures in the jungle.',
-                            pt: 'Pensei muito sobre as aventuras na selva.' }
+                        { en: 'Dad! Dad! Whoa!', pt: 'Pai! Pai! Uau!' },
+                        { en: 'You promised!', pt: 'Você prometeu!' },
+                        { en: 'Okay, okay. I\'m up. I\'m up.',
+                            pt: 'Ok, ok. Estou acordado. Estou acordado.' },
+                        { en: 'Yeah! Simba. Everything the light touches is our kingdom.',
+                            pt: 'Sim! Simba. Tudo o que a luz toca é nosso reino.' },
+                        { en: 'A King\'s time as ruler rises and falls like the Sun.',
+                            pt: 'O tempo de um rei como governante sobe e desce como o Sol.' },
+                        { en: 'One day Simba, the sun will set on my time here and will rise with you as the new king.',
+                            pt: 'Um dia Simba, o sol vai se pôr no meu tempo aqui e vai nascer com você como o novo rei.' }
                     ],
                     [
-                        { en: 'And I drew my first drawing.', pt: 'E desenhei meu primeiro desenho.' },
-                        { en: 'My drawing was not a picture of a hat.',
-                            pt: 'Meu desenho não era uma imagem de um chapéu.' },
-                        { en: 'It was a picture of a boa constrictor digesting an elephant.',
-                            pt: 'Era uma imagem de uma jiboia digerindo um elefante.' }
+                        { en: 'And this will all be mine?',
+                            pt: 'E tudo isso vai ser meu?' },
+                        { en: 'Everything.', pt: 'Tudo.' },
+                        { en: 'Everything the light touches.',
+                            pt: 'Tudo o que a luz toca.' },
+                        { en: 'What about that shadowy place?',
+                            pt: 'E aquele lugar sombrio?' },
+                        { en: 'That\'s beyond our borders. You must never go there.',
+                            pt: 'Isso está além das nossas fronteiras. Você nunca deve ir lá.' }
                     ]
                 ],
                 paginaAtual: 0
@@ -1969,16 +1975,18 @@
             }
 
             // ================================================================
-            // 📐 CALCULAR FRASES POR PÁGINA
+            // 📐 CALCULAR FRASES POR PÁGINA COM BASE NA FONTE
             // ================================================================
             function calcularFrasesPorPagina() {
                 const altura = window.innerHeight || 800;
-                const alturaUtil = altura - 80;
+                const alturaUtil = altura - 100;
                 const tamanhoFonte = config.tamanhoFonte || 16;
-                const alturaLinha = tamanhoFonte * 2.2;
+                // Espaçamento aumenta proporcionalmente com a fonte
+                const espacamento = tamanhoFonte * 0.8;
+                const alturaLinha = (tamanhoFonte * 1.6) + espacamento;
                 
                 let estimativa = Math.floor(alturaUtil / alturaLinha);
-                estimativa = Math.max(10, Math.min(estimativa, 30));
+                estimativa = Math.max(6, Math.min(estimativa, 25));
                 
                 FRASES_POR_PAGINA = estimativa;
                 return FRASES_POR_PAGINA;
@@ -2145,7 +2153,7 @@
                     return;
                 }
 
-                const livrosPorPrateleira = 4; // 2 linhas de 2 livros
+                const livrosPorPrateleira = 4;
                 let html = '';
 
                 for (let i = 0; i < livros.length; i += livrosPorPrateleira) {
@@ -2240,7 +2248,7 @@
             }
 
             // ================================================================
-            // 📖 LEITOR
+            // 📖 LEITOR COM ESPAÇAMENTO DINÂMICO
             // ================================================================
             function abrirLeitor(index) {
                 if (index < 0 || index >= livros.length) return;
@@ -2303,15 +2311,28 @@
                 const corIngles = config.corIngles || '#1A237E';
                 const corPortugues = config.corPortugues || '#4CAF50';
                 const tamanhoFonte = config.tamanhoFonte || 16;
+                const espacamento = tamanhoFonte * 0.6; // Espaçamento proporcional à fonte
 
-                let html = '<div class="pagina-item">';
+                let html = '<div class="pagina-item" style="padding: ' + (espacamento * 0.5) + 'px ' + (espacamento * 0.8) + 'px;">';
 
                 pagina.forEach((frase, idx) => {
                     html += `
-                            <div class="frase-item" data-index="${idx}">
-                                <div class="ingles" data-frase-index="${idx}" style="color: ${corIngles} !important; font-size: ${tamanhoFonte}px !important;">${frase.en || ''}</div>
-                                <div class="portugues ${ptClass}" style="color: ${corPortugues} !important; font-size: ${tamanhoFonte * 0.85}px !important;">${frase.pt || ''}</div>
-                                ${idx < pagina.length - 1 ? '<div class="divisor-frase"></div>' : ''}
+                            <div class="frase-item" style="padding: ${espacamento * 0.3}px ${espacamento * 0.4}px;">
+                                <div class="ingles" data-frase-index="${idx}" 
+                                     style="color: ${corIngles} !important; 
+                                            font-size: ${tamanhoFonte}px !important; 
+                                            line-height: ${tamanhoFonte * 1.2}px !important;
+                                            padding: ${espacamento * 0.1}px ${espacamento * 0.2}px;">
+                                    ${frase.en || ''}
+                                </div>
+                                <div class="portugues ${ptClass}" 
+                                     style="color: ${corPortugues} !important; 
+                                            font-size: ${tamanhoFonte * 0.85}px !important; 
+                                            line-height: ${tamanhoFonte * 1.1}px !important;
+                                            padding: ${espacamento * 0.1}px ${espacamento * 0.2}px ${espacamento * 0.2}px ${espacamento * 0.2}px;">
+                                    ${frase.pt || ''}
+                                </div>
+                                ${idx < pagina.length - 1 ? '<div class="divisor-frase" style="margin: ' + (espacamento * 0.2) + 'px 0;"></div>' : ''}
                             </div>
                         `;
                 });
@@ -2323,11 +2344,13 @@
                 document.querySelectorAll('.frase-item .ingles').forEach(el => {
                     el.style.setProperty('color', corIngles, 'important');
                     el.style.setProperty('font-size', tamanhoFonte + 'px', 'important');
+                    el.style.setProperty('line-height', (tamanhoFonte * 1.2) + 'px', 'important');
                 });
 
                 document.querySelectorAll('.frase-item .portugues').forEach(el => {
                     el.style.setProperty('color', corPortugues, 'important');
                     el.style.setProperty('font-size', (tamanhoFonte * 0.85) + 'px', 'important');
+                    el.style.setProperty('line-height', (tamanhoFonte * 1.1) + 'px', 'important');
                 });
 
                 container.querySelectorAll('.frase-item .ingles').forEach((el) => {
@@ -2351,7 +2374,7 @@
             }
 
             // ================================================================
-            // 🎨 APLICAR CORES E FONTES
+            // 🎨 APLICAR CONFIGURAÇÕES
             // ================================================================
             function aplicarConfiguracoes() {
                 const container = document.getElementById('appContainer');
@@ -2360,18 +2383,35 @@
                 const tamanho = config.tamanhoFonte || 16;
                 const corIngles = config.corIngles || '#1A237E';
                 const corPortugues = config.corPortugues || '#4CAF50';
+                const espacamento = tamanho * 0.6;
 
                 // Aplicar em TODOS os elementos existentes
                 document.querySelectorAll('.frase-item .ingles').forEach(el => {
                     el.style.setProperty('color', corIngles, 'important');
                     el.style.setProperty('font-size', tamanho + 'px', 'important');
+                    el.style.setProperty('line-height', (tamanho * 1.2) + 'px', 'important');
                 });
                 document.querySelectorAll('.frase-item .portugues').forEach(el => {
                     el.style.setProperty('color', corPortugues, 'important');
                     el.style.setProperty('font-size', (tamanho * 0.85) + 'px', 'important');
+                    el.style.setProperty('line-height', (tamanho * 1.1) + 'px', 'important');
                 });
 
-                // Atualizar o display do tamanho
+                // Ajustar padding dos items
+                document.querySelectorAll('.frase-item').forEach(el => {
+                    el.style.padding = (espacamento * 0.3) + 'px ' + (espacamento * 0.4) + 'px';
+                });
+
+                // Ajustar padding do container
+                document.querySelectorAll('.pagina-item').forEach(el => {
+                    el.style.padding = (espacamento * 0.5) + 'px ' + (espacamento * 0.8) + 'px';
+                });
+
+                // Ajustar divisores
+                document.querySelectorAll('.divisor-frase').forEach(el => {
+                    el.style.margin = (espacamento * 0.2) + 'px 0';
+                });
+
                 const fonteTamanho = document.getElementById('fonteTamanho');
                 if (fonteTamanho) fonteTamanho.textContent = tamanho;
 
@@ -2875,7 +2915,7 @@
                     });
                 }
 
-                // ===== BOTÃO VOLTAR FLUTUANTE (INFERIOR ESQUERDO) =====
+                // ===== BOTÃO VOLTAR FLUTUANTE =====
                 const btnVoltar = document.getElementById('btnVoltarFlutuante');
                 if (btnVoltar) {
                     btnVoltar.addEventListener('click', function() {
@@ -3043,6 +3083,8 @@
                     btnFonteMais.addEventListener('click', function() {
                         if (config.tamanhoFonte < 40) {
                             config.tamanhoFonte += 2;
+                            // Recalcular frases por página
+                            calcularFrasesPorPagina();
                             aplicarConfiguracoes();
                             // Re-renderizar a página atual se estiver no leitor
                             if (document.getElementById('telaLeitor').classList.contains('ativa')) {
@@ -3056,6 +3098,7 @@
                     btnFonteMenos.addEventListener('click', function() {
                         if (config.tamanhoFonte > 10) {
                             config.tamanhoFonte -= 2;
+                            calcularFrasesPorPagina();
                             aplicarConfiguracoes();
                             if (document.getElementById('telaLeitor').classList.contains('ativa')) {
                                 renderizarPagina();

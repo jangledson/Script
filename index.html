@@ -16,14 +16,14 @@
     </script>
 
     <style>
-        /* ===== RESET ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        html, body {
+        html,
+        body {
             width: 100%;
             height: 100%;
             overflow: hidden;
@@ -529,7 +529,7 @@
         }
 
         /* ================================================================
-                   📖 LEITOR - TEXTO OCUPA TODA LARGURA
+                   📖 LEITOR
                    ================================================================ */
         .pagina-container {
             flex: 1;
@@ -586,7 +586,6 @@
             width: 100%;
         }
 
-        /* TEXTO OCUPA TODA LARGURA - NÃO CENTRALIZADO */
         .frase-item .ingles {
             font-size: 17px;
             line-height: 1.5;
@@ -952,7 +951,7 @@
         }
 
         /* ================================================================
-                   MODAL CONFIG - COM SELETOR ARCO-ÍRIS COMPLETO
+                   MODAL CONFIG
                    ================================================================ */
         .modal-overlay {
             position: fixed;
@@ -1129,7 +1128,6 @@
             font-size: 10px;
         }
 
-        /* SELETOR DE COR ARCO-ÍRIS COMPLETO */
         .modal .grupo .cor-rainbow {
             display: flex;
             flex-direction: column;
@@ -1140,8 +1138,8 @@
             width: 100%;
             height: 30px;
             border-radius: 6px;
-            background: linear-gradient(to right, 
-                #000000, #1a1a1a, #333333, #4d4d4d, #666666, #808080, #999999, 
+            background: linear-gradient(to right,
+                #000000, #1a1a1a, #333333, #4d4d4d, #666666, #808080, #999999,
                 #b3b3b3, #cccccc, #e6e6e6, #ffffff,
                 #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff, #ff0000);
             position: relative;
@@ -1159,7 +1157,7 @@
             border-radius: 50%;
             background: #FFF;
             border: 3px solid #5C3D2E;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
             pointer-events: none;
             transition: left 0.1s ease;
         }
@@ -1629,7 +1627,7 @@
             let FRASES_POR_PAGINA = 10;
 
             // ================================================================
-            // 📖 DICIONÁRIO EFICIENTE - APENAS PALAVRAS ESSENCIAIS
+            // 📖 DICIONÁRIO COMPLETO - CORRIGIDO
             // ================================================================
             const DICIONARIO = {
                 // PRONOMES
@@ -1657,7 +1655,7 @@
                 'ours': 'nosso/nossa',
                 'theirs': 'deles/delas',
 
-                // VERBOS COMUNS
+                // VERBOS
                 'be': 'ser/estar',
                 'am': 'sou/estou',
                 'are': 'são/estão',
@@ -2191,8 +2189,64 @@
             };
 
             // ================================================================
-            // 🔧 FUNÇÕES DE TRADUÇÃO
+            // 🔧 FUNÇÕES DE TRADUÇÃO - CORRIGIDAS
             // ================================================================
+
+            // Função para traduzir palavra por palavra sem misturar idiomas
+            function traduzirPalavra(palavra, idiomaOrigem) {
+                const palavraLimpa = palavra.replace(/[.,!?;:'"()]/g, '');
+                const pontuacao = palavra.match(/[.,!?;:'"()]+$/)?.[0] || '';
+                const palavraSemPontuacao = palavra.replace(/[.,!?;:'"()]+$/, '');
+
+                let traducao = '';
+
+                if (idiomaOrigem === 'ingles') {
+                    // Inglês -> Português
+                    const entrada = DICIONARIO[palavraSemPontuacao.toLowerCase()];
+                    traducao = entrada || palavraSemPontuacao;
+                } else {
+                    // Português -> Inglês
+                    let encontrado = false;
+                    for (let [chave, valor] of Object.entries(DICIONARIO)) {
+                        if (valor === palavraSemPontuacao.toLowerCase()) {
+                            traducao = chave;
+                            encontrado = true;
+                            break;
+                        }
+                    }
+                    if (!encontrado) {
+                        traducao = palavraSemPontuacao;
+                    }
+                }
+
+                // Preserva maiúsculas
+                if (palavraSemPontuacao.length > 0) {
+                    const primeiraMaiuscula = palavraSemPontuacao[0] === palavraSemPontuacao[0].toUpperCase();
+                    if (primeiraMaiuscula && traducao.length > 0) {
+                        traducao = traducao[0].toUpperCase() + traducao.slice(1);
+                    }
+                }
+
+                return traducao + pontuacao;
+            }
+
+            function traduzirFrase(texto, idiomaOrigem) {
+                if (!texto || texto.trim() === '') return '';
+
+                // Divide em palavras mantendo pontuação
+                const palavras = texto.match(/\S+|\s+/g) || [];
+
+                const palavrasTraduzidas = palavras.map(item => {
+                    // Se for espaço, mantém
+                    if (item.trim() === '') return item;
+
+                    // Se for uma palavra, traduz
+                    return traduzirPalavra(item, idiomaOrigem);
+                });
+
+                return palavrasTraduzidas.join('');
+            }
+
             function detectarIdioma(texto) {
                 if (!texto || texto.trim() === '') return 'desconhecido';
 
@@ -2205,7 +2259,8 @@
                     const palavraLimpa = palavra.replace(/[.,!?;:'"()]/g, '');
                     const entrada = DICIONARIO[palavraLimpa];
                     if (entrada) {
-                        if (entrada === palavraLimpa || entrada.includes(palavraLimpa)) {
+                        // Se a tradução é igual à palavra, é português
+                        if (entrada === palavraLimpa) {
                             contadorPT++;
                         } else {
                             contadorEN++;
@@ -2239,60 +2294,6 @@
                 return percentualPT > 55 ? 'portugues' : 'ingles';
             }
 
-            function traduzirFrase(texto, idiomaOrigem) {
-                if (!texto || texto.trim() === '') return '';
-
-                // Tenta traduzir expressões completas primeiro
-                let fraseTraduzida = texto;
-
-                for (let [chave, valor] of Object.entries(DICIONARIO)) {
-                    if (idiomaOrigem === 'ingles') {
-                        const regex = new RegExp('\\b' + chave + '\\b', 'gi');
-                        if (regex.test(fraseTraduzida)) {
-                            fraseTraduzida = fraseTraduzida.replace(regex, valor);
-                        }
-                    } else {
-                        const regex = new RegExp('\\b' + valor + '\\b', 'gi');
-                        if (regex.test(fraseTraduzida)) {
-                            fraseTraduzida = fraseTraduzida.replace(regex, chave);
-                        }
-                    }
-                }
-
-                // Tradução palavra por palavra
-                const palavras = fraseTraduzida.split(/\s+/);
-                const palavrasTraduzidas = palavras.map(palavra => {
-                    const limpa = palavra.replace(/[.,!?;:'"()]/g, '');
-                    const pontuacao = palavra.match(/[.,!?;:'"()]+$/)?.[0] || '';
-                    const palavraSemPontuacao = palavra.replace(/[.,!?;:'"()]+$/, '');
-
-                    let traducao = '';
-                    if (idiomaOrigem === 'ingles') {
-                        const entrada = DICIONARIO[palavraSemPontuacao.toLowerCase()];
-                        traducao = entrada || palavraSemPontuacao;
-                    } else {
-                        for (let [chave, valor] of Object.entries(DICIONARIO)) {
-                            if (valor === palavraSemPontuacao.toLowerCase()) {
-                                traducao = chave;
-                                break;
-                            }
-                        }
-                        traducao = traducao || palavraSemPontuacao;
-                    }
-
-                    if (palavraSemPontuacao.length > 0) {
-                        const primeiraMaiuscula = palavraSemPontuacao[0] === palavraSemPontuacao[0].toUpperCase();
-                        if (primeiraMaiuscula && traducao.length > 0) {
-                            traducao = traducao[0].toUpperCase() + traducao.slice(1);
-                        }
-                    }
-
-                    return traducao + pontuacao;
-                });
-
-                return palavrasTraduzidas.join(' ');
-            }
-
             function processarComTraducao(texto) {
                 const linhas = texto.split('\n').filter(l => l.trim() !== '');
                 if (linhas.length === 0) return [];
@@ -2302,6 +2303,7 @@
                 linhas.forEach(linha => {
                     const linhaLimpa = linha.trim();
 
+                    // Verifica se já tem separador
                     if (linhaLimpa.includes('||')) {
                         const partes = linhaLimpa.split('||');
                         frases.push({
@@ -2311,28 +2313,25 @@
                         return;
                     }
 
+                    // Detecta idioma da linha
                     const idiomaLinha = detectarIdioma(linhaLimpa);
 
-                    if (idiomaLinha === 'ingles' || idiomaLinha === 'portugues') {
-                        if (idiomaLinha === 'ingles') {
-                            const traducao = traduzirFrase(linhaLimpa, 'ingles');
-                            frases.push({
-                                en: linhaLimpa,
-                                pt: traducao
-                            });
-                        } else {
-                            const traducao = traduzirFrase(linhaLimpa, 'portugues');
-                            frases.push({
-                                en: traducao,
-                                pt: linhaLimpa
-                            });
-                        }
+                    if (idiomaLinha === 'ingles') {
+                        frases.push({
+                            en: linhaLimpa,
+                            pt: traduzirFrase(linhaLimpa, 'ingles')
+                        });
+                    } else if (idiomaLinha === 'portugues') {
+                        frases.push({
+                            en: traduzirFrase(linhaLimpa, 'portugues'),
+                            pt: linhaLimpa
+                        });
                     } else {
+                        // Se não detectou, tenta traduzir para inglês
                         const traducaoEn = traduzirFrase(linhaLimpa, 'portugues');
-                        const traducaoPt = traduzirFrase(linhaLimpa, 'ingles');
                         frases.push({
                             en: traducaoEn || linhaLimpa,
-                            pt: traducaoPt || linhaLimpa
+                            pt: linhaLimpa
                         });
                     }
                 });
@@ -2341,7 +2340,7 @@
             }
 
             // ================================================================
-            // 📚 SEM LIVROS DE EXEMPLO - ARRAY VAZIO
+            // 📚 SEM LIVROS DE EXEMPLO
             // ================================================================
             const LIVROS_EXEMPLO = [];
 
@@ -2435,18 +2434,19 @@
 
                 let isDragging = false;
 
-                function getColorFromPosition(posX) {
+                function updatePosition(posX) {
                     const rect = track.getBoundingClientRect();
                     const percent = Math.max(0, Math.min(1, (posX - rect.left) / rect.width));
-                    const hue = percent * 360;
-                    const saturation = percent < 0.5 ? 0 : 100;
-                    const lightness = percent < 0.1 ? 10 : (percent < 0.3 ? 30 : (percent < 0.7 ? 50 : (percent < 0.9 ? 70 :
-                        90)));
-                    const color = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-                    return color;
-                }
+                    handle.style.left = (percent * 100) + '%';
 
-                function getHexFromHsl(hue, sat, light) {
+                    // Cor baseada na posição no gradiente
+                    const hue = percent * 360;
+                    const sat = percent < 0.1 ? 0 : (percent < 0.3 ? 50 : 100);
+                    const light = percent < 0.1 ? 10 : (percent < 0.3 ? 30 : (percent < 0.6 ? 50 : (percent < 0.8 ? 70 :
+                    90)));
+                    const color = `hsl(${hue}, ${sat}%, ${light}%)`;
+
+                    // Converte HSL para Hex
                     const h = hue / 360;
                     const s = sat / 100;
                     const l = light / 100;
@@ -2472,18 +2472,7 @@
                         const hex = Math.round(x * 255).toString(16);
                         return hex.length === 1 ? '0' + hex : hex;
                     };
-                    return '#' + toHex(r) + toHex(g) + toHex(b);
-                }
-
-                function updatePosition(posX) {
-                    const rect = track.getBoundingClientRect();
-                    const percent = Math.max(0, Math.min(1, (posX - rect.left) / rect.width));
-                    handle.style.left = (percent * 100) + '%';
-                    const hue = percent * 360;
-                    const sat = percent < 0.1 ? 0 : (percent < 0.4 ? 50 : 100);
-                    const light = percent < 0.1 ? 10 : (percent < 0.3 ? 30 : (percent < 0.6 ? 50 : (percent < 0.8 ? 70 :
-                    90)));
-                    const hex = getHexFromHsl(hue, sat, light);
+                    const hex = '#' + toHex(r) + toHex(g) + toHex(b);
                     if (label) label.textContent = hex.toUpperCase();
                     callback(hex);
                 }
@@ -2533,7 +2522,7 @@
                     handle.style.left = percent + '%';
                 }
 
-                return { updatePosition, getColorFromPosition };
+                return { updatePosition };
             }
 
             // ================================================================
@@ -2860,7 +2849,6 @@
 
                 const espacamento = tamanhoFonte * 0.7;
 
-                // Criar wrapper para animação
                 const wrapper = document.createElement('div');
                 wrapper.className = 'pagina-wrapper';
                 if (direcao === 'left') {
@@ -2869,7 +2857,8 @@
                     wrapper.classList.add('slide-right');
                 }
 
-                let html = `<div class="pagina-item" style="background-color: ${corFundo} !important; padding: ${espacamento * 0.6}px ${espacamento * 0.8}px;">`;
+                let html =
+                    `<div class="pagina-item" style="background-color: ${corFundo} !important; padding: ${espacamento * 0.6}px ${espacamento * 0.8}px;">`;
 
                 pagina.forEach((frase, idx) => {
                     html += `
@@ -2930,7 +2919,6 @@
                     el.style.setProperty('background-color', corFundo, 'important');
                 });
 
-                // Eventos de clique nas frases
                 container.querySelectorAll('.frase-item .ingles').forEach((el) => {
                     el.addEventListener('click', function(e) {
                         e.stopPropagation();
@@ -2966,7 +2954,6 @@
                 const corFundo = config.corFundo || '#FFFFFF';
                 const espacamento = tamanho * 0.7;
 
-                // Aplicar em TODOS os elementos existentes
                 document.querySelectorAll('.frase-item .ingles').forEach(el => {
                     el.style.setProperty('color', corIngles, 'important');
                     el.style.setProperty('font-size', tamanho + 'px', 'important');
@@ -3556,7 +3543,7 @@
                     });
                 }
 
-                // ===== ÁUDIO - CORES (ARCO-ÍRIS) =====
+                // ===== ÁUDIO - CORES =====
                 criarRainbowPicker('rainbowIngles', 'handleIngles', 'corInglesLabel', config.corIngles, function(hex) {
                     config.corIngles = hex;
                     aplicarConfiguracoes();

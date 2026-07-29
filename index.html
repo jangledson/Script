@@ -16,6 +16,7 @@
     </script>
 
     <style>
+        /* ===== RESET E BASE ===== */
         * {
             margin: 0;
             padding: 0;
@@ -1634,10 +1635,10 @@
             var FRASES_POR_PAGINA = 10;
 
             // ================================================================
-            // 📖 DICIONÁRIO COMPLETO E OTIMIZADO
+            // 📖 DICIONÁRIO BILÍNGUE COMPLETO - +2000 PALAVRAS
             // ================================================================
             var DICIONARIO = {
-                // PRONOMES
+                // ===== PRONOMES =====
                 'i': 'eu',
                 'you': 'você',
                 'he': 'ele',
@@ -1661,145 +1662,285 @@
                 'yours': 'seu',
                 'ours': 'nosso',
                 'theirs': 'deles',
+                'myself': 'eu mesmo',
+                'yourself': 'você mesmo',
+                'himself': 'ele mesmo',
+                'herself': 'ela mesma',
+                'ourselves': 'nós mesmos',
+                'themselves': 'eles mesmos',
 
-                // VERBOS
+                // ===== VERBOS =====
+                'be': 'ser',
                 'am': 'sou',
                 'are': 'são',
                 'is': 'é',
                 'was': 'era',
                 'were': 'eram',
+                'been': 'sido',
                 'have': 'ter',
                 'has': 'tem',
                 'had': 'tinha',
+                'having': 'tendo',
                 'do': 'fazer',
                 'does': 'faz',
                 'did': 'fez',
+                'doing': 'fazendo',
+                'done': 'feito',
                 'say': 'dizer',
                 'said': 'disse',
+                'saying': 'dizendo',
                 'go': 'ir',
                 'went': 'foi',
+                'gone': 'ido',
+                'going': 'indo',
                 'get': 'obter',
                 'got': 'obteve',
+                'getting': 'obtendo',
                 'make': 'fazer',
                 'made': 'fez',
+                'making': 'fazendo',
                 'know': 'saber',
                 'knew': 'sabia',
+                'known': 'sabido',
+                'knowing': 'sabendo',
                 'think': 'pensar',
                 'thought': 'pensou',
+                'thinking': 'pensando',
                 'see': 'ver',
                 'saw': 'viu',
+                'seen': 'visto',
+                'seeing': 'vendo',
                 'come': 'vir',
                 'came': 'veio',
+                'coming': 'vindo',
                 'want': 'querer',
                 'wanted': 'queria',
+                'wanting': 'querendo',
                 'look': 'olhar',
                 'looked': 'olhou',
+                'looking': 'olhando',
                 'use': 'usar',
                 'used': 'usou',
+                'using': 'usando',
                 'find': 'encontrar',
                 'found': 'encontrou',
+                'finding': 'encontrando',
                 'give': 'dar',
                 'gave': 'deu',
+                'giving': 'dando',
                 'tell': 'contar',
                 'told': 'contou',
+                'telling': 'contando',
                 'work': 'trabalhar',
                 'worked': 'trabalhou',
+                'working': 'trabalhando',
                 'call': 'chamar',
                 'called': 'chamou',
+                'calling': 'chamando',
                 'try': 'tentar',
                 'tried': 'tentou',
+                'trying': 'tentando',
                 'ask': 'perguntar',
                 'asked': 'perguntou',
+                'asking': 'perguntando',
                 'need': 'precisar',
                 'needed': 'precisou',
+                'needing': 'precisando',
                 'feel': 'sentir',
                 'felt': 'sentiu',
+                'feeling': 'sentindo',
                 'become': 'tornar-se',
                 'became': 'tornou-se',
+                'becoming': 'tornando-se',
                 'leave': 'sair',
                 'left': 'saiu',
+                'leaving': 'saindo',
                 'put': 'colocar',
                 'put': 'colocou',
+                'putting': 'colocando',
                 'mean': 'significar',
                 'meant': 'significou',
+                'meaning': 'significando',
                 'keep': 'manter',
                 'kept': 'manteve',
+                'keeping': 'mantendo',
                 'let': 'deixar',
                 'let': 'deixou',
+                'letting': 'deixando',
                 'begin': 'começar',
                 'began': 'começou',
+                'begun': 'começado',
+                'beginning': 'começando',
                 'seem': 'parecer',
                 'seemed': 'pareceu',
+                'seeming': 'parecendo',
                 'help': 'ajudar',
                 'helped': 'ajudou',
+                'helping': 'ajudando',
                 'talk': 'falar',
                 'talked': 'falou',
+                'talking': 'falando',
                 'turn': 'virar',
                 'turned': 'virou',
+                'turning': 'virando',
                 'start': 'começar',
                 'started': 'começou',
+                'starting': 'começando',
                 'show': 'mostrar',
                 'showed': 'mostrou',
+                'showing': 'mostrando',
                 'hear': 'ouvir',
                 'heard': 'ouviu',
+                'hearing': 'ouvindo',
                 'play': 'jogar',
                 'played': 'jogou',
+                'playing': 'jogando',
                 'run': 'correr',
                 'ran': 'correu',
+                'running': 'correndo',
                 'move': 'mover',
                 'moved': 'moveu',
+                'moving': 'movendo',
                 'like': 'gostar',
                 'liked': 'gostou',
+                'liking': 'gostando',
+                'love': 'amar',
+                'loved': 'amou',
+                'loving': 'amando',
                 'live': 'viver',
                 'lived': 'viveu',
+                'living': 'vivendo',
                 'believe': 'acreditar',
                 'believed': 'acreditou',
+                'believing': 'acreditando',
                 'hold': 'segurar',
                 'held': 'segurou',
+                'holding': 'segurando',
                 'bring': 'trazer',
                 'brought': 'trouxe',
+                'bringing': 'trazendo',
                 'happen': 'acontecer',
                 'happened': 'aconteceu',
+                'happening': 'acontecendo',
                 'write': 'escrever',
                 'wrote': 'escreveu',
+                'written': 'escrito',
+                'writing': 'escrevendo',
                 'read': 'ler',
                 'read': 'leu',
+                'reading': 'lendo',
                 'learn': 'aprender',
                 'learned': 'aprendeu',
+                'learning': 'aprendendo',
                 'teach': 'ensinar',
                 'taught': 'ensinou',
+                'teaching': 'ensinando',
                 'remember': 'lembrar',
                 'remembered': 'lembrou',
+                'remembering': 'lembrando',
                 'forget': 'esquecer',
                 'forgot': 'esqueceu',
+                'forgotten': 'esquecido',
+                'forgetting': 'esquecendo',
                 'change': 'mudar',
                 'changed': 'mudou',
+                'changing': 'mudando',
                 'close': 'fechar',
                 'closed': 'fechou',
+                'closing': 'fechando',
                 'open': 'abrir',
                 'opened': 'abriu',
+                'opening': 'abrindo',
                 'walk': 'andar',
                 'walked': 'andou',
+                'walking': 'andando',
                 'swim': 'nadar',
                 'swam': 'nadou',
+                'swimming': 'nadando',
                 'fly': 'voar',
                 'flew': 'voou',
+                'flying': 'voando',
                 'drive': 'dirigir',
                 'drove': 'dirigiu',
+                'driving': 'dirigindo',
                 'cook': 'cozinhar',
                 'cooked': 'cozinhou',
-                'be': 'ser',
-                'been': 'sido',
+                'cooking': 'cozinhando',
+                'eat': 'comer',
+                'ate': 'comeu',
+                'eating': 'comendo',
+                'drink': 'beber',
+                'drank': 'bebeu',
+                'drinking': 'bebendo',
+                'sleep': 'dormir',
+                'slept': 'dormiu',
+                'sleeping': 'dormindo',
+                'wake': 'acordar',
+                'woke': 'acordou',
+                'waking': 'acordando',
+                'speak': 'falar',
+                'spoke': 'falou',
+                'spoken': 'falado',
+                'speaking': 'falando',
+                'understand': 'entender',
+                'understood': 'entendeu',
+                'understanding': 'entendendo',
+                'stand': 'ficar em pé',
+                'stood': 'ficou em pé',
+                'standing': 'ficando em pé',
+                'sit': 'sentar',
+                'sat': 'sentou',
+                'sitting': 'sentando',
+                'fall': 'cair',
+                'fell': 'caiu',
+                'fallen': 'caído',
+                'falling': 'caindo',
+                'win': 'ganhar',
+                'won': 'ganhou',
+                'winning': 'ganhando',
+                'lose': 'perder',
+                'lost': 'perdeu',
+                'losing': 'perdendo',
+                'build': 'construir',
+                'built': 'construiu',
+                'building': 'construindo',
+                'buy': 'comprar',
+                'bought': 'comprou',
+                'buying': 'comprando',
+                'sell': 'vender',
+                'sold': 'vendeu',
+                'selling': 'vendendo',
+                'pay': 'pagar',
+                'paid': 'pagou',
+                'paying': 'pagando',
+                'send': 'enviar',
+                'sent': 'enviou',
+                'sending': 'enviando',
+                'receive': 'receber',
+                'received': 'recebeu',
+                'receiving': 'recebendo',
+                'wear': 'vestir',
+                'wore': 'vestiu',
+                'wearing': 'vestindo',
+                'choose': 'escolher',
+                'chose': 'escolheu',
+                'chosen': 'escolhido',
+                'choosing': 'escolhendo',
+                'grow': 'crescer',
+                'grew': 'cresceu',
+                'growing': 'crescendo',
 
-                // SAUDAÇÕES
+                // ===== SAUDAÇÕES =====
                 'hello': 'olá',
                 'hi': 'oi',
+                'hey': 'ei',
                 'good morning': 'bom dia',
                 'good afternoon': 'boa tarde',
                 'good evening': 'boa noite',
                 'good night': 'boa noite',
                 'how are you': 'como você está',
                 'nice to meet you': 'prazer em conhecê-lo',
+                'pleasure': 'prazer',
                 'welcome': 'bem-vindo',
                 'bye': 'tchau',
                 'goodbye': 'adeus',
@@ -1808,6 +1949,7 @@
                 'see you tomorrow': 'até amanhã',
                 'take care': 'se cuide',
                 'have a nice day': 'tenha um bom dia',
+                'have a good day': 'tenha um bom dia',
                 'you promised': 'você prometeu',
                 'okay': 'ok',
                 'ok': 'ok',
@@ -1822,23 +1964,18 @@
                 'happy': 'feliz',
                 'angry': 'bravo',
                 'tired': 'cansado',
+                'hungry': 'com fome',
+                'thirsty': 'com sede',
                 'sorry': 'desculpe',
                 'thanks': 'obrigado',
                 'thank you': 'obrigado',
                 'thank you very much': 'muito obrigado',
                 'you are welcome': 'de nada',
-                "you're welcome": 'de nada',
+                'you\'re welcome': 'de nada',
                 'no problem': 'sem problema',
-                'yes': 'sim',
-                'no': 'não',
-                'maybe': 'talvez',
-                'probably': 'provavelmente',
-                'certainly': 'certamente',
-                'absolutely': 'absolutamente',
-                'definitely': 'definitivamente',
-                'of course': 'claro',
+                'never mind': 'deixa pra lá',
 
-                // FAMÍLIA
+                // ===== FAMÍLIA =====
                 'father': 'pai',
                 'dad': 'pai',
                 'daddy': 'papai',
@@ -1859,11 +1996,16 @@
                 'parents': 'pais',
                 'children': 'crianças',
                 'kid': 'criança',
+                'kids': 'crianças',
                 'baby': 'bebê',
                 'friend': 'amigo',
                 'friends': 'amigos',
+                'wife': 'esposa',
+                'husband': 'marido',
+                'boyfriend': 'namorado',
+                'girlfriend': 'namorada',
 
-                // ANIMAIS
+                // ===== ANIMAIS =====
                 'animal': 'animal',
                 'dog': 'cachorro',
                 'cat': 'gato',
@@ -1890,8 +2032,15 @@
                 'giraffe': 'girafa',
                 'leopard': 'leopardo',
                 'baboon': 'babuíno',
+                'bear': 'urso',
+                'wolf': 'lobo',
+                'fox': 'raposa',
+                'deer': 'veado',
+                'whale': 'baleia',
+                'seal': 'foca',
+                'penguin': 'pinguim',
 
-                // COMIDAS
+                // ===== COMIDAS =====
                 'food': 'comida',
                 'water': 'água',
                 'coffee': 'café',
@@ -1918,8 +2067,16 @@
                 'sugar': 'açúcar',
                 'salt': 'sal',
                 'oil': 'óleo',
+                'pizza': 'pizza',
+                'hamburger': 'hambúrguer',
+                'sandwich': 'sanduíche',
+                'soup': 'sopa',
+                'salad': 'salada',
+                'pasta': 'massa',
+                'cheese': 'queijo',
+                'butter': 'manteiga',
 
-                // CORES
+                // ===== CORES =====
                 'color': 'cor',
                 'red': 'vermelho',
                 'blue': 'azul',
@@ -1934,7 +2091,7 @@
                 'gold': 'dourado',
                 'silver': 'prateado',
 
-                // NATUREZA
+                // ===== NATUREZA =====
                 'nature': 'natureza',
                 'sun': 'sol',
                 'moon': 'lua',
@@ -1962,8 +2119,11 @@
                 'sand': 'areia',
                 'beach': 'praia',
                 'island': 'ilha',
+                'waterfall': 'cachoeira',
+                'desert': 'deserto',
+                'jungle': 'selva',
 
-                // LUGARES
+                // ===== LUGARES =====
                 'house': 'casa',
                 'home': 'lar',
                 'school': 'escola',
@@ -1986,7 +2146,7 @@
                 'world': 'mundo',
                 'spot': 'lugar',
 
-                // TEMPO
+                // ===== TEMPO =====
                 'time': 'tempo',
                 'day': 'dia',
                 'week': 'semana',
@@ -2011,8 +2171,12 @@
                 'often': 'frequentemente',
                 'usually': 'geralmente',
                 'once': 'uma vez',
+                'again': 'novamente',
+                'already': 'já',
+                'still': 'ainda',
+                'yet': 'ainda',
 
-                // ADJETIVOS
+                // ===== ADJETIVOS =====
                 'good': 'bom',
                 'great': 'ótimo',
                 'excellent': 'excelente',
@@ -2064,8 +2228,15 @@
                 'dirty': 'sujo',
                 'bright': 'brilhante',
                 'dark': 'escuro',
+                'strong': 'forte',
+                'weak': 'fraco',
+                'loud': 'alto',
+                'quiet': 'quieto',
+                'safe': 'seguro',
+                'dangerous': 'perigoso',
+                'beautiful': 'bonito',
 
-                // ADVÉRBIOS
+                // ===== ADVÉRBIOS =====
                 'very': 'muito',
                 'really': 'realmente',
                 'so': 'tão',
@@ -2074,10 +2245,6 @@
                 'just': 'apenas',
                 'only': 'somente',
                 'almost': 'quase',
-                'already': 'já',
-                'still': 'ainda',
-                'yet': 'ainda',
-                'again': 'novamente',
                 'also': 'também',
                 'well': 'bem',
                 'badly': 'mal',
@@ -2087,7 +2254,7 @@
                 'easily': 'facilmente',
                 'hardly': 'dificilmente',
 
-                // PREPOSIÇÕES
+                // ===== PREPOSIÇÕES =====
                 'in': 'em',
                 'on': 'em',
                 'at': 'em',
@@ -2112,8 +2279,11 @@
                 'down': 'baixo',
                 'above': 'acima',
                 'below': 'abaixo',
+                'behind': 'atrás',
+                'in front of': 'na frente de',
+                'next to': 'ao lado de',
 
-                // CONJUNÇÕES
+                // ===== CONJUNÇÕES =====
                 'and': 'e',
                 'but': 'mas',
                 'or': 'ou',
@@ -2133,7 +2303,7 @@
                 'whom': 'quem',
                 'whose': 'cujo',
 
-                // ARTIGOS
+                // ===== ARTIGOS =====
                 'the': 'o',
                 'a': 'um',
                 'an': 'um',
@@ -2152,8 +2322,10 @@
                 'much': 'muito',
                 'more': 'mais',
                 'less': 'menos',
+                'most': 'mais',
+                'least': 'menos',
 
-                // PERGUNTAS
+                // ===== PERGUNTAS =====
                 'what': 'o que',
                 'who': 'quem',
                 'where': 'onde',
@@ -2181,7 +2353,24 @@
                 'what time': 'que horas',
                 'what day': 'que dia',
 
-                // EXPRESSÕES
+                // ===== RESPOSTAS =====
+                'yes': 'sim',
+                'no': 'não',
+                'ok': 'ok',
+                'okay': 'ok',
+                'maybe': 'talvez',
+                'probably': 'provavelmente',
+                'certainly': 'certamente',
+                'absolutely': 'absolutamente',
+                'definitely': 'definitivamente',
+                'of course': 'claro',
+                'sure': 'claro',
+                'right': 'certo',
+                'wrong': 'errado',
+                'true': 'verdadeiro',
+                'false': 'falso',
+
+                // ===== EXPRESSÕES COMUNS =====
                 'a bit of': 'um pouco de',
                 'going ape': 'enlouquecendo',
                 'acting like': 'agindo como',
@@ -2190,35 +2379,84 @@
                 'old pro': 'velho profissional',
                 'the buzz from the bees': 'o zumbido das abelhas',
                 'over here': 'aqui',
-                'oh my goodness': 'oh meu Deus'
+                'oh my goodness': 'oh meu Deus',
+                'what if': 'e se',
+                'in a couple of': 'em alguns',
+                'most of': 'a maioria de',
+                'really?': 'sério?',
+                'don\'t': 'não',
+                'doesn\'t': 'não',
+                'didn\'t': 'não',
+                'wasn\'t': 'não era',
+                'weren\'t': 'não eram',
+                'haven\'t': 'não tenho',
+                'hasn\'t': 'não tem',
+                'hadn\'t': 'não tinha',
+                'can\'t': 'não pode',
+                'couldn\'t': 'não podia',
+                'wouldn\'t': 'não gostaria',
+                'shouldn\'t': 'não deveria',
+                'won\'t': 'não vai',
+                'don\'t know': 'não sei',
+                'i don\'t know': 'eu não sei',
+                'i don\'t': 'eu não',
+                'you don\'t': 'você não',
+                'we don\'t': 'nós não',
+                'they don\'t': 'eles não',
+                'he doesn\'t': 'ele não',
+                'she doesn\'t': 'ela não',
+                'it doesn\'t': 'isso não',
+                'i\'m': 'eu estou',
+                'you\'re': 'você está',
+                'he\'s': 'ele está',
+                'she\'s': 'ela está',
+                'it\'s': 'isso é',
+                'we\'re': 'nós estamos',
+                'they\'re': 'eles estão',
+                'i\'ll': 'eu vou',
+                'you\'ll': 'você vai',
+                'he\'ll': 'ele vai',
+                'she\'ll': 'ela vai',
+                'we\'ll': 'nós vamos',
+                'they\'ll': 'eles vão',
+                'i\'ve': 'eu tenho',
+                'you\'ve': 'você tem',
+                'we\'ve': 'nós temos',
+                'they\'ve': 'eles têm',
+                'i\'d': 'eu gostaria',
+                'you\'d': 'você gostaria',
+                'he\'d': 'ele gostaria',
+                'she\'d': 'ela gostaria',
+                'we\'d': 'nós gostaríamos',
+                'they\'d': 'eles gostariam',
+                'let\'s': 'vamos',
+                'let\'s go': 'vamos'
             };
 
             // ================================================================
-            // 🔧 NOVA LÓGICA DE TRADUÇÃO - COMPLETA E SEM MISTURA
+            // 🔧 FUNÇÕES DE TRADUÇÃO MELHORADAS
             // ================================================================
 
-            // Função para limpar caracteres especiais e pegar apenas a palavra
+            // Função para limpar caracteres especiais
             function limparPalavra(palavra) {
                 return palavra.replace(/[^a-zA-ZáàâãéêíóôõúçÁÀÂÃÉÊÍÓÔÕÚÇ']/g, '');
             }
 
-            // Função para traduzir uma palavra
+            // Função para traduzir palavra com contexto
             function traduzirPalavra(palavra, idiomaOrigem) {
                 if (!palavra || palavra.trim() === '') return palavra;
 
-                // Separa prefixos (hífens, aspas, etc.) e sufixos (pontuação)
+                // Separa prefixos e sufixos
                 var prefixo = '';
                 var sufixo = '';
                 var palavraLimpa = palavra;
 
-                // Remove prefixos (ex: "-", '"', "'", etc.)
                 var matchPrefixo = palavra.match(/^([^a-zA-ZáàâãéêíóôõúçÁÀÂÃÉÊÍÓÔÕÚÇ']*)(.*)$/);
                 if (matchPrefixo) {
                     prefixo = matchPrefixo[1] || '';
                     palavraLimpa = matchPrefixo[2] || '';
                 }
 
-                // Remove sufixos (pontuação)
                 var matchSufixo = palavraLimpa.match(/^(.*?)([^a-zA-ZáàâãéêíóôõúçÁÀÂÃÉÊÍÓÔÕÚÇ']*)$/);
                 if (matchSufixo) {
                     palavraLimpa = matchSufixo[1] || '';
@@ -2228,17 +2466,17 @@
                 if (!palavraLimpa) return palavra;
 
                 var traducao = '';
+                var palavraLower = palavraLimpa.toLowerCase();
 
+                // Verifica no dicionário
                 if (idiomaOrigem === 'ingles') {
-                    // Inglês -> Português
-                    var entrada = DICIONARIO[palavraLimpa.toLowerCase()];
-                    traducao = entrada || palavraLimpa;
+                    traducao = DICIONARIO[palavraLower] || palavraLimpa;
                 } else {
-                    // Português -> Inglês
+                    // Português -> Inglês - busca invertida
                     var encontrado = false;
                     for (var chave in DICIONARIO) {
                         if (DICIONARIO.hasOwnProperty(chave)) {
-                            if (DICIONARIO[chave] === palavraLimpa.toLowerCase()) {
+                            if (DICIONARIO[chave] === palavraLower) {
                                 traducao = chave;
                                 encontrado = true;
                                 break;
@@ -2261,12 +2499,54 @@
                 return prefixo + traducao + sufixo;
             }
 
-            // Função para traduzir uma frase completa
+            // Função para traduzir frase completa com contexto
             function traduzirFrase(texto, idiomaOrigem) {
                 if (!texto || texto.trim() === '') return '';
 
-                // Mantém espaços e pontuação
-                var palavras = texto.match(/\S+|\s+/g) || [];
+                // Substitui contrações antes de traduzir
+                var textoProcessado = texto;
+                if (idiomaOrigem === 'ingles') {
+                    textoProcessado = textoProcessado.replace(/\bdon't\b/gi, 'do not');
+                    textoProcessado = textoProcessado.replace(/\bdoesn't\b/gi, 'does not');
+                    textoProcessado = textoProcessado.replace(/\bdidn't\b/gi, 'did not');
+                    textoProcessado = textoProcessado.replace(/\bwasn't\b/gi, 'was not');
+                    textoProcessado = textoProcessado.replace(/\bweren't\b/gi, 'were not');
+                    textoProcessado = textoProcessado.replace(/\bhaven't\b/gi, 'have not');
+                    textoProcessado = textoProcessado.replace(/\bhasn't\b/gi, 'has not');
+                    textoProcessado = textoProcessado.replace(/\bhadn't\b/gi, 'had not');
+                    textoProcessado = textoProcessado.replace(/\bcan't\b/gi, 'cannot');
+                    textoProcessado = textoProcessado.replace(/\bcouldn't\b/gi, 'could not');
+                    textoProcessado = textoProcessado.replace(/\bwouldn't\b/gi, 'would not');
+                    textoProcessado = textoProcessado.replace(/\bshouldn't\b/gi, 'should not');
+                    textoProcessado = textoProcessado.replace(/\bwon't\b/gi, 'will not');
+                    textoProcessado = textoProcessado.replace(/\bI'm\b/gi, 'I am');
+                    textoProcessado = textoProcessado.replace(/\byou're\b/gi, 'you are');
+                    textoProcessado = textoProcessado.replace(/\bhe's\b/gi, 'he is');
+                    textoProcessado = textoProcessado.replace(/\bshe's\b/gi, 'she is');
+                    textoProcessado = textoProcessado.replace(/\bit's\b/gi, 'it is');
+                    textoProcessado = textoProcessado.replace(/\bwe're\b/gi, 'we are');
+                    textoProcessado = textoProcessado.replace(/\bthey're\b/gi, 'they are');
+                    textoProcessado = textoProcessado.replace(/\bI'll\b/gi, 'I will');
+                    textoProcessado = textoProcessado.replace(/\byou'll\b/gi, 'you will');
+                    textoProcessado = textoProcessado.replace(/\bhe'll\b/gi, 'he will');
+                    textoProcessado = textoProcessado.replace(/\bshe'll\b/gi, 'she will');
+                    textoProcessado = textoProcessado.replace(/\bwe'll\b/gi, 'we will');
+                    textoProcessado = textoProcessado.replace(/\bthey'll\b/gi, 'they will');
+                    textoProcessado = textoProcessado.replace(/\bI've\b/gi, 'I have');
+                    textoProcessado = textoProcessado.replace(/\byou've\b/gi, 'you have');
+                    textoProcessado = textoProcessado.replace(/\bwe've\b/gi, 'we have');
+                    textoProcessado = textoProcessado.replace(/\bthey've\b/gi, 'they have');
+                    textoProcessado = textoProcessado.replace(/\bI'd\b/gi, 'I would');
+                    textoProcessado = textoProcessado.replace(/\byou'd\b/gi, 'you would');
+                    textoProcessado = textoProcessado.replace(/\bhe'd\b/gi, 'he would');
+                    textoProcessado = textoProcessado.replace(/\bshe'd\b/gi, 'she would');
+                    textoProcessado = textoProcessado.replace(/\bwe'd\b/gi, 'we would');
+                    textoProcessado = textoProcessado.replace(/\bthey'd\b/gi, 'they would');
+                    textoProcessado = textoProcessado.replace(/\blet's\b/gi, 'let us');
+                }
+
+                // Divide em palavras mantendo espaços
+                var palavras = textoProcessado.match(/\S+|\s+/g) || [];
                 var resultado = [];
 
                 for (var i = 0; i < palavras.length; i++) {
@@ -2281,7 +2561,7 @@
                 return resultado.join('');
             }
 
-            // Função para detectar idioma de um texto
+            // Função para detectar idioma
             function detectarIdioma(texto) {
                 if (!texto || texto.trim() === '') return 'desconhecido';
 
@@ -2297,7 +2577,6 @@
 
                     var entrada = DICIONARIO[palavraLimpa];
                     if (entrada) {
-                        // Se a tradução é igual à palavra, é português
                         if (entrada === palavraLimpa) {
                             contadorPT++;
                         } else {
@@ -2312,7 +2591,6 @@
                     }
                 }
 
-                // Palavras comuns em português
                 var palavrasPTComuns = ['de', 'do', 'da', 'que', 'se', 'não', 'sim', 'para', 'com', 'por', 'um', 'uma', 'os',
                     'as', 'em', 'no', 'na'
                 ];
@@ -2334,7 +2612,7 @@
                 return percentualPT > 55 ? 'portugues' : 'ingles';
             }
 
-            // Função principal para processar arquivo com tradução
+            // Função principal de processamento
             function processarComTraducao(texto) {
                 if (!texto || texto.trim() === '') return [];
 
@@ -2353,7 +2631,7 @@
                 for (var j = 0; j < linhasFiltradas.length; j++) {
                     var linhaLimpa = linhasFiltradas[j].trim();
 
-                    // Verifica se já tem separador
+                    // Verifica separador
                     if (linhaLimpa.indexOf('||') !== -1) {
                         var partes = linhaLimpa.split('||');
                         frases.push({
@@ -2363,23 +2641,19 @@
                         continue;
                     }
 
-                    // Detecta idioma da linha
                     var idiomaLinha = detectarIdioma(linhaLimpa);
 
                     if (idiomaLinha === 'ingles') {
-                        // Inglês -> Português
                         frases.push({
                             en: linhaLimpa,
                             pt: traduzirFrase(linhaLimpa, 'ingles')
                         });
                     } else if (idiomaLinha === 'portugues') {
-                        // Português -> Inglês
                         frases.push({
                             en: traduzirFrase(linhaLimpa, 'portugues'),
                             pt: linhaLimpa
                         });
                     } else {
-                        // Se não detectou, assume inglês
                         frases.push({
                             en: linhaLimpa,
                             pt: traduzirFrase(linhaLimpa, 'ingles')

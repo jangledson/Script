@@ -710,7 +710,7 @@
         }
 
         /* ================================================================
-                   ⚙️ CONFIGURAÇÕES
+                   ⚙️ CONFIGURAÇÕES - NOVA PALETA ARCO-ÍRIS
                    ================================================================ */
         .btn-config {
             position: absolute;
@@ -951,7 +951,7 @@
         }
 
         /* ================================================================
-                   MODAL CONFIG
+                   MODAL CONFIG - PALETA ARCO-ÍRIS COMPLETA
                    ================================================================ */
         .modal-overlay {
             position: fixed;
@@ -1128,6 +1128,7 @@
             font-size: 10px;
         }
 
+        /* PALETA ARCO-ÍRIS COMPLETA */
         .modal .grupo .cor-rainbow {
             display: flex;
             flex-direction: column;
@@ -1136,12 +1137,14 @@
 
         .modal .grupo .cor-rainbow .rainbow-track {
             width: 100%;
-            height: 30px;
-            border-radius: 6px;
+            height: 36px;
+            border-radius: 8px;
             background: linear-gradient(to right,
-                #000000, #1a1a1a, #333333, #4d4d4d, #666666, #808080, #999999,
-                #b3b3b3, #cccccc, #e6e6e6, #ffffff,
-                #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff, #ff0000);
+                #000000, #1a0000, #330000, #4d0000, #660000, #800000, #990000, #b30000, #cc0000, #e60000, #ff0000,
+                #ff3300, #ff6600, #ff9900, #ffcc00, #ffff00, #ccff00, #99ff00, #66ff00, #33ff00, #00ff00,
+                #00ff33, #00ff66, #00ff99, #00ffcc, #00ffff, #00ccff, #0099ff, #0066ff, #0033ff, #0000ff,
+                #3300ff, #6600ff, #9900ff, #cc00ff, #ff00ff, #ff00cc, #ff0099, #ff0066, #ff0033, #ff0000,
+                #ff3300, #ff6600, #ff9900, #ffcc00, #ffff00, #ffffff);
             position: relative;
             cursor: pointer;
             touch-action: none;
@@ -1152,12 +1155,12 @@
             position: absolute;
             top: 50%;
             transform: translate(-50%, -50%);
-            width: 22px;
-            height: 22px;
+            width: 26px;
+            height: 26px;
             border-radius: 50%;
             background: #FFF;
             border: 3px solid #5C3D2E;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
             pointer-events: none;
             transition: left 0.1s ease;
         }
@@ -1178,9 +1181,10 @@
         .modal .grupo .cor-rainbow .rainbow-value .cor-hex {
             font-family: monospace;
             background: #f5f0eb;
-            padding: 2px 8px;
+            padding: 2px 10px;
             border-radius: 4px;
             font-weight: 700;
+            font-size: 11px;
         }
 
         .modal .btn-fechar {
@@ -1314,6 +1318,7 @@
             .compartimentos { gap: 8px; }
             #splashScreen .logo-icon { font-size: 50px; width: 80px; height: 80px; padding: 12px; }
             #splashScreen .logo-text { font-size: 18px; }
+            .modal .grupo .cor-rainbow .rainbow-track { height: 30px; }
         }
 
         @media (max-width: 360px) {
@@ -1328,6 +1333,8 @@
             .capa-livro .capa-autor { font-size: 8px; }
             .capa-livro { min-height: 100px; }
             .compartimentos { gap: 6px; }
+            .modal .grupo .cor-rainbow .rainbow-track { height: 26px; }
+            .modal .grupo .cor-rainbow .rainbow-track .rainbow-handle { width: 20px; height: 20px; }
         }
 
         @media (max-height: 600px) {
@@ -1347,6 +1354,7 @@
             #splashScreen .logo-icon { font-size: 35px; width: 60px; height: 60px; padding: 10px; }
             #splashScreen .logo-text { font-size: 14px; }
             #splashScreen .logo-subtext { font-size: 8px; }
+            .modal .grupo .cor-rainbow .rainbow-track { height: 28px; }
         }
 
         @media (min-height: 800px) {
@@ -1627,7 +1635,7 @@
             let FRASES_POR_PAGINA = 10;
 
             // ================================================================
-            // 📖 DICIONÁRIO COMPLETO - CORRIGIDO
+            // 📖 DICIONÁRIO COMPLETO - OTIMIZADO PARA APK
             // ================================================================
             const DICIONARIO = {
                 // PRONOMES
@@ -2189,29 +2197,30 @@
             };
 
             // ================================================================
-            // 🔧 FUNÇÕES DE TRADUÇÃO - CORRIGIDAS
+            // 🔧 FUNÇÕES DE TRADUÇÃO - OTIMIZADAS PARA APK
             // ================================================================
 
-            // Função para traduzir palavra por palavra sem misturar idiomas
             function traduzirPalavra(palavra, idiomaOrigem) {
-                const palavraLimpa = palavra.replace(/[.,!?;:'"()]/g, '');
-                const pontuacao = palavra.match(/[.,!?;:'"()]+$/)?.[0] || '';
-                const palavraSemPontuacao = palavra.replace(/[.,!?;:'"()]+$/, '');
+                if (!palavra || palavra.trim() === '') return palavra;
 
-                let traducao = '';
+                var palavraLimpa = palavra.replace(/[.,!?;:'"()]/g, '');
+                var pontuacao = palavra.match(/[.,!?;:'"()]+$/)?.[0] || '';
+                var palavraSemPontuacao = palavra.replace(/[.,!?;:'"()]+$/, '');
+
+                var traducao = '';
 
                 if (idiomaOrigem === 'ingles') {
-                    // Inglês -> Português
-                    const entrada = DICIONARIO[palavraSemPontuacao.toLowerCase()];
+                    var entrada = DICIONARIO[palavraSemPontuacao.toLowerCase()];
                     traducao = entrada || palavraSemPontuacao;
                 } else {
-                    // Português -> Inglês
-                    let encontrado = false;
-                    for (let [chave, valor] of Object.entries(DICIONARIO)) {
-                        if (valor === palavraSemPontuacao.toLowerCase()) {
-                            traducao = chave;
-                            encontrado = true;
-                            break;
+                    var encontrado = false;
+                    for (var chave in DICIONARIO) {
+                        if (DICIONARIO.hasOwnProperty(chave)) {
+                            if (DICIONARIO[chave] === palavraSemPontuacao.toLowerCase()) {
+                                traducao = chave;
+                                encontrado = true;
+                                break;
+                            }
                         }
                     }
                     if (!encontrado) {
@@ -2221,7 +2230,7 @@
 
                 // Preserva maiúsculas
                 if (palavraSemPontuacao.length > 0) {
-                    const primeiraMaiuscula = palavraSemPontuacao[0] === palavraSemPontuacao[0].toUpperCase();
+                    var primeiraMaiuscula = palavraSemPontuacao[0] === palavraSemPontuacao[0].toUpperCase();
                     if (primeiraMaiuscula && traducao.length > 0) {
                         traducao = traducao[0].toUpperCase() + traducao.slice(1);
                     }
@@ -2233,33 +2242,34 @@
             function traduzirFrase(texto, idiomaOrigem) {
                 if (!texto || texto.trim() === '') return '';
 
-                // Divide em palavras mantendo pontuação
-                const palavras = texto.match(/\S+|\s+/g) || [];
+                var palavras = texto.match(/\S+|\s+/g) || [];
+                var resultado = [];
 
-                const palavrasTraduzidas = palavras.map(item => {
-                    // Se for espaço, mantém
-                    if (item.trim() === '') return item;
+                for (var i = 0; i < palavras.length; i++) {
+                    var item = palavras[i];
+                    if (item.trim() === '') {
+                        resultado.push(item);
+                    } else {
+                        resultado.push(traduzirPalavra(item, idiomaOrigem));
+                    }
+                }
 
-                    // Se for uma palavra, traduz
-                    return traduzirPalavra(item, idiomaOrigem);
-                });
-
-                return palavrasTraduzidas.join('');
+                return resultado.join('');
             }
 
             function detectarIdioma(texto) {
                 if (!texto || texto.trim() === '') return 'desconhecido';
 
-                const textoLower = texto.toLowerCase();
-                const palavras = textoLower.split(/\s+/);
-                let contadorPT = 0;
-                let contadorEN = 0;
+                var textoLower = texto.toLowerCase();
+                var palavras = textoLower.split(/\s+/);
+                var contadorPT = 0;
+                var contadorEN = 0;
 
-                palavras.forEach(palavra => {
-                    const palavraLimpa = palavra.replace(/[.,!?;:'"()]/g, '');
-                    const entrada = DICIONARIO[palavraLimpa];
+                for (var i = 0; i < palavras.length; i++) {
+                    var palavra = palavras[i];
+                    var palavraLimpa = palavra.replace(/[.,!?;:'"()]/g, '');
+                    var entrada = DICIONARIO[palavraLimpa];
                     if (entrada) {
-                        // Se a tradução é igual à palavra, é português
                         if (entrada === palavraLimpa) {
                             contadorPT++;
                         } else {
@@ -2272,49 +2282,56 @@
                             contadorEN++;
                         }
                     }
-                });
+                }
 
-                const palavrasPTComuns = ['de', 'do', 'da', 'que', 'se', 'não', 'sim', 'para', 'com', 'por', 'um', 'uma', 'os',
+                var palavrasPTComuns = ['de', 'do', 'da', 'que', 'se', 'não', 'sim', 'para', 'com', 'por', 'um', 'uma', 'os',
                     'as', 'em', 'no', 'na'
                 ];
-                const palavrasENComuns = ['the', 'of', 'and', 'to', 'for', 'with', 'on', 'at', 'by', 'from', 'up', 'down',
+                var palavrasENComuns = ['the', 'of', 'and', 'to', 'for', 'with', 'on', 'at', 'by', 'from', 'up', 'down',
                     'in', 'out'
                 ];
 
-                palavras.forEach(palavra => {
-                    const limpa = palavra.replace(/[.,!?;:'"()]/g, '');
-                    if (palavrasPTComuns.includes(limpa)) contadorPT += 2;
-                    if (palavrasENComuns.includes(limpa)) contadorEN += 2;
-                });
+                for (var j = 0; j < palavras.length; j++) {
+                    var limpa = palavras[j].replace(/[.,!?;:'"()]/g, '');
+                    if (palavrasPTComuns.indexOf(limpa) !== -1) contadorPT += 2;
+                    if (palavrasENComuns.indexOf(limpa) !== -1) contadorEN += 2;
+                }
 
-                const total = contadorPT + contadorEN;
+                var total = contadorPT + contadorEN;
                 if (total === 0) return 'desconhecido';
 
-                const percentualPT = (contadorPT / total) * 100;
+                var percentualPT = (contadorPT / total) * 100;
                 return percentualPT > 55 ? 'portugues' : 'ingles';
             }
 
             function processarComTraducao(texto) {
-                const linhas = texto.split('\n').filter(l => l.trim() !== '');
-                if (linhas.length === 0) return [];
+                if (!texto || texto.trim() === '') return [];
 
-                const frases = [];
+                var linhas = texto.split('\n');
+                var linhasFiltradas = [];
+                for (var i = 0; i < linhas.length; i++) {
+                    if (linhas[i].trim() !== '') {
+                        linhasFiltradas.push(linhas[i]);
+                    }
+                }
 
-                linhas.forEach(linha => {
-                    const linhaLimpa = linha.trim();
+                if (linhasFiltradas.length === 0) return [];
 
-                    // Verifica se já tem separador
-                    if (linhaLimpa.includes('||')) {
-                        const partes = linhaLimpa.split('||');
+                var frases = [];
+
+                for (var j = 0; j < linhasFiltradas.length; j++) {
+                    var linhaLimpa = linhasFiltradas[j].trim();
+
+                    if (linhaLimpa.indexOf('||') !== -1) {
+                        var partes = linhaLimpa.split('||');
                         frases.push({
                             en: partes[0].trim(),
                             pt: partes[1].trim()
                         });
-                        return;
+                        continue;
                     }
 
-                    // Detecta idioma da linha
-                    const idiomaLinha = detectarIdioma(linhaLimpa);
+                    var idiomaLinha = detectarIdioma(linhaLimpa);
 
                     if (idiomaLinha === 'ingles') {
                         frases.push({
@@ -2327,14 +2344,13 @@
                             pt: linhaLimpa
                         });
                     } else {
-                        // Se não detectou, tenta traduzir para inglês
-                        const traducaoEn = traduzirFrase(linhaLimpa, 'portugues');
+                        var traducaoEn = traduzirFrase(linhaLimpa, 'portugues');
                         frases.push({
                             en: traducaoEn || linhaLimpa,
                             pt: linhaLimpa
                         });
                     }
-                });
+                }
 
                 return frases;
             }
@@ -2342,7 +2358,7 @@
             // ================================================================
             // 📚 SEM LIVROS DE EXEMPLO
             // ================================================================
-            const LIVROS_EXEMPLO = [];
+            var LIVROS_EXEMPLO = [];
 
             // ================================================================
             // 🔧 FUNÇÕES DE PERSISTÊNCIA
@@ -2357,9 +2373,9 @@
 
             function carregarDados() {
                 try {
-                    const dados = localStorage.getItem('youcan_livros');
+                    var dados = localStorage.getItem('youcan_livros');
                     if (dados) {
-                        const parsed = JSON.parse(dados);
+                        var parsed = JSON.parse(dados);
                         if (Array.isArray(parsed) && parsed.length > 0) {
                             livros = parsed;
                             return;
@@ -2382,9 +2398,9 @@
 
             function carregarConfig() {
                 try {
-                    const dados = localStorage.getItem('youcan_config');
+                    var dados = localStorage.getItem('youcan_config');
                     if (dados) {
-                        const parsed = JSON.parse(dados);
+                        var parsed = JSON.parse(dados);
                         config = parsed;
                         velocidadeVoz = config.velocidadeVoz || 1.0;
                         return;
@@ -2409,13 +2425,13 @@
             // 📐 CALCULAR FRASES POR PÁGINA
             // ================================================================
             function calcularFrasesPorPagina() {
-                const altura = window.innerHeight || 800;
-                const alturaUtil = altura - 120;
-                const tamanhoFonte = config.tamanhoFonte || 17;
-                const espacamento = tamanhoFonte * 0.7;
-                const alturaLinha = (tamanhoFonte * 1.5) + espacamento;
+                var altura = window.innerHeight || 800;
+                var alturaUtil = altura - 120;
+                var tamanhoFonte = config.tamanhoFonte || 17;
+                var espacamento = tamanhoFonte * 0.7;
+                var alturaLinha = (tamanhoFonte * 1.5) + espacamento;
 
-                let estimativa = Math.floor(alturaUtil / alturaLinha);
+                var estimativa = Math.floor(alturaUtil / alturaLinha);
                 estimativa = Math.max(4, Math.min(estimativa, 12));
 
                 FRASES_POR_PAGINA = estimativa;
@@ -2423,38 +2439,62 @@
             }
 
             // ================================================================
-            // 🎨 FUNÇÕES DO SELETOR ARCO-ÍRIS
+            // 🎨 FUNÇÕES DO SELETOR ARCO-ÍRIS - NOVA VERSÃO
             // ================================================================
             function criarRainbowPicker(elementId, handleId, labelId, corInicial, callback) {
-                const track = document.getElementById(elementId);
-                const handle = document.getElementById(handleId);
-                const label = document.getElementById(labelId);
+                var track = document.getElementById(elementId);
+                var handle = document.getElementById(handleId);
+                var label = document.getElementById(labelId);
 
                 if (!track || !handle) return;
 
-                let isDragging = false;
+                var isDragging = false;
 
-                function updatePosition(posX) {
-                    const rect = track.getBoundingClientRect();
-                    const percent = Math.max(0, Math.min(1, (posX - rect.left) / rect.width));
-                    handle.style.left = (percent * 100) + '%';
+                function hexToRgb(hex) {
+                    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                    return result ? {
+                        r: parseInt(result[1], 16),
+                        g: parseInt(result[2], 16),
+                        b: parseInt(result[3], 16)
+                    } : { r: 0, g: 0, b: 0 };
+                }
 
-                    // Cor baseada na posição no gradiente
-                    const hue = percent * 360;
-                    const sat = percent < 0.1 ? 0 : (percent < 0.3 ? 50 : 100);
-                    const light = percent < 0.1 ? 10 : (percent < 0.3 ? 30 : (percent < 0.6 ? 50 : (percent < 0.8 ? 70 :
-                    90)));
-                    const color = `hsl(${hue}, ${sat}%, ${light}%)`;
+                function rgbToHsl(r, g, b) {
+                    r /= 255;
+                    g /= 255;
+                    b /= 255;
+                    var max = Math.max(r, g, b),
+                        min = Math.min(r, g, b);
+                    var h, s, l = (max + min) / 2;
+                    if (max === min) {
+                        h = s = 0;
+                    } else {
+                        var d = max - min;
+                        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                        switch (max) {
+                            case r:
+                                h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
+                                break;
+                            case g:
+                                h = ((b - r) / d + 2) / 6;
+                                break;
+                            case b:
+                                h = ((r - g) / d + 4) / 6;
+                                break;
+                        }
+                    }
+                    return { h: h * 360, s: s * 100, l: l * 100 };
+                }
 
-                    // Converte HSL para Hex
-                    const h = hue / 360;
-                    const s = sat / 100;
-                    const l = light / 100;
-                    let r, g, b;
+                function hslToHex(h, s, l) {
+                    h /= 360;
+                    s /= 100;
+                    l /= 100;
+                    var r, g, b;
                     if (s === 0) {
                         r = g = b = l;
                     } else {
-                        const hue2rgb = (p, q, t) => {
+                        var hue2rgb = function(p, q, t) {
                             if (t < 0) t += 1;
                             if (t > 1) t -= 1;
                             if (t < 1 / 6) return p + (q - p) * 6 * t;
@@ -2462,30 +2502,66 @@
                             if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
                             return p;
                         };
-                        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-                        const p = 2 * l - q;
+                        var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                        var p = 2 * l - q;
                         r = hue2rgb(p, q, h + 1 / 3);
                         g = hue2rgb(p, q, h);
                         b = hue2rgb(p, q, h - 1 / 3);
                     }
-                    const toHex = (x) => {
-                        const hex = Math.round(x * 255).toString(16);
+                    var toHex = function(x) {
+                        var hex = Math.round(x * 255).toString(16);
                         return hex.length === 1 ? '0' + hex : hex;
                     };
-                    const hex = '#' + toHex(r) + toHex(g) + toHex(b);
+                    return '#' + toHex(r) + toHex(g) + toHex(b);
+                }
+
+                function updatePosition(posX) {
+                    var rect = track.getBoundingClientRect();
+                    var percent = Math.max(0, Math.min(1, (posX - rect.left) / rect.width));
+                    handle.style.left = (percent * 100) + '%';
+
+                    var hue = percent * 360;
+                    var sat = 80;
+                    var light = 50;
+
+                    // Gradiente personalizado para mais cores
+                    if (percent < 0.1) {
+                        light = 10;
+                        sat = 0;
+                    } else if (percent < 0.2) {
+                        light = 30;
+                        sat = 20;
+                    } else if (percent < 0.4) {
+                        light = 50;
+                        sat = 60;
+                    } else if (percent < 0.6) {
+                        light = 60;
+                        sat = 80;
+                    } else if (percent < 0.8) {
+                        light = 70;
+                        sat = 90;
+                    } else if (percent < 0.9) {
+                        light = 85;
+                        sat = 60;
+                    } else {
+                        light = 95;
+                        sat = 10;
+                    }
+
+                    var hex = hslToHex(hue, sat, light);
                     if (label) label.textContent = hex.toUpperCase();
                     callback(hex);
                 }
 
                 function handleMove(e) {
                     if (!isDragging) return;
-                    const posX = e.touches ? e.touches[0].clientX : e.clientX;
+                    var posX = e.touches ? e.touches[0].clientX : e.clientX;
                     updatePosition(posX);
                 }
 
                 function handleStart(e) {
                     isDragging = true;
-                    const posX = e.touches ? e.touches[0].clientX : e.clientX;
+                    var posX = e.touches ? e.touches[0].clientX : e.clientX;
                     updatePosition(posX);
                     e.preventDefault();
                 }
@@ -2502,53 +2578,39 @@
                 document.addEventListener('touchend', handleEnd);
 
                 if (corInicial) {
-                    // Posiciona aproximadamente
-                    const hex = corInicial.replace('#', '');
-                    const r = parseInt(hex.substring(0, 2), 16) / 255;
-                    const g = parseInt(hex.substring(2, 4), 16) / 255;
-                    const b = parseInt(hex.substring(4, 6), 16) / 255;
-                    const max = Math.max(r, g, b);
-                    const min = Math.min(r, g, b);
-                    let h = 0;
-                    if (max !== min) {
-                        const d = max - min;
-                        if (max === r) h = ((g - b) / d) % 6;
-                        else if (max === g) h = (b - r) / d + 2;
-                        else h = (r - g) / d + 4;
-                        h /= 6;
-                        if (h < 0) h += 1;
-                    }
-                    const percent = h * 100;
-                    handle.style.left = percent + '%';
+                    var rgb = hexToRgb(corInicial);
+                    var hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+                    var percent = hsl.h / 360;
+                    handle.style.left = (percent * 100) + '%';
                 }
 
-                return { updatePosition };
+                return { updatePosition: updatePosition };
             }
 
             // ================================================================
             // 🔄 FUNÇÕES DA SETA FLUTUANTE
             // ================================================================
             function mostrarSeta() {
-                const seta = document.getElementById('btnVoltarFlutuante');
+                var seta = document.getElementById('btnVoltarFlutuante');
                 seta.classList.add('visivel');
                 clearTimeout(timeoutSeta);
-                timeoutSeta = setTimeout(() => {
+                timeoutSeta = setTimeout(function() {
                     seta.classList.remove('visivel');
                 }, 3000);
             }
 
             function esconderSeta() {
-                const seta = document.getElementById('btnVoltarFlutuante');
+                var seta = document.getElementById('btnVoltarFlutuante');
                 seta.classList.remove('visivel');
                 clearTimeout(timeoutSeta);
             }
 
             function mostrarIndicador(texto) {
-                const indicador = document.getElementById('pageIndicator');
+                var indicador = document.getElementById('pageIndicator');
                 indicador.textContent = texto;
                 indicador.classList.add('visivel');
                 clearTimeout(timeoutIndicador);
-                timeoutIndicador = setTimeout(() => {
+                timeoutIndicador = setTimeout(function() {
                     indicador.classList.remove('visivel');
                 }, 1500);
             }
@@ -2565,14 +2627,20 @@
                 try {
                     window.speechSynthesis.cancel();
 
-                    const utterance = new SpeechSynthesisUtterance(texto);
+                    var utterance = new SpeechSynthesisUtterance(texto);
                     utterance.lang = 'en-US';
                     utterance.rate = velocidadeVoz;
                     utterance.pitch = 1.0;
                     utterance.volume = 1.0;
 
-                    const vozes = window.speechSynthesis.getVoices();
-                    const vozInglesa = vozes.find(v => v.lang.startsWith('en'));
+                    var vozes = window.speechSynthesis.getVoices();
+                    var vozInglesa = null;
+                    for (var i = 0; i < vozes.length; i++) {
+                        if (vozes[i].lang.startsWith('en')) {
+                            vozInglesa = vozes[i];
+                            break;
+                        }
+                    }
                     if (vozInglesa) utterance.voice = vozInglesa;
 
                     if (callback) {
@@ -2602,44 +2670,44 @@
             function falarFraseAtual(index) {
                 if (livroAtual === null || livroAtual >= livros.length) return;
 
-                const livro = livros[livroAtual];
+                var livro = livros[livroAtual];
                 if (!livro || !livro.paginas || paginaAtual >= livro.paginas.length) return;
 
-                const pagina = livro.paginas[paginaAtual];
+                var pagina = livro.paginas[paginaAtual];
                 if (!pagina || !Array.isArray(pagina)) return;
 
-                const idx = (index !== undefined) ? index : 0;
+                var idx = (index !== undefined) ? index : 0;
                 if (idx >= pagina.length) return;
 
-                const frase = pagina[idx];
+                var frase = pagina[idx];
                 if (!frase || !frase.en) return;
 
-                document.querySelectorAll('.frase-item .ingles').forEach(el => {
-                    el.classList.remove('falando');
-                });
+                var elementos = document.querySelectorAll('.frase-item .ingles');
+                for (var i = 0; i < elementos.length; i++) {
+                    elementos[i].classList.remove('falando');
+                }
 
-                const elementos = document.querySelectorAll('.frase-item .ingles');
                 if (elementos[idx]) {
                     elementos[idx].classList.add('falando');
                 }
 
-                falarFrase(frase.en, () => {
+                falarFrase(frase.en, function() {
                     if (elementos[idx]) {
                         elementos[idx].classList.remove('falando');
                     }
                     if (audioAutomatico && idx < pagina.length - 1) {
-                        setTimeout(() => {
+                        setTimeout(function() {
                             falarFraseAtual(idx + 1);
                         }, 500);
                     } else if (audioAutomatico && idx === pagina.length - 1) {
-                        setTimeout(() => {
+                        setTimeout(function() {
                             if (livroAtual !== null && livroAtual < livros.length) {
-                                const livro = livros[livroAtual];
+                                var livro = livros[livroAtual];
                                 if (livro && paginaAtual < livro.paginas.length - 1) {
                                     paginaAtual++;
                                     renderizarPagina();
-                                    mostrarIndicador(`${paginaAtual + 1}/${livro.paginas.length}`);
-                                    setTimeout(() => {
+                                    mostrarIndicador((paginaAtual + 1) + '/' + livro.paginas.length);
+                                    setTimeout(function() {
                                         falarFraseAtual(0);
                                     }, 500);
                                 }
@@ -2652,14 +2720,14 @@
             function falarTudoPagina() {
                 if (livroAtual === null || livroAtual >= livros.length) return;
 
-                const livro = livros[livroAtual];
+                var livro = livros[livroAtual];
                 if (!livro || !livro.paginas || paginaAtual >= livro.paginas.length) return;
 
-                const pagina = livro.paginas[paginaAtual];
+                var pagina = livro.paginas[paginaAtual];
                 if (!pagina || !Array.isArray(pagina) || pagina.length === 0) return;
 
                 audioAutomatico = false;
-                const btnAuto = document.getElementById('btnAudioAutomatico');
+                var btnAuto = document.getElementById('btnAudioAutomatico');
                 if (btnAuto) btnAuto.classList.remove('ativo-audio');
 
                 falarFraseAtual(0);
@@ -2669,95 +2737,104 @@
             // 🏠 RENDERIZAR ESTANTE
             // ================================================================
             function renderizarEstante() {
-                const container = document.getElementById('estanteContainer');
+                var container = document.getElementById('estanteContainer');
                 if (!container) return;
 
                 if (!livros || livros.length === 0) {
                     container.innerHTML =
-                        `
-                            <div class="prateleira">
-                                <div class="estante-vazia">
-                                    <div class="icone">📚</div>
-                                    <p>Nenhum livro na estante.</p>
-                                    <p style="font-size:12px;opacity:0.6;">Toque em ➕ para importar</p>
-                                </div>
-                            </div>
-                        `;
+                        '<div class="prateleira">' +
+                        '<div class="estante-vazia">' +
+                        '<div class="icone">📚</div>' +
+                        '<p>Nenhum livro na estante.</p>' +
+                        '<p style="font-size:12px;opacity:0.6;">Toque em ➕ para importar</p>' +
+                        '</div>' +
+                        '</div>';
                     return;
                 }
 
-                const livrosPorPrateleira = 4;
-                let html = '';
+                var livrosPorPrateleira = 4;
+                var html = '';
 
-                for (let i = 0; i < livros.length; i += livrosPorPrateleira) {
-                    const grupo = livros.slice(i, i + livrosPorPrateleira);
-                    const numPrateleira = Math.floor(i / livrosPorPrateleira) + 1;
+                for (var i = 0; i < livros.length; i += livrosPorPrateleira) {
+                    var grupo = livros.slice(i, i + livrosPorPrateleira);
+                    var numPrateleira = Math.floor(i / livrosPorPrateleira) + 1;
 
-                    html += `
-                            <div class="prateleira">
-                                <div class="prateleira-header">
-                                    <span class="titulo">📚 Prateleira ${numPrateleira}</span>
-                                    <span class="contador">${grupo.length} livros</span>
-                                </div>
-                                <div class="compartimentos">
-                                    ${grupo.map((livro, idx) => {
-                                        const indexGlobal = i + idx;
-                                        const total = livro.paginas ? livro.paginas.length : 0;
-                                        const lidas = livro.paginaAtual || 0;
-                                        const percentual = total > 0 ? Math.round((lidas / total) * 100) : 0;
+                    html += '<div class="prateleira">';
+                    html += '<div class="prateleira-header">';
+                    html += '<span class="titulo">📚 Prateleira ' + numPrateleira + '</span>';
+                    html += '<span class="contador">' + grupo.length + ' livros</span>';
+                    html += '</div>';
+                    html += '<div class="compartimentos">';
 
-                                        const temCapa = livro.capa && livro.capa.startsWith('data:');
-                                        const iconeCapa = livro.capa && !temCapa ? livro.capa : '📖';
+                    for (var j = 0; j < grupo.length; j++) {
+                        var livro = grupo[j];
+                        var indexGlobal = i + j;
+                        var total = livro.paginas ? livro.paginas.length : 0;
+                        var lidas = livro.paginaAtual || 0;
+                        var percentual = total > 0 ? Math.round((lidas / total) * 100) : 0;
 
-                                        return `
-                                            <div class="compartimento">
-                                                <div class="livro-card" data-index="${indexGlobal}">
-                                                    <div class="capa-livro" style="background: ${livro.cor || '#5C3D2E'}">
-                                                        ${temCapa ? `<img src="${livro.capa}" alt="Capa do livro" />` : ''}
-                                                        <div class="capa-overlay"></div>
-                                                        <div class="capa-texto">
-                                                            ${!temCapa ? `<span class="capa-titulo">${livro.titulo || 'Sem título'}</span>` : ''}
-                                                            ${!temCapa ? `<span class="capa-autor">${livro.autor || ''}</span>` : ''}
-                                                        </div>
-                                                        ${!temCapa ? `<span class="capa-badge">${iconeCapa}</span>` : ''}
-                                                        <span class="capa-progresso">${percentual}%</span>
-                                                    </div>
-                                                    <button class="btn-excluir-livro" data-index="${indexGlobal}">✕</button>
-                                                </div>
-                                            </div>
-                                        `;
-                                    }).join('')}
-                                </div>
-                            </div>
-                        `;
+                        var temCapa = livro.capa && livro.capa.indexOf('data:') === 0;
+                        var iconeCapa = livro.capa && !temCapa ? livro.capa : '📖';
+
+                        html += '<div class="compartimento">';
+                        html += '<div class="livro-card" data-index="' + indexGlobal + '">';
+                        html += '<div class="capa-livro" style="background: ' + (livro.cor || '#5C3D2E') + '">';
+                        if (temCapa) {
+                            html += '<img src="' + livro.capa + '" alt="Capa do livro" />';
+                        }
+                        html += '<div class="capa-overlay"></div>';
+                        html += '<div class="capa-texto">';
+                        if (!temCapa) {
+                            html += '<span class="capa-titulo">' + (livro.titulo || 'Sem título') + '</span>';
+                        }
+                        if (!temCapa) {
+                            html += '<span class="capa-autor">' + (livro.autor || '') + '</span>';
+                        }
+                        html += '</div>';
+                        if (!temCapa) {
+                            html += '<span class="capa-badge">' + iconeCapa + '</span>';
+                        }
+                        html += '<span class="capa-progresso">' + percentual + '%</span>';
+                        html += '</div>';
+                        html += '<button class="btn-excluir-livro" data-index="' + indexGlobal + '">✕</button>';
+                        html += '</div>';
+                        html += '</div>';
+                    }
+
+                    html += '</div>';
+                    html += '</div>';
                 }
 
                 container.innerHTML = html;
 
-                container.querySelectorAll('.livro-card').forEach(card => {
-                    const index = parseInt(card.dataset.index);
+                var cards = container.querySelectorAll('.livro-card');
+                for (var k = 0; k < cards.length; k++) {
+                    var card = cards[k];
+                    var index = parseInt(card.dataset.index);
                     card.addEventListener('click', function(e) {
                         if (e.target.closest('.btn-excluir-livro')) return;
-                        abrirLeitor(index);
+                        var idx = parseInt(this.dataset.index);
+                        abrirLeitor(idx);
                     });
 
-                    const btnExcluir = card.querySelector('.btn-excluir-livro');
+                    var btnExcluir = card.querySelector('.btn-excluir-livro');
                     if (btnExcluir) {
                         btnExcluir.addEventListener('click', function(e) {
                             e.stopPropagation();
-                            excluirLivro(parseInt(this.dataset.index));
+                            var idx = parseInt(this.dataset.index);
+                            excluirLivro(idx);
                         });
                     }
-                });
+                }
             }
 
             function excluirLivro(index) {
                 if (index < 0 || index >= livros.length) return;
 
-                const livro = livros[index];
+                var livro = livros[index];
                 if (!livro) return;
 
-                if (confirm(`⚠️ Tem certeza que deseja excluir "${livro.titulo}" da estante?`)) {
+                if (confirm('⚠️ Tem certeza que deseja excluir "' + livro.titulo + '" da estante?')) {
                     try {
                         window.speechSynthesis.cancel();
                     } catch (e) {}
@@ -2792,15 +2869,15 @@
 
                 audioAutomatico = false;
                 audioFalando = false;
-                const btnAuto = document.getElementById('btnAudioAutomatico');
+                var btnAuto = document.getElementById('btnAudioAutomatico');
                 if (btnAuto) btnAuto.classList.remove('ativo-audio');
 
                 livroAtual = index;
-                const livro = livros[index];
+                var livro = livros[index];
                 paginaAtual = livro.paginaAtual || 0;
                 mostrarPT = true;
 
-                const btnPT = document.getElementById('btnTogglePT');
+                var btnPT = document.getElementById('btnTogglePT');
                 if (btnPT) {
                     btnPT.textContent = '🇧🇷 PT';
                     btnPT.classList.add('ativo');
@@ -2823,33 +2900,33 @@
             function renderizarPagina(direcao) {
                 if (livroAtual === null || livroAtual >= livros.length) return;
 
-                const livro = livros[livroAtual];
+                var livro = livros[livroAtual];
                 if (!livro || !livro.paginas) return;
 
-                const total = livro.paginas.length;
+                var total = livro.paginas.length;
                 if (paginaAtual >= total) paginaAtual = total - 1;
                 if (paginaAtual < 0) paginaAtual = 0;
 
-                const pagina = livro.paginas[paginaAtual];
+                var pagina = livro.paginas[paginaAtual];
                 if (!pagina || !Array.isArray(pagina)) return;
 
-                const btnAnt = document.getElementById('btnAnterior');
-                const btnProx = document.getElementById('btnProximo');
+                var btnAnt = document.getElementById('btnAnterior');
+                var btnProx = document.getElementById('btnProximo');
                 if (btnAnt) btnAnt.disabled = paginaAtual === 0;
                 if (btnProx) btnProx.disabled = paginaAtual >= total - 1;
 
-                const container = document.getElementById('paginasLeitor');
+                var container = document.getElementById('paginasLeitor');
                 if (!container) return;
 
-                const ptClass = mostrarPT ? '' : 'oculto';
-                const corIngles = config.corIngles || '#1A237E';
-                const corPortugues = config.corPortugues || '#4CAF50';
-                const corFundo = config.corFundo || '#FFFFFF';
-                const tamanhoFonte = config.tamanhoFonte || 17;
+                var ptClass = mostrarPT ? '' : 'oculto';
+                var corIngles = config.corIngles || '#1A237E';
+                var corPortugues = config.corPortugues || '#4CAF50';
+                var corFundo = config.corFundo || '#FFFFFF';
+                var tamanhoFonte = config.tamanhoFonte || 17;
 
-                const espacamento = tamanhoFonte * 0.7;
+                var espacamento = tamanhoFonte * 0.7;
 
-                const wrapper = document.createElement('div');
+                var wrapper = document.createElement('div');
                 wrapper.className = 'pagina-wrapper';
                 if (direcao === 'left') {
                     wrapper.classList.add('slide-left');
@@ -2857,34 +2934,33 @@
                     wrapper.classList.add('slide-right');
                 }
 
-                let html =
-                    `<div class="pagina-item" style="background-color: ${corFundo} !important; padding: ${espacamento * 0.6}px ${espacamento * 0.8}px;">`;
+                var html =
+                    '<div class="pagina-item" style="background-color: ' + corFundo +
+                    ' !important; padding: ' + (espacamento * 0.6) + 'px ' + (espacamento * 0.8) + 'px;">';
 
-                pagina.forEach((frase, idx) => {
-                    html += `
-                            <div class="frase-item" style="padding: ${espacamento * 0.15}px 0; margin: ${espacamento * 0.15}px 0;">
-                                <div class="ingles" data-frase-index="${idx}" 
-                                     style="color: ${corIngles} !important; 
-                                            font-size: ${tamanhoFonte}px !important; 
-                                            line-height: ${tamanhoFonte * 1.4}px !important;
-                                            padding: ${espacamento * 0.1}px ${espacamento * 0.15}px;
-                                            text-align: left !important;
-                                            width: 100% !important;">
-                                    ${frase.en || ''}
-                                </div>
-                                <div class="portugues ${ptClass}" 
-                                     style="color: ${corPortugues} !important; 
-                                            font-size: ${tamanhoFonte * 0.85}px !important; 
-                                            line-height: ${tamanhoFonte * 1.3}px !important;
-                                            padding: ${espacamento * 0.08}px ${espacamento * 0.15}px ${espacamento * 0.15}px ${espacamento * 0.15}px;
-                                            text-align: left !important;
-                                            width: 100% !important;">
-                                    ${frase.pt || ''}
-                                </div>
-                                ${idx < pagina.length - 1 ? '<div class="divisor-frase" style="margin: ' + (espacamento * 0.15) + 'px 0; height: 1px; width: 100%;"></div>' : ''}
-                            </div>
-                        `;
-                });
+                for (var idx = 0; idx < pagina.length; idx++) {
+                    var frase = pagina[idx];
+                    html += '<div class="frase-item" style="padding: ' + (espacamento * 0.15) +
+                        'px 0; margin: ' + (espacamento * 0.15) + 'px 0;">';
+                    html += '<div class="ingles" data-frase-index="' + idx + '" style="color: ' + corIngles +
+                        ' !important; font-size: ' + tamanhoFonte +
+                        'px !important; line-height: ' + (tamanhoFonte * 1.4) +
+                        'px !important; padding: ' + (espacamento * 0.1) + 'px ' + (espacamento * 0.15) +
+                        'px; text-align: left !important; width: 100% !important;">' +
+                        (frase.en || '') + '</div>';
+                    html += '<div class="portugues ' + ptClass + '" style="color: ' + corPortugues +
+                        ' !important; font-size: ' + (tamanhoFonte * 0.85) +
+                        'px !important; line-height: ' + (tamanhoFonte * 1.3) +
+                        'px !important; padding: ' + (espacamento * 0.08) + 'px ' + (espacamento * 0.15) +
+                        'px ' + (espacamento * 0.15) + 'px ' + (espacamento * 0.15) +
+                        'px; text-align: left !important; width: 100% !important;">' +
+                        (frase.pt || '') + '</div>';
+                    if (idx < pagina.length - 1) {
+                        html += '<div class="divisor-frase" style="margin: ' + (espacamento * 0.15) +
+                            'px 0; height: 1px; width: 100%;"></div>';
+                    }
+                    html += '</div>';
+                }
 
                 html += '</div>';
                 wrapper.innerHTML = html;
@@ -2893,108 +2969,125 @@
                 container.appendChild(wrapper);
 
                 if (direcao === 'left' || direcao === 'right') {
-                    requestAnimationFrame(() => {
+                    requestAnimationFrame(function() {
                         wrapper.classList.remove('slide-left', 'slide-right');
                     });
                 }
 
                 // Reaplicar estilos
-                document.querySelectorAll('.frase-item .ingles').forEach(el => {
+                var inglesEls = document.querySelectorAll('.frase-item .ingles');
+                for (var i = 0; i < inglesEls.length; i++) {
+                    var el = inglesEls[i];
                     el.style.setProperty('color', corIngles, 'important');
                     el.style.setProperty('font-size', tamanhoFonte + 'px', 'important');
                     el.style.setProperty('line-height', (tamanhoFonte * 1.4) + 'px', 'important');
                     el.style.setProperty('text-align', 'left', 'important');
                     el.style.setProperty('width', '100%', 'important');
-                });
+                }
 
-                document.querySelectorAll('.frase-item .portugues').forEach(el => {
-                    el.style.setProperty('color', corPortugues, 'important');
-                    el.style.setProperty('font-size', (tamanhoFonte * 0.85) + 'px', 'important');
-                    el.style.setProperty('line-height', (tamanhoFonte * 1.3) + 'px', 'important');
-                    el.style.setProperty('text-align', 'left', 'important');
-                    el.style.setProperty('width', '100%', 'important');
-                });
+                var portuguesEls = document.querySelectorAll('.frase-item .portugues');
+                for (var j = 0; j < portuguesEls.length; j++) {
+                    var el2 = portuguesEls[j];
+                    el2.style.setProperty('color', corPortugues, 'important');
+                    el2.style.setProperty('font-size', (tamanhoFonte * 0.85) + 'px', 'important');
+                    el2.style.setProperty('line-height', (tamanhoFonte * 1.3) + 'px', 'important');
+                    el2.style.setProperty('text-align', 'left', 'important');
+                    el2.style.setProperty('width', '100%', 'important');
+                }
 
-                document.querySelectorAll('.pagina-item').forEach(el => {
-                    el.style.setProperty('background-color', corFundo, 'important');
-                });
+                var paginaItems = document.querySelectorAll('.pagina-item');
+                for (var k = 0; k < paginaItems.length; k++) {
+                    paginaItems[k].style.setProperty('background-color', corFundo, 'important');
+                }
 
-                container.querySelectorAll('.frase-item .ingles').forEach((el) => {
-                    el.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        const index = parseInt(this.dataset.fraseIndex);
-                        if (audioAutomatico) {
-                            audioAutomatico = false;
-                            const btnAuto = document.getElementById('btnAudioAutomatico');
-                            if (btnAuto) btnAuto.classList.remove('ativo-audio');
-                            try { window.speechSynthesis.cancel(); } catch (ex) {}
-                        }
-                        falarFraseAtual(index);
-                    });
-                });
+                var inglesClicks = container.querySelectorAll('.frase-item .ingles');
+                for (var l = 0; l < inglesClicks.length; l++) {
+                    (function(el) {
+                        el.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            var index = parseInt(this.dataset.fraseIndex);
+                            if (audioAutomatico) {
+                                audioAutomatico = false;
+                                var btnAuto = document.getElementById('btnAudioAutomatico');
+                                if (btnAuto) btnAuto.classList.remove('ativo-audio');
+                                try { window.speechSynthesis.cancel(); } catch (ex) {}
+                            }
+                            falarFraseAtual(index);
+                        });
+                    })(inglesClicks[l]);
+                }
 
                 livro.paginaAtual = paginaAtual;
                 salvarDados();
                 renderizarEstante();
                 atualizarListaLivrosConfig();
 
-                mostrarIndicador(`${paginaAtual + 1}/${total}`);
+                mostrarIndicador((paginaAtual + 1) + '/' + total);
             }
 
             // ================================================================
             // 🎨 APLICAR CONFIGURAÇÕES
             // ================================================================
             function aplicarConfiguracoes() {
-                const container = document.getElementById('appContainer');
+                var container = document.getElementById('appContainer');
                 if (!container) return;
 
-                const tamanho = config.tamanhoFonte || 17;
-                const corIngles = config.corIngles || '#1A237E';
-                const corPortugues = config.corPortugues || '#4CAF50';
-                const corFundo = config.corFundo || '#FFFFFF';
-                const espacamento = tamanho * 0.7;
+                var tamanho = config.tamanhoFonte || 17;
+                var corIngles = config.corIngles || '#1A237E';
+                var corPortugues = config.corPortugues || '#4CAF50';
+                var corFundo = config.corFundo || '#FFFFFF';
+                var espacamento = tamanho * 0.7;
 
-                document.querySelectorAll('.frase-item .ingles').forEach(el => {
+                var inglesEls = document.querySelectorAll('.frase-item .ingles');
+                for (var i = 0; i < inglesEls.length; i++) {
+                    var el = inglesEls[i];
                     el.style.setProperty('color', corIngles, 'important');
                     el.style.setProperty('font-size', tamanho + 'px', 'important');
                     el.style.setProperty('line-height', (tamanho * 1.4) + 'px', 'important');
                     el.style.setProperty('text-align', 'left', 'important');
                     el.style.setProperty('width', '100%', 'important');
-                });
-                document.querySelectorAll('.frase-item .portugues').forEach(el => {
-                    el.style.setProperty('color', corPortugues, 'important');
-                    el.style.setProperty('font-size', (tamanho * 0.85) + 'px', 'important');
-                    el.style.setProperty('line-height', (tamanho * 1.3) + 'px', 'important');
-                    el.style.setProperty('text-align', 'left', 'important');
-                    el.style.setProperty('width', '100%', 'important');
-                });
+                }
 
-                document.querySelectorAll('.pagina-item').forEach(el => {
-                    el.style.setProperty('background-color', corFundo, 'important');
-                });
+                var portuguesEls = document.querySelectorAll('.frase-item .portugues');
+                for (var j = 0; j < portuguesEls.length; j++) {
+                    var el2 = portuguesEls[j];
+                    el2.style.setProperty('color', corPortugues, 'important');
+                    el2.style.setProperty('font-size', (tamanho * 0.85) + 'px', 'important');
+                    el2.style.setProperty('line-height', (tamanho * 1.3) + 'px', 'important');
+                    el2.style.setProperty('text-align', 'left', 'important');
+                    el2.style.setProperty('width', '100%', 'important');
+                }
 
-                document.querySelectorAll('.frase-item').forEach(el => {
-                    el.style.padding = (espacamento * 0.15) + 'px 0';
-                    el.style.margin = (espacamento * 0.15) + 'px 0';
-                });
+                var paginaItems = document.querySelectorAll('.pagina-item');
+                for (var k = 0; k < paginaItems.length; k++) {
+                    paginaItems[k].style.setProperty('background-color', corFundo, 'important');
+                }
 
-                document.querySelectorAll('.pagina-item').forEach(el => {
-                    el.style.padding = (espacamento * 0.6) + 'px ' + (espacamento * 0.8) + 'px';
-                });
+                var fraseItems = document.querySelectorAll('.frase-item');
+                for (var l = 0; l < fraseItems.length; l++) {
+                    fraseItems[l].style.padding = (espacamento * 0.15) + 'px 0';
+                    fraseItems[l].style.margin = (espacamento * 0.15) + 'px 0';
+                }
 
-                document.querySelectorAll('.divisor-frase').forEach(el => {
-                    el.style.margin = (espacamento * 0.15) + 'px 0';
-                });
+                var paginaItems2 = document.querySelectorAll('.pagina-item');
+                for (var m = 0; m < paginaItems2.length; m++) {
+                    paginaItems2[m].style.padding = (espacamento * 0.6) + 'px ' + (espacamento * 0.8) + 'px';
+                }
 
-                const fonteTamanho = document.getElementById('fonteTamanho');
+                var divisores = document.querySelectorAll('.divisor-frase');
+                for (var n = 0; n < divisores.length; n++) {
+                    divisores[n].style.margin = (espacamento * 0.15) + 'px 0';
+                }
+
+                var fonteTamanho = document.getElementById('fonteTamanho');
                 if (fonteTamanho) fonteTamanho.textContent = tamanho;
 
-                const velocidadeEl = document.getElementById('velocidadeVoz');
+                var velocidadeEl = document.getElementById('velocidadeVoz');
                 if (velocidadeEl) velocidadeEl.textContent = velocidadeVoz.toFixed(1);
 
-                const corInglesLabel = document.getElementById('corInglesLabel');
-                const corPortuguesLabel = document.getElementById('corPortuguesLabel');
-                const corFundoLabel = document.getElementById('corFundoLabel');
+                var corInglesLabel = document.getElementById('corInglesLabel');
+                var corPortuguesLabel = document.getElementById('corPortuguesLabel');
+                var corFundoLabel = document.getElementById('corFundoLabel');
 
                 if (corInglesLabel) corInglesLabel.textContent = corIngles.toUpperCase();
                 if (corPortuguesLabel) corPortuguesLabel.textContent = corPortugues.toUpperCase();
@@ -3002,16 +3095,20 @@
 
                 container.classList.toggle('negrito', config.negrito);
 
-                const toggleNegrito = document.getElementById('toggleNegrito');
+                var toggleNegrito = document.getElementById('toggleNegrito');
                 if (toggleNegrito) toggleNegrito.checked = config.negrito;
 
-                ['fonte-georgia', 'fonte-times', 'fonte-arial', 'fonte-verdana', 'fonte-courier'].forEach(f =>
-                    container.classList.remove(f));
+                var fontes = ['fonte-georgia', 'fonte-times', 'fonte-arial', 'fonte-verdana', 'fonte-courier'];
+                for (var o = 0; o < fontes.length; o++) {
+                    container.classList.remove(fontes[o]);
+                }
                 if (config.fonte) container.classList.add(config.fonte);
 
-                document.querySelectorAll('#opcoesFonte button').forEach(btn => {
+                var opcoesFonte = document.querySelectorAll('#opcoesFonte button');
+                for (var p = 0; p < opcoesFonte.length; p++) {
+                    var btn = opcoesFonte[p];
                     btn.classList.toggle('selecionado', btn.dataset.fonte === config.fonte);
-                });
+                }
 
                 calcularFrasesPorPagina();
                 salvarConfig();
@@ -3021,54 +3118,55 @@
             // 📚 GERENCIAR LIVROS NAS CONFIGURAÇÕES
             // ================================================================
             function atualizarListaLivrosConfig() {
-                const container = document.getElementById('listaLivrosConfig');
+                var container = document.getElementById('listaLivrosConfig');
                 if (!container) return;
 
                 if (!livros || livros.length === 0) {
                     container.innerHTML =
-                        `
-                            <div class="sem-livros">
-                                📭 Nenhum livro na estante
-                            </div>
-                        `;
+                        '<div class="sem-livros">📭 Nenhum livro na estante</div>';
                     return;
                 }
 
-                let html = '';
-                livros.forEach((livro, index) => {
-                    const total = livro.paginas ? livro.paginas.length : 0;
-                    const lidas = livro.paginaAtual || 0;
-                    const percentual = total > 0 ? Math.round((lidas / total) * 100) : 0;
+                var html = '';
+                for (var i = 0; i < livros.length; i++) {
+                    var livro = livros[i];
+                    var total = livro.paginas ? livro.paginas.length : 0;
+                    var lidas = livro.paginaAtual || 0;
+                    var percentual = total > 0 ? Math.round((lidas / total) * 100) : 0;
 
-                    html += `
-                            <div class="item-livro">
-                                <div class="info">
-                                    <div class="titulo-item">${livro.titulo || 'Sem título'}</div>
-                                    <div class="autor-item">${livro.autor || 'Autor desconhecido'} • ${percentual}% lido • ${total} páginas</div>
-                                </div>
-                                <button class="btn-excluir-config" data-index="${index}" title="Excluir livro">✕</button>
-                            </div>
-                        `;
-                });
+                    html += '<div class="item-livro">';
+                    html += '<div class="info">';
+                    html += '<div class="titulo-item">' + (livro.titulo || 'Sem título') + '</div>';
+                    html += '<div class="autor-item">' + (livro.autor || 'Autor desconhecido') + ' • ' +
+                        percentual + '% lido • ' + total + ' páginas</div>';
+                    html += '</div>';
+                    html +=
+                        '<button class="btn-excluir-config" data-index="' + i + '" title="Excluir livro">✕</button>';
+                    html += '</div>';
+                }
 
                 container.innerHTML = html;
 
-                container.querySelectorAll('.btn-excluir-config').forEach(btn => {
-                    btn.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        const index = parseInt(this.dataset.index);
-                        excluirLivroConfig(index);
-                    });
-                });
+                var botoes = container.querySelectorAll('.btn-excluir-config');
+                for (var j = 0; j < botoes.length; j++) {
+                    (function(btn) {
+                        btn.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            var index = parseInt(this.dataset.index);
+                            excluirLivroConfig(index);
+                        });
+                    })(botoes[j]);
+                }
             }
 
             function excluirLivroConfig(index) {
                 if (index < 0 || index >= livros.length) return;
 
-                const livro = livros[index];
+                var livro = livros[index];
                 if (!livro) return;
 
-                if (confirm(`⚠️ Tem certeza que deseja excluir "${livro.titulo}" da estante?\n\nEsta ação não pode ser desfeita!`)) {
+                if (confirm('⚠️ Tem certeza que deseja excluir "' + livro.titulo +
+                        '" da estante?\n\nEsta ação não pode ser desfeita!')) {
                     try {
                         window.speechSynthesis.cancel();
                     } catch (e) {}
@@ -3097,31 +3195,31 @@
             // 📤 IMPORTAÇÃO
             // ================================================================
             function importarArquivo() {
-                const titulo = document.getElementById('inputTitulo');
-                const autor = document.getElementById('inputAutor');
-                const fileInput = document.getElementById('fileInput');
+                var titulo = document.getElementById('inputTitulo');
+                var autor = document.getElementById('inputAutor');
+                var fileInput = document.getElementById('fileInput');
 
                 if (!titulo || !autor || !fileInput) return;
 
-                const tituloValue = titulo.value.trim();
-                const autorValue = autor.value.trim() || 'Desconhecido';
-                const file = fileInput.files[0];
+                var tituloValue = titulo.value.trim();
+                var autorValue = autor.value.trim() || 'Desconhecido';
+                var file = fileInput.files[0];
 
                 if (!tituloValue) { alert('Digite um título para o livro.'); return; }
                 if (!file) { alert('Selecione um arquivo.'); return; }
 
-                const extensao = file.name.split('.').pop().toLowerCase();
+                var extensao = file.name.split('.').pop().toLowerCase();
 
-                const processarConteudo = function(texto) {
-                    const frases = processarComTraducao(texto);
+                var processarConteudo = function(texto) {
+                    var frases = processarComTraducao(texto);
 
                     if (frases.length === 0) {
                         alert('Nenhuma frase válida encontrada no arquivo.');
                         return;
                     }
 
-                    const paginas = [];
-                    for (let i = 0; i < frases.length; i += FRASES_POR_PAGINA) {
+                    var paginas = [];
+                    for (var i = 0; i < frases.length; i += FRASES_POR_PAGINA) {
                         paginas.push(frases.slice(i, i + FRASES_POR_PAGINA));
                     }
 
@@ -3129,12 +3227,12 @@
                 };
 
                 if (extensao === 'txt' || extensao === 'docx') {
-                    const reader = new FileReader();
+                    var reader = new FileReader();
                     reader.onload = function(e) {
                         if (extensao === 'docx') {
                             mammoth.extractRawText({ arrayBuffer: e.target.result })
-                                .then(r => processarConteudo(r.value))
-                                .catch(err => alert('Erro ao ler DOCX: ' + err.message));
+                                .then(function(r) { processarConteudo(r.value); })
+                                .catch(function(err) { alert('Erro ao ler DOCX: ' + err.message); });
                             return;
                         }
                         processarConteudo(e.target.result);
@@ -3145,25 +3243,25 @@
                         reader.readAsText(file, 'UTF-8');
                     }
                 } else if (extensao === 'csv') {
-                    const reader = new FileReader();
+                    var reader = new FileReader();
                     reader.onload = function(e) {
                         processarConteudo(e.target.result);
                     };
                     reader.readAsText(file, 'UTF-8');
                 } else if (extensao === 'json') {
-                    const reader = new FileReader();
+                    var reader = new FileReader();
                     reader.onload = function(e) {
                         processarConteudo(e.target.result);
                     };
                     reader.readAsText(file, 'UTF-8');
                 } else if (extensao === 'srt' || extensao === 'vtt') {
-                    const reader = new FileReader();
+                    var reader = new FileReader();
                     reader.onload = function(e) {
                         processarConteudo(e.target.result);
                     };
                     reader.readAsText(file, 'UTF-8');
                 } else if (extensao === 'pdf') {
-                    const reader = new FileReader();
+                    var reader = new FileReader();
                     reader.onload = function(e) {
                         processarPDF(e.target.result, tituloValue, autorValue);
                     };
@@ -3175,27 +3273,30 @@
 
             async function processarPDF(arrayBuffer, titulo, autor) {
                 try {
-                    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-                    const totalPages = pdf.numPages;
-                    let textoCompleto = '';
+                    var pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                    var totalPages = pdf.numPages;
+                    var textoCompleto = '';
 
-                    for (let i = 1; i <= totalPages; i++) {
-                        const page = await pdf.getPage(i);
-                        const textContent = await page.getTextContent();
-                        const texto = textContent.items.map(item => item.str).join(' ');
+                    for (var i = 1; i <= totalPages; i++) {
+                        var page = await pdf.getPage(i);
+                        var textContent = await page.getTextContent();
+                        var texto = '';
+                        for (var j = 0; j < textContent.items.length; j++) {
+                            texto += textContent.items[j].str + ' ';
+                        }
                         textoCompleto += texto + '\n';
                     }
 
-                    const frases = processarComTraducao(textoCompleto);
+                    var frases = processarComTraducao(textoCompleto);
 
                     if (frases.length === 0) {
                         alert('Não foi possível extrair texto do PDF.');
                         return;
                     }
 
-                    const paginas = [];
-                    for (let i = 0; i < frases.length; i += FRASES_POR_PAGINA) {
-                        paginas.push(frases.slice(i, i + FRASES_POR_PAGINA));
+                    var paginas = [];
+                    for (var k = 0; k < frases.length; k += FRASES_POR_PAGINA) {
+                        paginas.push(frases.slice(k, k + FRASES_POR_PAGINA));
                     }
 
                     criarLivro(paginas, titulo, autor);
@@ -3207,13 +3308,13 @@
             }
 
             function criarLivro(paginas, titulo, autor) {
-                const cores = ['#1a5276', '#6a1b4d', '#1b5e20', '#b71c1c', '#004d40', '#4a148c',
+                var cores = ['#1a5276', '#6a1b4d', '#1b5e20', '#b71c1c', '#004d40', '#4a148c',
                     '#e65100', '#0d47a1', '#4e342e', '#33691e', '#880e4f', '#006064'
                 ];
 
-                const capaFinal = capaImagem || '📖';
+                var capaFinal = capaImagem || '📖';
 
-                const novoLivro = {
+                var novoLivro = {
                     id: Date.now(),
                     titulo: titulo,
                     autor: autor,
@@ -3234,26 +3335,36 @@
                 renderizarEstante();
                 atualizarListaLivrosConfig();
 
-                const inputTitulo = document.getElementById('inputTitulo');
-                const inputAutor = document.getElementById('inputAutor');
-                const fileInput = document.getElementById('fileInput');
-                const nomeArquivo = document.getElementById('nomeArquivo');
+                var inputTitulo = document.getElementById('inputTitulo');
+                var inputAutor = document.getElementById('inputAutor');
+                var fileInput = document.getElementById('fileInput');
+                var nomeArquivo = document.getElementById('nomeArquivo');
 
                 if (inputTitulo) inputTitulo.value = '';
                 if (inputAutor) inputAutor.value = '';
                 if (fileInput) fileInput.value = '';
                 if (nomeArquivo) nomeArquivo.textContent = '';
 
-                const btnImportar = document.getElementById('btnImportarArquivo');
+                var btnImportar = document.getElementById('btnImportarArquivo');
                 if (btnImportar) btnImportar.disabled = true;
 
-                const totalFrases = paginas.reduce((acc, p) => acc + p.length, 0);
-                alert(`📚 "${titulo}" importado com sucesso!\n📄 ${paginas.length} páginas\n📝 ${totalFrases} frases`);
+                var totalFrases = 0;
+                for (var i = 0; i < paginas.length; i++) {
+                    totalFrases += paginas[i].length;
+                }
+                alert('📚 "' + titulo + '" importado com sucesso!\n📄 ' + paginas.length +
+                    ' páginas\n📝 ' + totalFrases + ' frases');
 
-                const progressoSalvo = localStorage.getItem('youcan_progresso_' + novoLivro.id);
+                var progressoSalvo = localStorage.getItem('youcan_progresso_' + novoLivro.id);
                 if (progressoSalvo) {
-                    const progresso = JSON.parse(progressoSalvo);
-                    const livroIndex = livros.findIndex(l => l.id === novoLivro.id);
+                    var progresso = JSON.parse(progressoSalvo);
+                    var livroIndex = -1;
+                    for (var j = 0; j < livros.length; j++) {
+                        if (livros[j].id === novoLivro.id) {
+                            livroIndex = j;
+                            break;
+                        }
+                    }
                     if (livroIndex !== -1) {
                         livros[livroIndex].paginaAtual = progresso.pagina || 0;
                         salvarDados();
@@ -3284,7 +3395,7 @@
                     } catch (e) {}
                     audioAutomatico = false;
                     audioFalando = false;
-                    const btnAuto = document.getElementById('btnAudioAutomatico');
+                    var btnAuto = document.getElementById('btnAudioAutomatico');
                     if (btnAuto) btnAuto.classList.remove('ativo-audio');
 
                     document.getElementById('toolbarEstante').style.display = 'flex';
@@ -3295,28 +3406,31 @@
                     document.getElementById('pageIndicator').classList.remove('visivel');
                 }
 
-                document.querySelectorAll('.tela').forEach(el => el.classList.remove('ativa'));
+                var telas = document.querySelectorAll('.tela');
+                for (var i = 0; i < telas.length; i++) {
+                    telas[i].classList.remove('ativa');
+                }
 
                 if (tela === 'estante') {
-                    const el = document.getElementById('telaEstante');
+                    var el = document.getElementById('telaEstante');
                     if (el) el.classList.add('ativa');
                     atualizarToolbar('estante');
                 } else if (tela === 'leitor') {
-                    const el = document.getElementById('telaLeitor');
-                    if (el) {
-                        el.classList.add('ativa');
-                        el.style.display = 'flex';
+                    var el2 = document.getElementById('telaLeitor');
+                    if (el2) {
+                        el2.classList.add('ativa');
+                        el2.style.display = 'flex';
                     }
                     atualizarToolbar('leitor');
                 } else {
-                    const el = document.getElementById('telaImportar');
-                    if (el) el.classList.add('ativa');
+                    var el3 = document.getElementById('telaImportar');
+                    if (el3) el3.classList.add('ativa');
                     atualizarToolbar('importar');
                 }
             }
 
             function atualizarToolbar(tela) {
-                const titulo = document.getElementById('toolbarTitulo');
+                var titulo = document.getElementById('toolbarTitulo');
                 if (!titulo) return;
 
                 if (tela === 'estante') titulo.textContent = '📚 Minha Estante';
@@ -3328,7 +3442,7 @@
             // 📖 NAVEGAÇÃO POR SWIPE
             // ================================================================
             function setupSwipe() {
-                const container = document.getElementById('paginaContainer');
+                var container = document.getElementById('paginaContainer');
                 if (!container) return;
 
                 container.addEventListener('touchstart', function(e) {
@@ -3342,8 +3456,8 @@
                     handleSwipe();
                 }, { passive: true });
 
-                let mouseDown = false;
-                let mouseStartX = 0;
+                var mouseDown = false;
+                var mouseStartX = 0;
 
                 container.addEventListener('mousedown', function(e) {
                     if (isTransitioning) return;
@@ -3354,7 +3468,7 @@
                 container.addEventListener('mouseup', function(e) {
                     if (!mouseDown || isTransitioning) return;
                     mouseDown = false;
-                    const diff = mouseStartX - e.screenX;
+                    var diff = mouseStartX - e.screenX;
                     if (Math.abs(diff) > 50) {
                         if (diff > 0) {
                             proximaPagina();
@@ -3370,8 +3484,8 @@
             }
 
             function handleSwipe() {
-                const diff = touchStartX - touchEndX;
-                const threshold = 40;
+                var diff = touchStartX - touchEndX;
+                var threshold = 40;
 
                 if (Math.abs(diff) > threshold) {
                     if (diff > 0) {
@@ -3385,12 +3499,12 @@
             function proximaPagina() {
                 if (isTransitioning) return;
                 if (livroAtual !== null && livroAtual < livros.length) {
-                    const livro = livros[livroAtual];
+                    var livro = livros[livroAtual];
                     if (livro && paginaAtual < livro.paginas.length - 1) {
                         if (audioAutomatico || audioFalando) {
                             audioAutomatico = false;
                             audioFalando = false;
-                            const btnAuto = document.getElementById('btnAudioAutomatico');
+                            var btnAuto = document.getElementById('btnAudioAutomatico');
                             if (btnAuto) btnAuto.classList.remove('ativo-audio');
                             try { window.speechSynthesis.cancel(); } catch (e) {}
                         }
@@ -3401,7 +3515,7 @@
                         if (livro.id) {
                             salvarProgresso(livro.id, paginaAtual);
                         }
-                        setTimeout(() => {
+                        setTimeout(function() {
                             isTransitioning = false;
                         }, 400);
                     }
@@ -3414,19 +3528,19 @@
                     if (audioAutomatico || audioFalando) {
                         audioAutomatico = false;
                         audioFalando = false;
-                        const btnAuto = document.getElementById('btnAudioAutomatico');
+                        var btnAuto = document.getElementById('btnAudioAutomatico');
                         if (btnAuto) btnAuto.classList.remove('ativo-audio');
                         try { window.speechSynthesis.cancel(); } catch (e) {}
                     }
                     isTransitioning = true;
                     paginaAtual--;
                     renderizarPagina('right');
-                    const livro = livros[livroAtual];
+                    var livro = livros[livroAtual];
                     if (livro && livro.id) {
                         salvarProgresso(livro.id, paginaAtual);
                     }
                     mostrarSeta();
-                    setTimeout(() => {
+                    setTimeout(function() {
                         isTransitioning = false;
                     }, 400);
                 }
@@ -3436,7 +3550,7 @@
             // ⚙️ CONFIG
             // ================================================================
             function abrirConfig() {
-                const modal = document.getElementById('modalConfig');
+                var modal = document.getElementById('modalConfig');
                 if (modal) {
                     modal.classList.add('ativo');
                     atualizarListaLivrosConfig();
@@ -3445,7 +3559,7 @@
             }
 
             function fecharConfig() {
-                const modal = document.getElementById('modalConfig');
+                var modal = document.getElementById('modalConfig');
                 if (modal) modal.classList.remove('ativo');
             }
 
@@ -3453,12 +3567,12 @@
             // 🚀 SPLASH SCREEN
             // ================================================================
             function hideSplash() {
-                const splash = document.getElementById('splashScreen');
-                const app = document.getElementById('appContainer');
+                var splash = document.getElementById('splashScreen');
+                var app = document.getElementById('appContainer');
 
                 if (splash) splash.classList.add('fade-out');
 
-                setTimeout(() => {
+                setTimeout(function() {
                     if (splash) splash.style.display = 'none';
                     if (app) app.classList.add('visible');
                 }, 800);
@@ -3469,10 +3583,10 @@
             // ================================================================
             function setupEventos() {
                 // ===== CAPA NA IMPORTAÇÃO =====
-                const btnCapa = document.getElementById('btnCapa');
-                const capaInput = document.getElementById('capaInput');
-                const capaPreview = document.getElementById('capaPreview');
-                const capaNome = document.getElementById('capaNome');
+                var btnCapa = document.getElementById('btnCapa');
+                var capaInput = document.getElementById('capaInput');
+                var capaPreview = document.getElementById('capaPreview');
+                var capaNome = document.getElementById('capaNome');
 
                 if (btnCapa && capaInput) {
                     btnCapa.addEventListener('click', function(e) {
@@ -3483,11 +3597,11 @@
 
                 if (capaInput) {
                     capaInput.addEventListener('change', function(e) {
-                        const file = this.files[0];
+                        var file = this.files[0];
                         if (file) {
-                            const reader = new FileReader();
+                            var reader = new FileReader();
                             reader.onload = function(e) {
-                                capaPreview.innerHTML = `<img src="${e.target.result}" alt="Capa" />`;
+                                capaPreview.innerHTML = '<img src="' + e.target.result + '" alt="Capa" />';
                                 capaNome.textContent = file.name;
                                 capaImagem = e.target.result;
                             };
@@ -3497,7 +3611,7 @@
                 }
 
                 // ===== BOTÃO VOLTAR FLUTUANTE =====
-                const btnVoltar = document.getElementById('btnVoltarFlutuante');
+                var btnVoltar = document.getElementById('btnVoltarFlutuante');
                 if (btnVoltar) {
                     btnVoltar.addEventListener('click', function() {
                         mostrarTela('estante');
@@ -3506,7 +3620,7 @@
                 }
 
                 // ===== TOQUE NA TELA PARA MOSTRAR SETA =====
-                const paginaContainer = document.getElementById('paginaContainer');
+                var paginaContainer = document.getElementById('paginaContainer');
                 if (paginaContainer) {
                     paginaContainer.addEventListener('click', function(e) {
                         if (e.target.closest('.ingles')) return;
@@ -3517,23 +3631,24 @@
                 }
 
                 // ===== IMPORTAÇÃO =====
-                const btnImportar = document.getElementById('btnImportar');
-                const btnImportarTop = document.getElementById('btnImportarTop');
-                const btnImportarConfig = document.getElementById('btnImportarConfig');
-                const btnVoltarImportar = document.getElementById('btnVoltarImportar');
+                var btnImportar = document.getElementById('btnImportar');
+                var btnImportarTop = document.getElementById('btnImportarTop');
+                var btnImportarConfig = document.getElementById('btnImportarConfig');
+                var btnVoltarImportar = document.getElementById('btnVoltarImportar');
 
-                if (btnImportar) btnImportar.addEventListener('click', () => mostrarTela('importar'));
-                if (btnImportarTop) btnImportarTop.addEventListener('click', () => mostrarTela('importar'));
-                if (btnImportarConfig) btnImportarConfig.addEventListener('click', () => {
+                if (btnImportar) btnImportar.addEventListener('click', function() { mostrarTela('importar'); });
+                if (btnImportarTop) btnImportarTop.addEventListener('click', function() { mostrarTela('importar'); });
+                if (btnImportarConfig) btnImportarConfig.addEventListener('click', function() {
                     fecharConfig();
-                    setTimeout(() => mostrarTela('importar'), 300);
+                    setTimeout(function() { mostrarTela('importar'); }, 300);
                 });
-                if (btnVoltarImportar) btnVoltarImportar.addEventListener('click', () => mostrarTela('estante'));
+                if (btnVoltarImportar) btnVoltarImportar.addEventListener('click', function() { mostrarTela(
+                    'estante'); });
 
                 // ===== CONFIG =====
-                const btnConfig = document.getElementById('btnConfigEstante');
-                const btnFecharConfig = document.getElementById('btnFecharConfig');
-                const modalConfig = document.getElementById('modalConfig');
+                var btnConfig = document.getElementById('btnConfigEstante');
+                var btnFecharConfig = document.getElementById('btnFecharConfig');
+                var modalConfig = document.getElementById('modalConfig');
 
                 if (btnConfig) btnConfig.addEventListener('click', abrirConfig);
                 if (btnFecharConfig) btnFecharConfig.addEventListener('click', fecharConfig);
@@ -3543,7 +3658,7 @@
                     });
                 }
 
-                // ===== ÁUDIO - CORES =====
+                // ===== ÁUDIO - CORES (ARCO-ÍRIS) =====
                 criarRainbowPicker('rainbowIngles', 'handleIngles', 'corInglesLabel', config.corIngles, function(hex) {
                     config.corIngles = hex;
                     aplicarConfiguracoes();
@@ -3564,15 +3679,15 @@
                 });
 
                 // ===== ÁUDIO - Falar Tudo =====
-                const btnAudioFrase = document.getElementById('btnAudioFrase');
+                var btnAudioFrase = document.getElementById('btnAudioFrase');
                 if (btnAudioFrase) {
                     btnAudioFrase.addEventListener('click', function() {
                         if (audioAutomatico) {
                             audioAutomatico = false;
-                            const btnAuto = document.getElementById('btnAudioAutomatico');
+                            var btnAuto = document.getElementById('btnAudioAutomatico');
                             if (btnAuto) btnAuto.classList.remove('ativo-audio');
                             try { window.speechSynthesis.cancel(); } catch (e) {}
-                            setTimeout(() => falarTudoPagina(), 300);
+                            setTimeout(function() { falarTudoPagina(); }, 300);
                         } else {
                             falarTudoPagina();
                         }
@@ -3580,29 +3695,30 @@
                 }
 
                 // ===== ÁUDIO - Auto =====
-                const btnAudioAuto = document.getElementById('btnAudioAutomatico');
+                var btnAudioAuto = document.getElementById('btnAudioAutomatico');
                 if (btnAudioAuto) {
                     btnAudioAuto.addEventListener('click', function() {
                         audioAutomatico = !audioAutomatico;
                         this.classList.toggle('ativo-audio', audioAutomatico);
                         if (audioAutomatico) {
                             try { window.speechSynthesis.cancel(); } catch (e) {}
-                            setTimeout(() => {
+                            setTimeout(function() {
                                 falarFraseAtual(0);
                             }, 300);
                         } else {
                             try { window.speechSynthesis.cancel(); } catch (e) {}
                             audioFalando = false;
-                            document.querySelectorAll('.frase-item .ingles').forEach(el => {
-                                el.classList.remove('falando');
-                            });
+                            var els = document.querySelectorAll('.frase-item .ingles');
+                            for (var i = 0; i < els.length; i++) {
+                                els[i].classList.remove('falando');
+                            }
                         }
                     });
                 }
 
                 // ===== NAVEGAÇÃO POR BOTÕES =====
-                const btnAnt = document.getElementById('btnAnterior');
-                const btnProx = document.getElementById('btnProximo');
+                var btnAnt = document.getElementById('btnAnterior');
+                var btnProx = document.getElementById('btnProximo');
 
                 if (btnAnt) {
                     btnAnt.addEventListener('click', function() {
@@ -3617,7 +3733,7 @@
                 }
 
                 // ===== TOGGLE PT =====
-                const btnTogglePT = document.getElementById('btnTogglePT');
+                var btnTogglePT = document.getElementById('btnTogglePT');
                 if (btnTogglePT) {
                     btnTogglePT.addEventListener('click', function() {
                         mostrarPT = !mostrarPT;
@@ -3628,21 +3744,21 @@
                 }
 
                 // ===== IMPORTAÇÃO ARQUIVO =====
-                const importArea = document.getElementById('importArea');
-                const fileInput = document.getElementById('fileInput');
-                const btnImportarArquivo = document.getElementById('btnImportarArquivo');
+                var importArea = document.getElementById('importArea');
+                var fileInput = document.getElementById('fileInput');
+                var btnImportarArquivo = document.getElementById('btnImportarArquivo');
 
                 if (importArea) {
                     importArea.addEventListener('click', function() {
-                        const input = document.getElementById('fileInput');
+                        var input = document.getElementById('fileInput');
                         if (input) input.click();
                     });
                 }
 
                 if (fileInput) {
                     fileInput.addEventListener('change', function() {
-                        const nome = this.files[0] ? this.files[0].name : '';
-                        const nomeEl = document.getElementById('nomeArquivo');
+                        var nome = this.files[0] ? this.files[0].name : '';
+                        var nomeEl = document.getElementById('nomeArquivo');
                         if (nomeEl) nomeEl.textContent = nome;
                         if (btnImportarArquivo) btnImportarArquivo.disabled = !nome;
                     });
@@ -3653,8 +3769,8 @@
                 }
 
                 // ===== CONFIGURAÇÕES - FONTE =====
-                const btnFonteMais = document.getElementById('btnFonteMais');
-                const btnFonteMenos = document.getElementById('btnFonteMenos');
+                var btnFonteMais = document.getElementById('btnFonteMais');
+                var btnFonteMenos = document.getElementById('btnFonteMenos');
 
                 if (btnFonteMais) {
                     btnFonteMais.addEventListener('click', function() {
@@ -3682,8 +3798,8 @@
                     });
                 }
 
-                const btnVelocidadeMais = document.getElementById('btnVelocidadeMais');
-                const btnVelocidadeMenos = document.getElementById('btnVelocidadeMenos');
+                var btnVelocidadeMais = document.getElementById('btnVelocidadeMais');
+                var btnVelocidadeMenos = document.getElementById('btnVelocidadeMenos');
 
                 if (btnVelocidadeMais) {
                     btnVelocidadeMais.addEventListener('click', function() {
@@ -3703,7 +3819,7 @@
                     });
                 }
 
-                const toggleNegrito = document.getElementById('toggleNegrito');
+                var toggleNegrito = document.getElementById('toggleNegrito');
                 if (toggleNegrito) {
                     toggleNegrito.addEventListener('change', function() {
                         config.negrito = this.checked;
@@ -3711,16 +3827,20 @@
                     });
                 }
 
-                document.querySelectorAll('#opcoesFonte button').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        config.fonte = this.dataset.fonte;
-                        aplicarConfiguracoes();
-                    });
-                });
+                var opcoesFonte = document.querySelectorAll('#opcoesFonte button');
+                for (var i = 0; i < opcoesFonte.length; i++) {
+                    (function(btn) {
+                        btn.addEventListener('click', function() {
+                            config.fonte = this.dataset.fonte;
+                            aplicarConfiguracoes();
+                        });
+                    })(opcoesFonte[i]);
+                }
 
                 // ===== TECLADO =====
                 document.addEventListener('keydown', function(e) {
-                    const leitorAtivo = document.getElementById('telaLeitor')?.classList.contains('ativa');
+                    var leitorAtivo = document.getElementById('telaLeitor') &&
+                        document.getElementById('telaLeitor').classList.contains('ativa');
                     if (leitorAtivo) {
                         if (e.key === 'ArrowRight') { e.preventDefault();
                             proximaPagina(); }
@@ -3736,8 +3856,8 @@
 
                 // ===== VOZES =====
                 if (window.speechSynthesis) {
-                    const carregarVozes = function() {
-                        const vozes = window.speechSynthesis.getVoices();
+                    var carregarVozes = function() {
+                        var vozes = window.speechSynthesis.getVoices();
                         if (vozes.length > 0) {
                             console.log('🔊 Vozes carregadas:', vozes.length);
                             return true;
@@ -3766,7 +3886,7 @@
                 }, { once: true });
 
                 // ===== REDIMENSIONAMENTO =====
-                let resizeTimeout;
+                var resizeTimeout;
                 window.addEventListener('resize', function() {
                     clearTimeout(resizeTimeout);
                     resizeTimeout = setTimeout(function() {
@@ -3782,12 +3902,23 @@
 
                 // ===== CARREGAR PROGRESSO SALVO =====
                 setTimeout(function() {
-                    const livrosComProgresso = livros.filter(l => l.id && l.paginaAtual > 0);
+                    var livrosComProgresso = [];
+                    for (var i = 0; i < livros.length; i++) {
+                        if (livros[i].id && livros[i].paginaAtual > 0) {
+                            livrosComProgresso.push(livros[i]);
+                        }
+                    }
                     if (livrosComProgresso.length > 0) {
-                        const ultimoLivro = livrosComProgresso[livrosComProgresso.length - 1];
-                        const index = livros.findIndex(l => l.id === ultimoLivro.id);
+                        var ultimoLivro = livrosComProgresso[livrosComProgresso.length - 1];
+                        var index = -1;
+                        for (var j = 0; j < livros.length; j++) {
+                            if (livros[j].id === ultimoLivro.id) {
+                                index = j;
+                                break;
+                            }
+                        }
                         if (index !== -1) {
-                            setTimeout(() => {
+                            setTimeout(function() {
                                 abrirLeitor(index);
                             }, 500);
                         }

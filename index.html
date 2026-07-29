@@ -16,7 +16,6 @@
     </script>
 
     <style>
-        /* ===== RESET E BASE ===== */
         * {
             margin: 0;
             padding: 0;
@@ -1635,10 +1634,9 @@
             var FRASES_POR_PAGINA = 10;
 
             // ================================================================
-            // 📖 DICIONÁRIO BILÍNGUE COMPLETO - +2000 PALAVRAS
+            // 📖 DICIONÁRIO COMPLETO
             // ================================================================
             var DICIONARIO = {
-                // ===== PRONOMES =====
                 'i': 'eu',
                 'you': 'você',
                 'he': 'ele',
@@ -1655,292 +1653,139 @@
                 'your': 'seu',
                 'his': 'dele',
                 'her': 'dela',
-                'its': 'dele',
                 'our': 'nosso',
                 'their': 'deles',
-                'mine': 'meu',
-                'yours': 'seu',
-                'ours': 'nosso',
-                'theirs': 'deles',
-                'myself': 'eu mesmo',
-                'yourself': 'você mesmo',
-                'himself': 'ele mesmo',
-                'herself': 'ela mesma',
-                'ourselves': 'nós mesmos',
-                'themselves': 'eles mesmos',
-
-                // ===== VERBOS =====
-                'be': 'ser',
                 'am': 'sou',
                 'are': 'são',
                 'is': 'é',
                 'was': 'era',
                 'were': 'eram',
-                'been': 'sido',
                 'have': 'ter',
                 'has': 'tem',
                 'had': 'tinha',
-                'having': 'tendo',
                 'do': 'fazer',
                 'does': 'faz',
                 'did': 'fez',
-                'doing': 'fazendo',
-                'done': 'feito',
                 'say': 'dizer',
                 'said': 'disse',
-                'saying': 'dizendo',
                 'go': 'ir',
                 'went': 'foi',
-                'gone': 'ido',
-                'going': 'indo',
                 'get': 'obter',
                 'got': 'obteve',
-                'getting': 'obtendo',
                 'make': 'fazer',
                 'made': 'fez',
-                'making': 'fazendo',
                 'know': 'saber',
                 'knew': 'sabia',
-                'known': 'sabido',
-                'knowing': 'sabendo',
                 'think': 'pensar',
                 'thought': 'pensou',
-                'thinking': 'pensando',
                 'see': 'ver',
                 'saw': 'viu',
-                'seen': 'visto',
-                'seeing': 'vendo',
                 'come': 'vir',
                 'came': 'veio',
-                'coming': 'vindo',
                 'want': 'querer',
                 'wanted': 'queria',
-                'wanting': 'querendo',
                 'look': 'olhar',
                 'looked': 'olhou',
-                'looking': 'olhando',
                 'use': 'usar',
                 'used': 'usou',
-                'using': 'usando',
                 'find': 'encontrar',
                 'found': 'encontrou',
-                'finding': 'encontrando',
                 'give': 'dar',
                 'gave': 'deu',
-                'giving': 'dando',
                 'tell': 'contar',
                 'told': 'contou',
-                'telling': 'contando',
                 'work': 'trabalhar',
                 'worked': 'trabalhou',
-                'working': 'trabalhando',
                 'call': 'chamar',
                 'called': 'chamou',
-                'calling': 'chamando',
                 'try': 'tentar',
                 'tried': 'tentou',
-                'trying': 'tentando',
                 'ask': 'perguntar',
                 'asked': 'perguntou',
-                'asking': 'perguntando',
                 'need': 'precisar',
                 'needed': 'precisou',
-                'needing': 'precisando',
                 'feel': 'sentir',
                 'felt': 'sentiu',
-                'feeling': 'sentindo',
                 'become': 'tornar-se',
                 'became': 'tornou-se',
-                'becoming': 'tornando-se',
                 'leave': 'sair',
                 'left': 'saiu',
-                'leaving': 'saindo',
                 'put': 'colocar',
-                'put': 'colocou',
-                'putting': 'colocando',
                 'mean': 'significar',
                 'meant': 'significou',
-                'meaning': 'significando',
                 'keep': 'manter',
                 'kept': 'manteve',
-                'keeping': 'mantendo',
                 'let': 'deixar',
-                'let': 'deixou',
-                'letting': 'deixando',
                 'begin': 'começar',
                 'began': 'começou',
-                'begun': 'começado',
-                'beginning': 'começando',
                 'seem': 'parecer',
                 'seemed': 'pareceu',
-                'seeming': 'parecendo',
                 'help': 'ajudar',
                 'helped': 'ajudou',
-                'helping': 'ajudando',
                 'talk': 'falar',
                 'talked': 'falou',
-                'talking': 'falando',
                 'turn': 'virar',
                 'turned': 'virou',
-                'turning': 'virando',
                 'start': 'começar',
                 'started': 'começou',
-                'starting': 'começando',
                 'show': 'mostrar',
                 'showed': 'mostrou',
-                'showing': 'mostrando',
                 'hear': 'ouvir',
                 'heard': 'ouviu',
-                'hearing': 'ouvindo',
                 'play': 'jogar',
                 'played': 'jogou',
-                'playing': 'jogando',
                 'run': 'correr',
                 'ran': 'correu',
-                'running': 'correndo',
                 'move': 'mover',
                 'moved': 'moveu',
-                'moving': 'movendo',
                 'like': 'gostar',
                 'liked': 'gostou',
-                'liking': 'gostando',
-                'love': 'amar',
-                'loved': 'amou',
-                'loving': 'amando',
                 'live': 'viver',
                 'lived': 'viveu',
-                'living': 'vivendo',
                 'believe': 'acreditar',
                 'believed': 'acreditou',
-                'believing': 'acreditando',
                 'hold': 'segurar',
                 'held': 'segurou',
-                'holding': 'segurando',
                 'bring': 'trazer',
                 'brought': 'trouxe',
-                'bringing': 'trazendo',
                 'happen': 'acontecer',
                 'happened': 'aconteceu',
-                'happening': 'acontecendo',
                 'write': 'escrever',
                 'wrote': 'escreveu',
-                'written': 'escrito',
-                'writing': 'escrevendo',
                 'read': 'ler',
                 'read': 'leu',
-                'reading': 'lendo',
                 'learn': 'aprender',
                 'learned': 'aprendeu',
-                'learning': 'aprendendo',
                 'teach': 'ensinar',
                 'taught': 'ensinou',
-                'teaching': 'ensinando',
                 'remember': 'lembrar',
                 'remembered': 'lembrou',
-                'remembering': 'lembrando',
                 'forget': 'esquecer',
                 'forgot': 'esqueceu',
-                'forgotten': 'esquecido',
-                'forgetting': 'esquecendo',
                 'change': 'mudar',
                 'changed': 'mudou',
-                'changing': 'mudando',
                 'close': 'fechar',
                 'closed': 'fechou',
-                'closing': 'fechando',
                 'open': 'abrir',
                 'opened': 'abriu',
-                'opening': 'abrindo',
                 'walk': 'andar',
                 'walked': 'andou',
-                'walking': 'andando',
                 'swim': 'nadar',
                 'swam': 'nadou',
-                'swimming': 'nadando',
                 'fly': 'voar',
                 'flew': 'voou',
-                'flying': 'voando',
                 'drive': 'dirigir',
                 'drove': 'dirigiu',
-                'driving': 'dirigindo',
                 'cook': 'cozinhar',
                 'cooked': 'cozinhou',
-                'cooking': 'cozinhando',
-                'eat': 'comer',
-                'ate': 'comeu',
-                'eating': 'comendo',
-                'drink': 'beber',
-                'drank': 'bebeu',
-                'drinking': 'bebendo',
-                'sleep': 'dormir',
-                'slept': 'dormiu',
-                'sleeping': 'dormindo',
-                'wake': 'acordar',
-                'woke': 'acordou',
-                'waking': 'acordando',
-                'speak': 'falar',
-                'spoke': 'falou',
-                'spoken': 'falado',
-                'speaking': 'falando',
-                'understand': 'entender',
-                'understood': 'entendeu',
-                'understanding': 'entendendo',
-                'stand': 'ficar em pé',
-                'stood': 'ficou em pé',
-                'standing': 'ficando em pé',
-                'sit': 'sentar',
-                'sat': 'sentou',
-                'sitting': 'sentando',
-                'fall': 'cair',
-                'fell': 'caiu',
-                'fallen': 'caído',
-                'falling': 'caindo',
-                'win': 'ganhar',
-                'won': 'ganhou',
-                'winning': 'ganhando',
-                'lose': 'perder',
-                'lost': 'perdeu',
-                'losing': 'perdendo',
-                'build': 'construir',
-                'built': 'construiu',
-                'building': 'construindo',
-                'buy': 'comprar',
-                'bought': 'comprou',
-                'buying': 'comprando',
-                'sell': 'vender',
-                'sold': 'vendeu',
-                'selling': 'vendendo',
-                'pay': 'pagar',
-                'paid': 'pagou',
-                'paying': 'pagando',
-                'send': 'enviar',
-                'sent': 'enviou',
-                'sending': 'enviando',
-                'receive': 'receber',
-                'received': 'recebeu',
-                'receiving': 'recebendo',
-                'wear': 'vestir',
-                'wore': 'vestiu',
-                'wearing': 'vestindo',
-                'choose': 'escolher',
-                'chose': 'escolheu',
-                'chosen': 'escolhido',
-                'choosing': 'escolhendo',
-                'grow': 'crescer',
-                'grew': 'cresceu',
-                'growing': 'crescendo',
-
-                // ===== SAUDAÇÕES =====
                 'hello': 'olá',
                 'hi': 'oi',
-                'hey': 'ei',
                 'good morning': 'bom dia',
                 'good afternoon': 'boa tarde',
                 'good evening': 'boa noite',
                 'good night': 'boa noite',
                 'how are you': 'como você está',
                 'nice to meet you': 'prazer em conhecê-lo',
-                'pleasure': 'prazer',
                 'welcome': 'bem-vindo',
                 'bye': 'tchau',
                 'goodbye': 'adeus',
@@ -1949,7 +1794,6 @@
                 'see you tomorrow': 'até amanhã',
                 'take care': 'se cuide',
                 'have a nice day': 'tenha um bom dia',
-                'have a good day': 'tenha um bom dia',
                 'you promised': 'você prometeu',
                 'okay': 'ok',
                 'ok': 'ok',
@@ -1964,8 +1808,6 @@
                 'happy': 'feliz',
                 'angry': 'bravo',
                 'tired': 'cansado',
-                'hungry': 'com fome',
-                'thirsty': 'com sede',
                 'sorry': 'desculpe',
                 'thanks': 'obrigado',
                 'thank you': 'obrigado',
@@ -1973,9 +1815,6 @@
                 'you are welcome': 'de nada',
                 'you\'re welcome': 'de nada',
                 'no problem': 'sem problema',
-                'never mind': 'deixa pra lá',
-
-                // ===== FAMÍLIA =====
                 'father': 'pai',
                 'dad': 'pai',
                 'daddy': 'papai',
@@ -1996,17 +1835,9 @@
                 'parents': 'pais',
                 'children': 'crianças',
                 'kid': 'criança',
-                'kids': 'crianças',
                 'baby': 'bebê',
                 'friend': 'amigo',
                 'friends': 'amigos',
-                'wife': 'esposa',
-                'husband': 'marido',
-                'boyfriend': 'namorado',
-                'girlfriend': 'namorada',
-
-                // ===== ANIMAIS =====
-                'animal': 'animal',
                 'dog': 'cachorro',
                 'cat': 'gato',
                 'horse': 'cavalo',
@@ -2015,32 +1846,15 @@
                 'sheep': 'ovelha',
                 'bird': 'pássaro',
                 'fish': 'peixe',
-                'shark': 'tubarão',
-                'whale': 'baleia',
-                'dolphin': 'golfinho',
-                'turtle': 'tartaruga',
                 'lion': 'leão',
                 'tiger': 'tigre',
                 'elephant': 'elefante',
                 'monkey': 'macaco',
                 'rabbit': 'coelho',
-                'mouse': 'rato',
                 'snake': 'cobra',
-                'eagle': 'águia',
-                'butterfly': 'borboleta',
-                'bee': 'abelha',
                 'giraffe': 'girafa',
                 'leopard': 'leopardo',
                 'baboon': 'babuíno',
-                'bear': 'urso',
-                'wolf': 'lobo',
-                'fox': 'raposa',
-                'deer': 'veado',
-                'whale': 'baleia',
-                'seal': 'foca',
-                'penguin': 'pinguim',
-
-                // ===== COMIDAS =====
                 'food': 'comida',
                 'water': 'água',
                 'coffee': 'café',
@@ -2053,31 +1867,11 @@
                 'meat': 'carne',
                 'chicken': 'frango',
                 'egg': 'ovo',
-                'fruits': 'frutas',
                 'apple': 'maçã',
                 'banana': 'banana',
                 'orange': 'laranja',
-                'lemon': 'limão',
-                'strawberry': 'morango',
-                'grape': 'uva',
-                'watermelon': 'melancia',
                 'cake': 'bolo',
-                'ice cream': 'sorvete',
                 'chocolate': 'chocolate',
-                'sugar': 'açúcar',
-                'salt': 'sal',
-                'oil': 'óleo',
-                'pizza': 'pizza',
-                'hamburger': 'hambúrguer',
-                'sandwich': 'sanduíche',
-                'soup': 'sopa',
-                'salad': 'salada',
-                'pasta': 'massa',
-                'cheese': 'queijo',
-                'butter': 'manteiga',
-
-                // ===== CORES =====
-                'color': 'cor',
                 'red': 'vermelho',
                 'blue': 'azul',
                 'green': 'verde',
@@ -2088,11 +1882,6 @@
                 'pink': 'rosa',
                 'purple': 'roxo',
                 'brown': 'marrom',
-                'gold': 'dourado',
-                'silver': 'prateado',
-
-                // ===== NATUREZA =====
-                'nature': 'natureza',
                 'sun': 'sol',
                 'moon': 'lua',
                 'star': 'estrela',
@@ -2100,7 +1889,6 @@
                 'cloud': 'nuvem',
                 'rain': 'chuva',
                 'wind': 'vento',
-                'storm': 'tempestade',
                 'snow': 'neve',
                 'ice': 'gelo',
                 'fire': 'fogo',
@@ -2111,19 +1899,9 @@
                 'lake': 'lago',
                 'forest': 'floresta',
                 'mountain': 'montanha',
-                'hill': 'colina',
                 'tree': 'árvore',
                 'flower': 'flor',
-                'grass': 'grama',
-                'rock': 'pedra',
-                'sand': 'areia',
                 'beach': 'praia',
-                'island': 'ilha',
-                'waterfall': 'cachoeira',
-                'desert': 'deserto',
-                'jungle': 'selva',
-
-                // ===== LUGARES =====
                 'house': 'casa',
                 'home': 'lar',
                 'school': 'escola',
@@ -2134,19 +1912,9 @@
                 'market': 'mercado',
                 'restaurant': 'restaurante',
                 'hotel': 'hotel',
-                'airport': 'aeroporto',
-                'station': 'estação',
-                'church': 'igreja',
-                'park': 'parque',
-                'garden': 'jardim',
                 'city': 'cidade',
-                'town': 'cidade',
-                'village': 'vila',
                 'country': 'país',
                 'world': 'mundo',
-                'spot': 'lugar',
-
-                // ===== TEMPO =====
                 'time': 'tempo',
                 'day': 'dia',
                 'week': 'semana',
@@ -2161,31 +1929,15 @@
                 'night': 'noite',
                 'hour': 'hora',
                 'minute': 'minuto',
-                'second': 'segundo',
                 'now': 'agora',
                 'later': 'depois',
                 'soon': 'em breve',
                 'always': 'sempre',
                 'never': 'nunca',
                 'sometimes': 'às vezes',
-                'often': 'frequentemente',
-                'usually': 'geralmente',
-                'once': 'uma vez',
-                'again': 'novamente',
-                'already': 'já',
-                'still': 'ainda',
-                'yet': 'ainda',
-
-                // ===== ADJETIVOS =====
                 'good': 'bom',
                 'great': 'ótimo',
-                'excellent': 'excelente',
                 'bad': 'ruim',
-                'terrible': 'terrível',
-                'beautiful': 'bonito',
-                'pretty': 'bonito',
-                'handsome': 'bonito',
-                'ugly': 'feio',
                 'big': 'grande',
                 'small': 'pequeno',
                 'large': 'grande',
@@ -2207,54 +1959,19 @@
                 'hot': 'quente',
                 'cold': 'frio',
                 'warm': 'morno',
-                'cool': 'legal',
-                'calm': 'calmo',
-                'nervous': 'nervoso',
-                'scared': 'assustado',
-                'brave': 'corajoso',
-                'kind': 'gentil',
-                'mean': 'mau',
-                'funny': 'engraçado',
-                'boring': 'chato',
-                'interesting': 'interessante',
-                'important': 'importante',
-                'special': 'especial',
-                'common': 'comum',
-                'different': 'diferente',
-                'same': 'mesmo',
-                'simple': 'simples',
-                'complex': 'complexo',
-                'clean': 'limpo',
-                'dirty': 'sujo',
-                'bright': 'brilhante',
                 'dark': 'escuro',
-                'strong': 'forte',
-                'weak': 'fraco',
-                'loud': 'alto',
-                'quiet': 'quieto',
-                'safe': 'seguro',
-                'dangerous': 'perigoso',
-                'beautiful': 'bonito',
-
-                // ===== ADVÉRBIOS =====
                 'very': 'muito',
                 'really': 'realmente',
                 'so': 'tão',
                 'too': 'também',
-                'quite': 'bastante',
                 'just': 'apenas',
                 'only': 'somente',
                 'almost': 'quase',
+                'already': 'já',
+                'still': 'ainda',
+                'again': 'novamente',
                 'also': 'também',
                 'well': 'bem',
-                'badly': 'mal',
-                'quickly': 'rapidamente',
-                'slowly': 'lentamente',
-                'carefully': 'cuidadosamente',
-                'easily': 'facilmente',
-                'hardly': 'dificilmente',
-
-                // ===== PREPOSIÇÕES =====
                 'in': 'em',
                 'on': 'em',
                 'at': 'em',
@@ -2271,7 +1988,6 @@
                 'between': 'entre',
                 'among': 'entre',
                 'through': 'através',
-                'across': 'através',
                 'around': 'ao redor',
                 'near': 'perto',
                 'far': 'longe',
@@ -2279,11 +1995,6 @@
                 'down': 'baixo',
                 'above': 'acima',
                 'below': 'abaixo',
-                'behind': 'atrás',
-                'in front of': 'na frente de',
-                'next to': 'ao lado de',
-
-                // ===== CONJUNÇÕES =====
                 'and': 'e',
                 'but': 'mas',
                 'or': 'ou',
@@ -2291,19 +2002,11 @@
                 'if': 'se',
                 'when': 'quando',
                 'while': 'enquanto',
-                'although': 'embora',
-                'however': 'no entanto',
-                'therefore': 'portanto',
-                'thus': 'assim',
                 'then': 'então',
                 'than': 'do que',
                 'that': 'que',
                 'which': 'que',
                 'who': 'quem',
-                'whom': 'quem',
-                'whose': 'cujo',
-
-                // ===== ARTIGOS =====
                 'the': 'o',
                 'a': 'um',
                 'an': 'um',
@@ -2322,10 +2025,6 @@
                 'much': 'muito',
                 'more': 'mais',
                 'less': 'menos',
-                'most': 'mais',
-                'least': 'menos',
-
-                // ===== PERGUNTAS =====
                 'what': 'o que',
                 'who': 'quem',
                 'where': 'onde',
@@ -2333,31 +2032,9 @@
                 'why': 'por que',
                 'how': 'como',
                 'which': 'qual',
-                'what is': 'o que é',
-                'what are': 'o que são',
-                'who is': 'quem é',
-                'where is': 'onde está',
-                'when is': 'quando é',
-                'why is': 'por que é',
-                'how is': 'como está',
-                'how much': 'quanto',
-                'how many': 'quantos',
-                'can you': 'você pode',
-                'could you': 'você poderia',
-                'would you': 'você gostaria',
-                'do you': 'você',
-                'are you': 'você está',
-                'is it': 'é',
-                'is that': 'é isso',
-                'is this': 'é este',
-                'what time': 'que horas',
-                'what day': 'que dia',
-
-                // ===== RESPOSTAS =====
                 'yes': 'sim',
                 'no': 'não',
                 'ok': 'ok',
-                'okay': 'ok',
                 'maybe': 'talvez',
                 'probably': 'provavelmente',
                 'certainly': 'certamente',
@@ -2369,8 +2046,6 @@
                 'wrong': 'errado',
                 'true': 'verdadeiro',
                 'false': 'falso',
-
-                // ===== EXPRESSÕES COMUNS =====
                 'a bit of': 'um pouco de',
                 'going ape': 'enlouquecendo',
                 'acting like': 'agindo como',
@@ -2387,30 +2062,16 @@
                 'don\'t': 'não',
                 'doesn\'t': 'não',
                 'didn\'t': 'não',
-                'wasn\'t': 'não era',
-                'weren\'t': 'não eram',
-                'haven\'t': 'não tenho',
-                'hasn\'t': 'não tem',
-                'hadn\'t': 'não tinha',
                 'can\'t': 'não pode',
                 'couldn\'t': 'não podia',
-                'wouldn\'t': 'não gostaria',
+                'wouldn\'t': 'não',
                 'shouldn\'t': 'não deveria',
                 'won\'t': 'não vai',
-                'don\'t know': 'não sei',
-                'i don\'t know': 'eu não sei',
-                'i don\'t': 'eu não',
-                'you don\'t': 'você não',
-                'we don\'t': 'nós não',
-                'they don\'t': 'eles não',
-                'he doesn\'t': 'ele não',
-                'she doesn\'t': 'ela não',
-                'it doesn\'t': 'isso não',
                 'i\'m': 'eu estou',
                 'you\'re': 'você está',
                 'he\'s': 'ele está',
                 'she\'s': 'ela está',
-                'it\'s': 'isso é',
+                'it\'s': 'é',
                 'we\'re': 'nós estamos',
                 'they\'re': 'eles estão',
                 'i\'ll': 'eu vou',
@@ -2434,19 +2095,16 @@
             };
 
             // ================================================================
-            // 🔧 FUNÇÕES DE TRADUÇÃO MELHORADAS
+            // 🔧 FUNÇÕES DE TRADUÇÃO
             // ================================================================
 
-            // Função para limpar caracteres especiais
             function limparPalavra(palavra) {
                 return palavra.replace(/[^a-zA-ZáàâãéêíóôõúçÁÀÂÃÉÊÍÓÔÕÚÇ']/g, '');
             }
 
-            // Função para traduzir palavra com contexto
             function traduzirPalavra(palavra, idiomaOrigem) {
                 if (!palavra || palavra.trim() === '') return palavra;
 
-                // Separa prefixos e sufixos
                 var prefixo = '';
                 var sufixo = '';
                 var palavraLimpa = palavra;
@@ -2468,23 +2126,38 @@
                 var traducao = '';
                 var palavraLower = palavraLimpa.toLowerCase();
 
-                // Verifica no dicionário
-                if (idiomaOrigem === 'ingles') {
-                    traducao = DICIONARIO[palavraLower] || palavraLimpa;
-                } else {
-                    // Português -> Inglês - busca invertida
-                    var encontrado = false;
-                    for (var chave in DICIONARIO) {
-                        if (DICIONARIO.hasOwnProperty(chave)) {
-                            if (DICIONARIO[chave] === palavraLower) {
-                                traducao = chave;
-                                encontrado = true;
-                                break;
-                            }
+                // Verifica expressões compostas primeiro
+                var expressaoEncontrada = false;
+                for (var chave in DICIONARIO) {
+                    if (DICIONARIO.hasOwnProperty(chave)) {
+                        if (chave === palavraLower) {
+                            traducao = DICIONARIO[chave];
+                            expressaoEncontrada = true;
+                            break;
                         }
                     }
-                    if (!encontrado) {
-                        traducao = palavraLimpa;
+                }
+
+                if (!expressaoEncontrada) {
+                    if (idiomaOrigem === 'ingles') {
+                        // Busca no dicionário
+                        var entrada = DICIONARIO[palavraLower];
+                        traducao = entrada || palavraLimpa;
+                    } else {
+                        // Português -> Inglês - busca invertida
+                        var encontrado = false;
+                        for (var chave2 in DICIONARIO) {
+                            if (DICIONARIO.hasOwnProperty(chave2)) {
+                                if (DICIONARIO[chave2] === palavraLower) {
+                                    traducao = chave2;
+                                    encontrado = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!encontrado) {
+                            traducao = palavraLimpa;
+                        }
                     }
                 }
 
@@ -2499,25 +2172,15 @@
                 return prefixo + traducao + sufixo;
             }
 
-            // Função para traduzir frase completa com contexto
             function traduzirFrase(texto, idiomaOrigem) {
                 if (!texto || texto.trim() === '') return '';
 
-                // Substitui contrações antes de traduzir
                 var textoProcessado = texto;
                 if (idiomaOrigem === 'ingles') {
                     textoProcessado = textoProcessado.replace(/\bdon't\b/gi, 'do not');
                     textoProcessado = textoProcessado.replace(/\bdoesn't\b/gi, 'does not');
                     textoProcessado = textoProcessado.replace(/\bdidn't\b/gi, 'did not');
-                    textoProcessado = textoProcessado.replace(/\bwasn't\b/gi, 'was not');
-                    textoProcessado = textoProcessado.replace(/\bweren't\b/gi, 'were not');
-                    textoProcessado = textoProcessado.replace(/\bhaven't\b/gi, 'have not');
-                    textoProcessado = textoProcessado.replace(/\bhasn't\b/gi, 'has not');
-                    textoProcessado = textoProcessado.replace(/\bhadn't\b/gi, 'had not');
                     textoProcessado = textoProcessado.replace(/\bcan't\b/gi, 'cannot');
-                    textoProcessado = textoProcessado.replace(/\bcouldn't\b/gi, 'could not');
-                    textoProcessado = textoProcessado.replace(/\bwouldn't\b/gi, 'would not');
-                    textoProcessado = textoProcessado.replace(/\bshouldn't\b/gi, 'should not');
                     textoProcessado = textoProcessado.replace(/\bwon't\b/gi, 'will not');
                     textoProcessado = textoProcessado.replace(/\bI'm\b/gi, 'I am');
                     textoProcessado = textoProcessado.replace(/\byou're\b/gi, 'you are');
@@ -2528,8 +2191,6 @@
                     textoProcessado = textoProcessado.replace(/\bthey're\b/gi, 'they are');
                     textoProcessado = textoProcessado.replace(/\bI'll\b/gi, 'I will');
                     textoProcessado = textoProcessado.replace(/\byou'll\b/gi, 'you will');
-                    textoProcessado = textoProcessado.replace(/\bhe'll\b/gi, 'he will');
-                    textoProcessado = textoProcessado.replace(/\bshe'll\b/gi, 'she will');
                     textoProcessado = textoProcessado.replace(/\bwe'll\b/gi, 'we will');
                     textoProcessado = textoProcessado.replace(/\bthey'll\b/gi, 'they will');
                     textoProcessado = textoProcessado.replace(/\bI've\b/gi, 'I have');
@@ -2538,14 +2199,10 @@
                     textoProcessado = textoProcessado.replace(/\bthey've\b/gi, 'they have');
                     textoProcessado = textoProcessado.replace(/\bI'd\b/gi, 'I would');
                     textoProcessado = textoProcessado.replace(/\byou'd\b/gi, 'you would');
-                    textoProcessado = textoProcessado.replace(/\bhe'd\b/gi, 'he would');
-                    textoProcessado = textoProcessado.replace(/\bshe'd\b/gi, 'she would');
                     textoProcessado = textoProcessado.replace(/\bwe'd\b/gi, 'we would');
                     textoProcessado = textoProcessado.replace(/\bthey'd\b/gi, 'they would');
-                    textoProcessado = textoProcessado.replace(/\blet's\b/gi, 'let us');
                 }
 
-                // Divide em palavras mantendo espaços
                 var palavras = textoProcessado.match(/\S+|\s+/g) || [];
                 var resultado = [];
 
@@ -2561,7 +2218,6 @@
                 return resultado.join('');
             }
 
-            // Função para detectar idioma
             function detectarIdioma(texto) {
                 if (!texto || texto.trim() === '') return 'desconhecido';
 
@@ -2612,7 +2268,6 @@
                 return percentualPT > 55 ? 'portugues' : 'ingles';
             }
 
-            // Função principal de processamento
             function processarComTraducao(texto) {
                 if (!texto || texto.trim() === '') return [];
 
@@ -2631,7 +2286,6 @@
                 for (var j = 0; j < linhasFiltradas.length; j++) {
                     var linhaLimpa = linhasFiltradas[j].trim();
 
-                    // Verifica separador
                     if (linhaLimpa.indexOf('||') !== -1) {
                         var partes = linhaLimpa.split('||');
                         frases.push({
@@ -3166,7 +2820,7 @@
             }
 
             // ================================================================
-            // 📖 LEITOR COM TRANSIÇÃO SUAVE
+            // 📖 LEITOR COM CORES FUNCIONANDO
             // ================================================================
             function abrirLeitor(index) {
                 if (index < 0 || index >= livros.length) return;
@@ -3282,7 +2936,7 @@
                     });
                 }
 
-                // Reaplicar estilos
+                // Aplicar cores e fontes com !important
                 var inglesEls = document.querySelectorAll('.frase-item .ingles');
                 for (var i = 0; i < inglesEls.length; i++) {
                     var el = inglesEls[i];
@@ -3334,7 +2988,7 @@
             }
 
             // ================================================================
-            // 🎨 APLICAR CONFIGURAÇÕES
+            // 🎨 APLICAR CONFIGURAÇÕES - GARANTINDO CORES
             // ================================================================
             function aplicarConfiguracoes() {
                 var container = document.getElementById('appContainer');
@@ -3346,6 +3000,7 @@
                 var corFundo = config.corFundo || '#FFFFFF';
                 var espacamento = tamanho * 0.7;
 
+                // Aplicar em TODOS os elementos com !important
                 var inglesEls = document.querySelectorAll('.frase-item .ingles');
                 for (var i = 0; i < inglesEls.length; i++) {
                     var el = inglesEls[i];
@@ -3890,7 +3545,6 @@
             // 🎯 EVENTOS
             // ================================================================
             function setupEventos() {
-                // ===== CAPA NA IMPORTAÇÃO =====
                 var btnCapa = document.getElementById('btnCapa');
                 var capaInput = document.getElementById('capaInput');
                 var capaPreview = document.getElementById('capaPreview');
@@ -3918,7 +3572,6 @@
                     });
                 }
 
-                // ===== BOTÃO VOLTAR FLUTUANTE =====
                 var btnVoltar = document.getElementById('btnVoltarFlutuante');
                 if (btnVoltar) {
                     btnVoltar.addEventListener('click', function() {
@@ -3927,7 +3580,6 @@
                     });
                 }
 
-                // ===== TOQUE NA TELA PARA MOSTRAR SETA =====
                 var paginaContainer = document.getElementById('paginaContainer');
                 if (paginaContainer) {
                     paginaContainer.addEventListener('click', function(e) {
@@ -3938,7 +3590,6 @@
                     });
                 }
 
-                // ===== IMPORTAÇÃO =====
                 var btnImportar = document.getElementById('btnImportar');
                 var btnImportarTop = document.getElementById('btnImportarTop');
                 var btnImportarConfig = document.getElementById('btnImportarConfig');
@@ -3953,7 +3604,6 @@
                 if (btnVoltarImportar) btnVoltarImportar.addEventListener('click', function() { mostrarTela(
                     'estante'); });
 
-                // ===== CONFIG =====
                 var btnConfig = document.getElementById('btnConfigEstante');
                 var btnFecharConfig = document.getElementById('btnFecharConfig');
                 var modalConfig = document.getElementById('modalConfig');
@@ -3966,7 +3616,6 @@
                     });
                 }
 
-                // ===== ÁUDIO - CORES (ARCO-ÍRIS) =====
                 criarRainbowPicker('rainbowIngles', 'handleIngles', 'corInglesLabel', config.corIngles, function(hex) {
                     config.corIngles = hex;
                     aplicarConfiguracoes();
@@ -3986,7 +3635,6 @@
                     salvarConfig();
                 });
 
-                // ===== ÁUDIO - Falar Tudo =====
                 var btnAudioFrase = document.getElementById('btnAudioFrase');
                 if (btnAudioFrase) {
                     btnAudioFrase.addEventListener('click', function() {
@@ -4002,7 +3650,6 @@
                     });
                 }
 
-                // ===== ÁUDIO - Auto =====
                 var btnAudioAuto = document.getElementById('btnAudioAutomatico');
                 if (btnAudioAuto) {
                     btnAudioAuto.addEventListener('click', function() {
@@ -4024,7 +3671,6 @@
                     });
                 }
 
-                // ===== NAVEGAÇÃO POR BOTÕES =====
                 var btnAnt = document.getElementById('btnAnterior');
                 var btnProx = document.getElementById('btnProximo');
 
@@ -4040,7 +3686,6 @@
                     });
                 }
 
-                // ===== TOGGLE PT =====
                 var btnTogglePT = document.getElementById('btnTogglePT');
                 if (btnTogglePT) {
                     btnTogglePT.addEventListener('click', function() {
@@ -4051,7 +3696,6 @@
                     });
                 }
 
-                // ===== IMPORTAÇÃO ARQUIVO =====
                 var importArea = document.getElementById('importArea');
                 var fileInput = document.getElementById('fileInput');
                 var btnImportarArquivo = document.getElementById('btnImportarArquivo');
@@ -4076,7 +3720,6 @@
                     btnImportarArquivo.addEventListener('click', importarArquivo);
                 }
 
-                // ===== CONFIGURAÇÕES - FONTE =====
                 var btnFonteMais = document.getElementById('btnFonteMais');
                 var btnFonteMenos = document.getElementById('btnFonteMenos');
 
@@ -4145,7 +3788,6 @@
                     })(opcoesFonte[i]);
                 }
 
-                // ===== TECLADO =====
                 document.addEventListener('keydown', function(e) {
                     var leitorAtivo = document.getElementById('telaLeitor') &&
                         document.getElementById('telaLeitor').classList.contains('ativa');
@@ -4162,7 +3804,6 @@
                     if (e.key === 'Escape') fecharConfig();
                 });
 
-                // ===== VOZES =====
                 if (window.speechSynthesis) {
                     var carregarVozes = function() {
                         var vozes = window.speechSynthesis.getVoices();
@@ -4193,7 +3834,6 @@
                     }
                 }, { once: true });
 
-                // ===== REDIMENSIONAMENTO =====
                 var resizeTimeout;
                 window.addEventListener('resize', function() {
                     clearTimeout(resizeTimeout);
@@ -4205,10 +3845,8 @@
                     }, 300);
                 });
 
-                // ===== SWIPE =====
                 setupSwipe();
 
-                // ===== CARREGAR PROGRESSO SALVO =====
                 setTimeout(function() {
                     var livrosComProgresso = [];
                     for (var i = 0; i < livros.length; i++) {

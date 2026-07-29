@@ -1634,7 +1634,7 @@
             var FRASES_POR_PAGINA = 10;
 
             // ================================================================
-            // 📖 DICIONÁRIO COMPLETO
+            // 📖 DICIONÁRIO COMPLETO E OTIMIZADO
             // ================================================================
             var DICIONARIO = {
                 // PRONOMES
@@ -1642,33 +1642,32 @@
                 'you': 'você',
                 'he': 'ele',
                 'she': 'ela',
-                'it': 'ele/ela',
+                'it': 'isso',
                 'we': 'nós',
-                'they': 'eles/elas',
+                'they': 'eles',
                 'me': 'mim',
                 'him': 'ele',
                 'her': 'ela',
                 'us': 'nós',
-                'them': 'eles/elas',
-                'my': 'meu/minha',
-                'your': 'seu/sua',
+                'them': 'eles',
+                'my': 'meu',
+                'your': 'seu',
                 'his': 'dele',
                 'her': 'dela',
-                'its': 'dele/dela',
-                'our': 'nosso/nossa',
-                'their': 'deles/delas',
-                'mine': 'meu/minha',
-                'yours': 'seu/sua',
-                'ours': 'nosso/nossa',
-                'theirs': 'deles/delas',
+                'its': 'dele',
+                'our': 'nosso',
+                'their': 'deles',
+                'mine': 'meu',
+                'yours': 'seu',
+                'ours': 'nosso',
+                'theirs': 'deles',
 
                 // VERBOS
-                'be': 'ser/estar',
-                'am': 'sou/estou',
-                'are': 'são/estão',
-                'is': 'é/está',
-                'was': 'era/estava',
-                'were': 'eram/estavam',
+                'am': 'sou',
+                'are': 'são',
+                'is': 'é',
+                'was': 'era',
+                'were': 'eram',
                 'have': 'ter',
                 'has': 'tem',
                 'had': 'tinha',
@@ -1679,7 +1678,6 @@
                 'said': 'disse',
                 'go': 'ir',
                 'went': 'foi',
-                'gone': 'ido',
                 'get': 'obter',
                 'got': 'obteve',
                 'make': 'fazer',
@@ -1690,7 +1688,6 @@
                 'thought': 'pensou',
                 'see': 'ver',
                 'saw': 'viu',
-                'seen': 'visto',
                 'come': 'vir',
                 'came': 'veio',
                 'want': 'querer',
@@ -1745,8 +1742,8 @@
                 'showed': 'mostrou',
                 'hear': 'ouvir',
                 'heard': 'ouviu',
-                'play': 'jogar/tocar',
-                'played': 'jogou/tocou',
+                'play': 'jogar',
+                'played': 'jogou',
                 'run': 'correr',
                 'ran': 'correu',
                 'move': 'mover',
@@ -1791,6 +1788,8 @@
                 'drove': 'dirigiu',
                 'cook': 'cozinhar',
                 'cooked': 'cozinhou',
+                'be': 'ser',
+                'been': 'sido',
 
                 // SAUDAÇÕES
                 'hello': 'olá',
@@ -1830,6 +1829,14 @@
                 'you are welcome': 'de nada',
                 "you're welcome": 'de nada',
                 'no problem': 'sem problema',
+                'yes': 'sim',
+                'no': 'não',
+                'maybe': 'talvez',
+                'probably': 'provavelmente',
+                'certainly': 'certamente',
+                'absolutely': 'absolutamente',
+                'definitely': 'definitivamente',
+                'of course': 'claro',
 
                 // FAMÍLIA
                 'father': 'pai',
@@ -2029,14 +2036,14 @@
                 'slow': 'lento',
                 'easy': 'fácil',
                 'difficult': 'difícil',
-                'hard': 'duro/difícil',
+                'hard': 'duro',
                 'soft': 'macio',
                 'heavy': 'pesado',
                 'light': 'leve',
                 'hot': 'quente',
                 'cold': 'frio',
                 'warm': 'morno',
-                'cool': 'legal/fresco',
+                'cool': 'legal',
                 'calm': 'calmo',
                 'nervous': 'nervoso',
                 'scared': 'assustado',
@@ -2062,14 +2069,14 @@
                 'very': 'muito',
                 'really': 'realmente',
                 'so': 'tão',
-                'too': 'também/demais',
+                'too': 'também',
                 'quite': 'bastante',
                 'just': 'apenas',
                 'only': 'somente',
                 'almost': 'quase',
                 'already': 'já',
                 'still': 'ainda',
-                'yet': 'ainda/já',
+                'yet': 'ainda',
                 'again': 'novamente',
                 'also': 'também',
                 'well': 'bem',
@@ -2085,15 +2092,15 @@
                 'on': 'em',
                 'at': 'em',
                 'to': 'para',
-                'for': 'para/por',
+                'for': 'para',
                 'with': 'com',
                 'without': 'sem',
                 'by': 'por',
-                'from': 'de/desde',
+                'from': 'de',
                 'of': 'de',
                 'about': 'sobre',
                 'over': 'sobre',
-                'under': 'sob/abaixo',
+                'under': 'sob',
                 'between': 'entre',
                 'among': 'entre',
                 'through': 'através',
@@ -2121,23 +2128,23 @@
                 'then': 'então',
                 'than': 'do que',
                 'that': 'que',
-                'which': 'que/o qual',
-                'who': 'quem/que',
+                'which': 'que',
+                'who': 'quem',
                 'whom': 'quem',
                 'whose': 'cujo',
 
                 // ARTIGOS
-                'the': 'o/a/os/as',
-                'a': 'um/uma',
-                'an': 'um/uma',
-                'this': 'este/esta',
-                'that': 'aquele/aquela',
-                'these': 'estes/estas',
-                'those': 'aqueles/aquelas',
-                'all': 'tudo/todos',
-                'some': 'alguns/algumas',
+                'the': 'o',
+                'a': 'um',
+                'an': 'um',
+                'this': 'este',
+                'that': 'aquele',
+                'these': 'estes',
+                'those': 'aqueles',
+                'all': 'todos',
+                'some': 'alguns',
                 'any': 'qualquer',
-                'no': 'nenhum/nenhuma',
+                'no': 'nenhum',
                 'every': 'cada',
                 'each': 'cada',
                 'few': 'poucos',
@@ -2174,28 +2181,20 @@
                 'what time': 'que horas',
                 'what day': 'que dia',
 
-                // RESPOSTAS
-                'yes': 'sim',
-                'no': 'não',
-                'ok': 'ok',
-                'okay': 'ok',
-                'maybe': 'talvez',
-                'probably': 'provavelmente',
-                'certainly': 'certamente',
-                'absolutely': 'absolutamente',
-                'definitely': 'definitivamente',
-                'of course': 'claro',
+                // EXPRESSÕES
                 'a bit of': 'um pouco de',
                 'going ape': 'enlouquecendo',
                 'acting like': 'agindo como',
                 'show you how': 'mostrar como',
                 'tick birds': 'pássaros carrapateiros',
                 'old pro': 'velho profissional',
-                'the buzz from the bees': 'o zumbido das abelhas'
+                'the buzz from the bees': 'o zumbido das abelhas',
+                'over here': 'aqui',
+                'oh my goodness': 'oh meu Deus'
             };
 
             // ================================================================
-            // 🔧 FUNÇÕES DE TRADUÇÃO - IGNORA CARACTERES ESPECIAIS
+            // 🔧 NOVA LÓGICA DE TRADUÇÃO - COMPLETA E SEM MISTURA
             // ================================================================
 
             // Função para limpar caracteres especiais e pegar apenas a palavra
@@ -2203,25 +2202,39 @@
                 return palavra.replace(/[^a-zA-ZáàâãéêíóôõúçÁÀÂÃÉÊÍÓÔÕÚÇ']/g, '');
             }
 
+            // Função para traduzir uma palavra
             function traduzirPalavra(palavra, idiomaOrigem) {
                 if (!palavra || palavra.trim() === '') return palavra;
 
-                // Separa pontuação e caracteres especiais
-                var partes = palavra.match(/^([^a-zA-ZáàâãéêíóôõúçÁÀÂÃÉÊÍÓÔÕÚÇ']*)(.*?)([^a-zA-ZáàâãéêíóôõúçÁÀÂÃÉÊÍÓÔÕÚÇ']*)$/);
-                if (!partes) return palavra;
+                // Separa prefixos (hífens, aspas, etc.) e sufixos (pontuação)
+                var prefixo = '';
+                var sufixo = '';
+                var palavraLimpa = palavra;
 
-                var prefixo = partes[1] || '';
-                var palavraLimpa = partes[2] || '';
-                var sufixo = partes[3] || '';
+                // Remove prefixos (ex: "-", '"', "'", etc.)
+                var matchPrefixo = palavra.match(/^([^a-zA-ZáàâãéêíóôõúçÁÀÂÃÉÊÍÓÔÕÚÇ']*)(.*)$/);
+                if (matchPrefixo) {
+                    prefixo = matchPrefixo[1] || '';
+                    palavraLimpa = matchPrefixo[2] || '';
+                }
+
+                // Remove sufixos (pontuação)
+                var matchSufixo = palavraLimpa.match(/^(.*?)([^a-zA-ZáàâãéêíóôõúçÁÀÂÃÉÊÍÓÔÕÚÇ']*)$/);
+                if (matchSufixo) {
+                    palavraLimpa = matchSufixo[1] || '';
+                    sufixo = matchSufixo[2] || '';
+                }
 
                 if (!palavraLimpa) return palavra;
 
                 var traducao = '';
 
                 if (idiomaOrigem === 'ingles') {
+                    // Inglês -> Português
                     var entrada = DICIONARIO[palavraLimpa.toLowerCase()];
                     traducao = entrada || palavraLimpa;
                 } else {
+                    // Português -> Inglês
                     var encontrado = false;
                     for (var chave in DICIONARIO) {
                         if (DICIONARIO.hasOwnProperty(chave)) {
@@ -2248,9 +2261,11 @@
                 return prefixo + traducao + sufixo;
             }
 
+            // Função para traduzir uma frase completa
             function traduzirFrase(texto, idiomaOrigem) {
                 if (!texto || texto.trim() === '') return '';
 
+                // Mantém espaços e pontuação
                 var palavras = texto.match(/\S+|\s+/g) || [];
                 var resultado = [];
 
@@ -2266,6 +2281,7 @@
                 return resultado.join('');
             }
 
+            // Função para detectar idioma de um texto
             function detectarIdioma(texto) {
                 if (!texto || texto.trim() === '') return 'desconhecido';
 
@@ -2281,6 +2297,7 @@
 
                     var entrada = DICIONARIO[palavraLimpa];
                     if (entrada) {
+                        // Se a tradução é igual à palavra, é português
                         if (entrada === palavraLimpa) {
                             contadorPT++;
                         } else {
@@ -2295,6 +2312,7 @@
                     }
                 }
 
+                // Palavras comuns em português
                 var palavrasPTComuns = ['de', 'do', 'da', 'que', 'se', 'não', 'sim', 'para', 'com', 'por', 'um', 'uma', 'os',
                     'as', 'em', 'no', 'na'
                 ];
@@ -2316,6 +2334,7 @@
                 return percentualPT > 55 ? 'portugues' : 'ingles';
             }
 
+            // Função principal para processar arquivo com tradução
             function processarComTraducao(texto) {
                 if (!texto || texto.trim() === '') return [];
 
@@ -2344,23 +2363,26 @@
                         continue;
                     }
 
+                    // Detecta idioma da linha
                     var idiomaLinha = detectarIdioma(linhaLimpa);
 
                     if (idiomaLinha === 'ingles') {
+                        // Inglês -> Português
                         frases.push({
                             en: linhaLimpa,
                             pt: traduzirFrase(linhaLimpa, 'ingles')
                         });
                     } else if (idiomaLinha === 'portugues') {
+                        // Português -> Inglês
                         frases.push({
                             en: traduzirFrase(linhaLimpa, 'portugues'),
                             pt: linhaLimpa
                         });
                     } else {
-                        var traducaoEn = traduzirFrase(linhaLimpa, 'portugues');
+                        // Se não detectou, assume inglês
                         frases.push({
-                            en: traducaoEn || linhaLimpa,
-                            pt: linhaLimpa
+                            en: linhaLimpa,
+                            pt: traduzirFrase(linhaLimpa, 'ingles')
                         });
                     }
                 }

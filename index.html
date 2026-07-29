@@ -1,3911 +1,875 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <meta name="theme-color" content="#5C3D2E" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="mobile-web-app-capable" content="yes" />
-    
-    <title>📚 YouCan Leitor</title>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js">
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js">
-    </script>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PolyglotShelf - Leitor Bilíngue</title>
+    <!-- Bibliotecas auxiliares para leitura de arquivos -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
     <style>
+        :root {
+            --bg-color: #f7f9fc;
+            --surface-color: #ffffff;
+            --text-color: #2d3748;
+            --trans-color: #4a90e2;
+            --accent-color: #e2e8f0;
+            --shelf-color: #8b5a2b;
+            --shelf-shadow: rgba(0,0,0,0.2);
+            --card-bg: #ffffff;
+            --font-pixel-size: 16px;
+        }
+
         * {
-            margin: 0;
-            padding: 0;
             box-sizing: border-box;
-        }
-
-        html,
-        body {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background: #5C3D2E;
-            -webkit-tap-highlight-color: transparent;
-            touch-action: none;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 0;
             margin: 0;
-            height: 100vh;
-            height: 100dvh;
-            overflow: hidden;
-            user-select: none;
-            -webkit-user-select: none;
+            padding: 0;
+            font-family: var(--selected-font, 'Arial', sans-serif);
         }
 
-        /* ===== SPLASH SCREEN ===== */
-        #splashScreen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: #5C3D2E;
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            transition: opacity 0.8s ease, transform 0.8s ease;
+            overflow-x: hidden;
         }
 
-        #splashScreen.fade-out {
-            opacity: 0;
-            transform: scale(1.1);
-            pointer-events: none;
-        }
-
-        #splashScreen .logo-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 16px;
-            animation: splashPulse 2s ease-in-out infinite;
-        }
-
-        #splashScreen .logo-icon {
-            font-size: 100px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            padding: 30px;
-            width: 160px;
-            height: 160px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
-            border: 3px solid rgba(255, 255, 255, 0.15);
-        }
-
-        #splashScreen .logo-text {
-            color: #FFF;
-            font-size: 28px;
-            font-weight: 700;
-            letter-spacing: 2px;
-            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        #splashScreen .logo-subtext {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 14px;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-        }
-
-        #splashScreen .loading-bar {
-            width: 200px;
-            height: 3px;
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 3px;
-            margin-top: 20px;
-            overflow: hidden;
-        }
-
-        #splashScreen .loading-bar .progress {
-            height: 100%;
-            background: linear-gradient(90deg, #4CAF50, #8BC34A);
-            border-radius: 3px;
-            width: 100%;
-        }
-
-        #splashScreen .version-info {
-            color: rgba(255, 255, 255, 0.3);
-            font-size: 11px;
-            margin-top: 20px;
-            letter-spacing: 1px;
-        }
-
-        @keyframes splashPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-        }
-
-        /* ===== APP CONTAINER ===== */
-        .app-container {
-            width: 100%;
-            height: 100vh;
-            height: 100dvh;
-            max-width: 100%;
-            background: #E8DDD0;
-            border-radius: 0;
-            box-shadow: none;
-            overflow: hidden;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            opacity: 0;
-            transition: opacity 0.6s ease;
-        }
-
-        .app-container.visible {
-            opacity: 1;
-        }
-
-        /* ===== TOOLBAR ===== */
-        .toolbar {
-            background: #5C3D2E;
-            padding: 6px 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-shrink: 0;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            min-height: 36px;
-        }
-
-        .toolbar h1 {
-            color: #FFF;
-            font-size: 13px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .toolbar-actions {
-            display: flex;
-            gap: 4px;
-            align-items: center;
-        }
-
-        .toolbar-actions button {
-            background: rgba(255, 255, 255, 0.15);
-            border: none;
-            color: #FFF;
-            border-radius: 50%;
-            width: 26px;
-            height: 26px;
-            font-size: 12px;
-            cursor: pointer;
-            transition: background 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .toolbar-actions button:active {
-            background: rgba(255, 255, 255, 0.3);
-            transform: scale(0.95);
-        }
-
-        .toolbar-leitor {
-            background: #5C3D2E;
-            padding: 4px 10px;
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            flex-shrink: 0;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            min-height: 32px;
-        }
-
-        .toolbar-leitor .leitor-actions {
-            display: flex;
-            gap: 3px;
-            align-items: center;
-            flex-wrap: wrap;
-            width: 100%;
-            justify-content: flex-start;
-        }
-
-        .toolbar-leitor .leitor-actions button {
-            padding: 2px 6px;
-            border: none;
-            border-radius: 10px;
-            font-size: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            background: rgba(255, 255, 255, 0.15);
-            color: #FFF;
-            white-space: nowrap;
-        }
-
-        .toolbar-leitor .leitor-actions button:active {
-            transform: scale(0.95);
-        }
-
-        .toolbar-leitor .leitor-actions button.ativo {
-            background: #4CAF50;
-            color: #FFF;
-        }
-
-        .toolbar-leitor .leitor-actions button.primario {
-            background: rgba(255, 255, 255, 0.25);
-            color: #FFF;
-        }
-
-        .toolbar-leitor .leitor-actions button.btn-audio {
-            background: #2196F3;
-            color: #FFF;
-        }
-
-        .toolbar-leitor .leitor-actions button.btn-audio.ativo-audio {
-            background: #FF5722;
-        }
-
-        /* ===== TELAS ===== */
-        .tela {
-            display: none;
-            padding: 6px 8px;
-            overflow-y: auto;
-            flex: 1;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .tela.ativa {
-            display: flex !important;
-            flex-direction: column;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ================================================================
-                   🏠 ESTANTE
-                   ================================================================ */
-        .estante-wrapper {
-            flex: 1;
-            overflow-y: auto;
-            padding: 4px 4px 50px 4px;
-            background: #DCCFC0;
-            height: 100%;
-        }
-
-        .prateleira {
-            background: #8B6F4C;
-            border-radius: 8px 8px 0 0;
-            padding: 10px 8px 6px 8px;
-            margin-bottom: 16px;
-            position: relative;
-            box-shadow: 0 -4px 0 #6B553A, 0 6px 25px rgba(0, 0, 0, 0.2);
-            border: 1px solid #7A5F3F;
-        }
-
-        .prateleira::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 100%;
-            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.05), transparent);
-            border-radius: 8px 8px 0 0;
-            pointer-events: none;
-        }
-
-        .prateleira::after {
-            content: '';
-            position: absolute;
-            bottom: -12px;
-            left: -2px;
-            right: -2px;
-            height: 14px;
-            background: linear-gradient(to bottom, #7A5F3F, #5C4A30);
-            border-radius: 0 0 6px 6px;
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
-            border-left: 1px solid #6B553A;
-            border-right: 1px solid #6B553A;
-        }
-
-        .prateleira-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 6px;
-            padding: 0 2px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .prateleira-header .titulo {
-            color: #F5EDE0;
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
-            background: rgba(0, 0, 0, 0.2);
-            padding: 2px 8px;
-            border-radius: 8px;
-        }
-
-        .prateleira-header .contador {
-            color: #F5EDE0;
-            font-size: 8px;
-            opacity: 0.6;
-            background: rgba(0, 0, 0, 0.15);
-            padding: 2px 6px;
-            border-radius: 6px;
-        }
-
-        .compartimentos {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            padding: 4px 2px 6px 2px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .compartimento {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-        }
-
-        .livro-card {
-            width: 100%;
-            max-width: 160px;
-            cursor: pointer;
-            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            z-index: 2;
-            margin: 0 auto;
-        }
-
-        .livro-card:active {
-            transform: translateY(-8px) scale(0.96);
-        }
-
-        .capa-livro {
-            width: 100%;
-            aspect-ratio: 2/3;
-            border-radius: 6px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: #FFF;
+        header {
+            background-color: var(--surface-color);
+            padding: 16px;
             text-align: center;
-            padding: 12px 8px;
-            font-family: 'Georgia', serif;
-            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
-            position: relative;
-            box-shadow: -3px 0 15px rgba(0, 0, 0, 0.2), 3px 0 12px rgba(0, 0, 0, 0.1);
-            transition: all 0.2s;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            overflow: hidden;
-            min-height: 150px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .capa-livro img {
+        h1 {
+            font-size: 1.2rem;
+            color: var(--trans-color);
+        }
+
+        .btn-add {
+            background-color: var(--trans-color);
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        /* Estante de Livros */
+        .shelf-container {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .shelf-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            padding-bottom: 12px;
+            border-bottom: 14px solid var(--shelf-color);
+            box-shadow: 0 8px 6px -6px var(--shelf-shadow);
+            min-height: 160px;
+            align-items: end;
+        }
+
+        .book-card {
+            background-color: var(--card-bg);
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            height: 140px;
+            transition: transform 0.2s;
+            position: relative;
+        }
+
+        .book-card:active {
+            transform: scale(0.95);
+        }
+
+        .book-cover {
+            flex: 1;
+            background-color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .book-cover img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            position: absolute;
-            top: 0;
-            left: 0;
         }
 
-        .capa-livro .capa-texto {
-            position: relative;
-            z-index: 2;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            padding: 8px;
-        }
-
-        .capa-livro .capa-titulo {
-            font-size: 16px;
-            font-weight: 700;
-            line-height: 1.2;
-            word-break: break-word;
-            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
-            max-width: 100%;
-        }
-
-        .capa-livro .capa-autor {
-            font-size: 11px;
-            opacity: 0.85;
-            margin-top: 4px;
-            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
-        }
-
-        .capa-livro .capa-progresso {
-            position: absolute;
-            bottom: 6px;
-            right: 8px;
-            font-size: 11px;
-            font-weight: 700;
-            color: rgba(255, 255, 255, 0.95);
-            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9);
-            z-index: 3;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 2px 10px;
-            border-radius: 10px;
-            backdrop-filter: blur(4px);
-        }
-
-        .capa-livro .capa-badge {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            font-size: 24px;
-            z-index: 3;
-            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
-        }
-
-        .capa-livro .capa-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.4));
-            z-index: 1;
-        }
-
-        .btn-excluir-livro {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background: rgba(229, 57, 53, 0.92);
-            border: 2px solid #FFF;
-            color: #FFF;
-            border-radius: 50%;
-            width: 22px;
-            height: 22px;
-            font-size: 11px;
-            cursor: pointer;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-        }
-
-        .livro-card:hover .btn-excluir-livro {
-            display: flex;
-        }
-
-        .btn-excluir-livro:hover {
-            background: #C62828;
-        }
-
-        .estante-vazia {
+        .book-cover span {
+            font-size: 0.75rem;
+            padding: 4px;
             text-align: center;
-            padding: 30px 20px;
-            color: #F5EDE0;
-            width: 100%;
+            color: var(--text-color);
         }
 
-        .estante-vazia .icone {
-            font-size: 48px;
-            margin-bottom: 10px;
-            opacity: 0.8;
-        }
-
-        .estante-vazia p {
-            font-size: 13px;
-            line-height: 1.6;
-            opacity: 0.8;
-        }
-
-        /* ================================================================
-                   📖 LEITOR
-                   ================================================================ */
-        .pagina-container {
-            flex: 1;
+        .book-title-label {
+            font-size: 0.7rem;
+            padding: 4px;
+            text-align: center;
+            background-color: var(--surface-color);
+            white-space: nowrap;
             overflow: hidden;
-            padding: 0;
-            min-height: 0;
+            text-overflow: ellipsis;
+            font-weight: bold;
+        }
+
+        .empty-slot {
+            border: 2px dashed var(--accent-color);
+            border-radius: 6px;
+            height: 140px;
             display: flex;
-            flex-direction: column;
-            touch-action: none;
-            position: relative;
-            height: 100%;
-        }
-
-        .pagina-wrapper {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            will-change: transform;
-            height: 100%;
-        }
-
-        .pagina-wrapper.slide-left {
-            transform: translateX(-100%);
-        }
-
-        .pagina-wrapper.slide-right {
-            transform: translateX(100%);
-        }
-
-        .pagina-item {
-            border-radius: 10px;
-            padding: 12px 16px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-            border-left: 4px solid #5C3D2E;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-evenly;
-            min-height: 100%;
-            height: 100%;
-            transition: background-color 0.3s ease;
-            flex-shrink: 0;
-        }
-
-        .frase-item {
-            padding: 4px 0;
-            border-radius: 4px;
-            transition: background 0.2s;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            margin: 2px 0;
-            width: 100%;
-        }
-
-        .frase-item .ingles {
-            font-size: 17px;
-            line-height: 1.5;
-            font-weight: 600;
-            cursor: pointer;
-            padding: 2px 4px;
-            border-radius: 4px;
-            transition: background 0.2s, font-size 0.2s;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-            width: 100%;
-            text-align: left;
-        }
-
-        .frase-item .ingles:active {
-            background: #E3F2FD;
-        }
-
-        .frase-item .ingles::after {
-            content: ' 🔊';
-            font-size: 10px;
-            opacity: 0.15;
-            transition: opacity 0.2s;
-        }
-
-        .frase-item .ingles:active::after {
-            opacity: 0.6;
-        }
-
-        .frase-item .ingles.falando {
-            background: #BBDEFB !important;
-            animation: pulseAudio 0.8s ease-in-out infinite;
-        }
-
-        .frase-item .portugues {
-            font-size: 14px;
-            line-height: 1.4;
-            padding: 2px 4px 4px 4px;
-            transition: color 0.2s, font-size 0.2s;
-            width: 100%;
-            text-align: left;
-        }
-
-        .frase-item .portugues.oculto {
-            display: none;
-        }
-
-        .frase-item .divisor-frase {
-            height: 1px;
-            background: linear-gradient(to right, #E8DDD0, transparent);
-            margin: 3px 0;
-            transition: margin 0.2s;
-            width: 100%;
-        }
-
-        @keyframes pulseAudio {
-            0%, 100% { background: #BBDEFB !important; }
-            50% { background: #90CAF9 !important; }
-        }
-
-        /* ================================================================
-                   BOTÃO VOLTAR - INFERIOR ESQUERDO
-                   ================================================================ */
-        .btn-voltar-flutuante {
-            position: fixed;
-            bottom: 24px;
-            left: 16px;
-            background: rgba(92, 61, 46, 0.9);
-            color: #FFF;
-            border: none;
-            border-radius: 50%;
-            width: 64px;
-            height: 64px;
-            font-size: 36px;
-            cursor: pointer;
-            z-index: 100;
-            display: none;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(8px);
-            transition: opacity 0.3s ease, transform 0.3s ease;
-            touch-action: none;
+            color: var(--accent-color);
+            font-size: 1.5rem;
         }
 
-        .btn-voltar-flutuante.visivel {
-            display: flex;
-            animation: fadeInBtn 0.3s ease;
-        }
-
-        .btn-voltar-flutuante:active {
-            transform: scale(0.85);
-        }
-
-        @keyframes fadeInBtn {
-            from { opacity: 0; transform: scale(0.8); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        /* ===== INDICADOR DE PÁGINA ===== */
-        .page-indicator {
+        /* Botão de Configurações Flutuante (Inferior Direito) */
+        .fab-settings {
             position: fixed;
             bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.6);
-            color: #FFF;
-            padding: 4px 14px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            z-index: 50;
-            backdrop-filter: blur(8px);
-            display: none;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .page-indicator.visivel {
-            display: block;
-            opacity: 1;
-        }
-
-        /* ================================================================
-                   ⚙️ CONFIGURAÇÕES
-                   ================================================================ */
-        .btn-config {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            background: #5C3D2E;
-            color: #FFF;
-            border: none;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            background-color: var(--trans-color);
+            color: white;
             border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            font-size: 16px;
-            cursor: pointer;
-            box-shadow: 0 4px 16px rgba(92, 61, 46, 0.45);
-            transition: all 0.25s;
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 20;
-        }
-
-        .btn-config:active {
-            transform: scale(0.9) rotate(30deg);
-        }
-
-        .fab {
-            position: sticky;
-            bottom: 10px;
-            align-self: flex-end;
-            background: #5C3D2E;
-            color: #FFF;
-            border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            font-size: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
             cursor: pointer;
-            box-shadow: 0 4px 16px rgba(92, 61, 46, 0.4);
+            z-index: 100;
+            font-size: 1.5rem;
+            border: none;
             transition: transform 0.2s;
-            flex-shrink: 0;
-            margin-top: auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 5;
         }
 
-        .fab:active {
+        .fab-settings:active {
             transform: scale(0.9);
         }
 
-        /* ================================================================
-                   📤 IMPORTAÇÃO
-                   ================================================================ */
-        .import-area {
-            border: 2px dashed #D5CCC2;
-            border-radius: 10px;
-            padding: 14px 10px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-bottom: 8px;
-            background: #FAF8F5;
-        }
-
-        .import-area:active {
-            border-color: #5C3D2E;
-            background: #F5F0EB;
-        }
-
-        .import-area input[type="file"] {
-            display: none;
-        }
-
-        .import-area .icone {
-            font-size: 28px;
-            margin-bottom: 2px;
-        }
-
-        .import-area p {
-            color: #888;
-            font-size: 10px;
-        }
-
-        .import-area .nome-arquivo {
-            color: #4CAF50;
-            font-weight: 600;
-            margin-top: 2px;
-            font-size: 10px;
-        }
-
-        .import-form label {
-            font-weight: 600;
-            font-size: 10px;
-            color: #555;
-            display: block;
-            margin-bottom: 2px;
-        }
-
-        .import-form input[type="text"] {
-            width: 100%;
-            padding: 6px 8px;
-            border: 2px solid #E8DDD0;
-            border-radius: 6px;
-            font-size: 11px;
-            margin-bottom: 6px;
-            transition: border 0.2s;
-            background: #FAF8F5;
-        }
-
-        .import-form input[type="text"]:focus {
-            outline: none;
-            border-color: #5C3D2E;
-        }
-
-        .import-form .btn-importar {
-            width: 100%;
-            padding: 6px;
-            border: none;
-            border-radius: 6px;
-            background: #4CAF50;
-            color: #FFF;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .import-form .btn-importar:active:not(:disabled) {
-            transform: scale(0.98);
-            background: #388E3C;
-        }
-
-        .import-form .btn-importar:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .import-form .formatos-aceitos {
-            display: flex;
-            gap: 3px;
-            flex-wrap: wrap;
-            margin-top: 3px;
-            justify-content: center;
-        }
-
-        .import-form .formatos-aceitos span {
-            background: #E8DDD0;
-            padding: 2px 6px;
-            border-radius: 6px;
-            font-size: 7px;
-            font-weight: 600;
-            color: #555;
-        }
-
-        .import-form .formatos-aceitos span.suportado {
-            background: #4CAF50;
-            color: #FFF;
-        }
-
-        .import-form .dica {
-            margin-top: 6px;
-            padding: 8px;
-            background: #F5F0EB;
-            border-radius: 6px;
-            font-size: 9px;
-            color: #888;
-            line-height: 1.4;
-        }
-
-        .import-form .dica strong {
-            color: #555;
-        }
-
-        .import-capa-area {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 8px;
-            padding: 8px;
-            background: #FAF8F5;
-            border-radius: 8px;
-            border: 2px solid #E8DDD0;
-        }
-
-        .import-capa-area .capa-preview {
-            width: 50px;
-            height: 75px;
-            border-radius: 4px;
-            background: #D5CCC2;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            flex-shrink: 0;
-            overflow: hidden;
-        }
-
-        .import-capa-area .capa-preview img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .import-capa-area .capa-input-area {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .import-capa-area .capa-input-area input[type="file"] {
-            display: none;
-        }
-
-        .import-capa-area .capa-input-area .btn-capa {
-            padding: 4px 10px;
-            background: #5C3D2E;
-            color: #FFF;
-            border: none;
-            border-radius: 4px;
-            font-size: 9px;
-            cursor: pointer;
-            font-weight: 600;
-            text-align: center;
-        }
-
-        .import-capa-area .capa-input-area .btn-capa:active {
-            transform: scale(0.95);
-        }
-
-        .import-capa-area .capa-input-area .capa-nome {
-            font-size: 8px;
-            color: #888;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        /* ================================================================
-                   MODAL CONFIG
-                   ================================================================ */
-        .modal-overlay {
+        /* Modal / Telas */
+        .modal {
             position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.55);
-            backdrop-filter: blur(4px);
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
             display: none;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             z-index: 1000;
-            padding: 14px;
+            padding: 16px;
         }
 
-        .modal-overlay.ativo {
+        .modal.active {
             display: flex;
         }
 
-        .modal {
-            background: #FFF;
-            border-radius: 16px;
-            max-width: 360px;
+        .modal-content {
+            background-color: var(--surface-color);
+            padding: 20px;
+            border-radius: 12px;
             width: 100%;
-            padding: 16px;
+            max-width: 400px;
             max-height: 90vh;
             overflow-y: auto;
-            animation: modalIn 0.3s ease;
-        }
-
-        @keyframes modalIn {
-            from { opacity: 0; transform: scale(0.92); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        .modal h2 {
-            font-size: 14px;
-            color: #5C3D2E;
-            margin-bottom: 10px;
-        }
-
-        .modal .grupo {
-            margin-bottom: 10px;
-        }
-
-        .modal .grupo label {
-            display: block;
-            font-size: 9px;
-            font-weight: 600;
-            color: #555;
-            margin-bottom: 3px;
-        }
-
-        .modal .grupo .opcoes {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             display: flex;
-            gap: 3px;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 16px;
         }
 
-        .modal .grupo .opcoes button {
-            padding: 3px 8px;
-            border: 2px solid #E8DDD0;
-            border-radius: 4px;
-            background: #FFF;
-            cursor: pointer;
-            font-size: 9px;
-            transition: all 0.2s;
-            color: #333;
-        }
-
-        .modal .grupo .opcoes button:active {
-            transform: scale(0.95);
-        }
-
-        .modal .grupo .opcoes button.selecionado {
-            border-color: #5C3D2E;
-            background: #5C3D2E;
-            color: #FFF;
-        }
-
-        .modal .grupo .controle-fonte {
+        .modal-header {
             display: flex;
+            justify-content: space-between;
             align-items: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: var(--trans-color);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
             gap: 6px;
         }
 
-        .modal .grupo .controle-fonte button {
-            width: 24px;
-            height: 24px;
-            border: none;
-            border-radius: 4px;
-            background: #E8DDD0;
-            font-size: 12px;
-            cursor: pointer;
+        .form-group label {
+            font-size: 0.85rem;
+            font-weight: bold;
         }
 
-        .modal .grupo .controle-fonte button:active {
-            transform: scale(0.9);
+        .form-group select, .form-group input {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid var(--accent-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-size: 0.9rem;
         }
 
-        .modal .grupo .controle-fonte span {
-            font-size: 12px;
-            font-weight: 600;
-            min-width: 24px;
-            text-align: center;
-        }
-
-        .modal .grupo .lista-livros {
-            max-height: 100px;
-            overflow-y: auto;
-            border: 1px solid #E8DDD0;
-            border-radius: 4px;
-            padding: 3px;
-        }
-
-        .modal .grupo .item-livro {
+        /* Controles de Tamanho de Fonte com Botões de + e - */
+        .font-size-control {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 3px 6px;
-            border-bottom: 1px solid #f0ece6;
-            gap: 4px;
+            justify-content: space-between;
+            background-color: var(--bg-color);
+            border: 1px solid var(--accent-color);
+            border-radius: 6px;
+            padding: 4px;
         }
 
-        .modal .grupo .item-livro:last-child {
-            border-bottom: none;
-        }
-
-        .modal .grupo .item-livro .info {
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-            min-width: 0;
-        }
-
-        .modal .grupo .item-livro .info .titulo-item {
-            font-size: 10px;
-            font-weight: 600;
-            color: #333;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .modal .grupo .item-livro .info .autor-item {
-            font-size: 8px;
-            color: #888;
-        }
-
-        .modal .grupo .item-livro .btn-excluir-config {
-            background: #e53935;
+        .font-size-btn {
+            background-color: var(--trans-color);
+            color: white;
             border: none;
-            color: #FFF;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            font-size: 9px;
+            width: 36px;
+            height: 36px;
+            border-radius: 4px;
+            font-size: 1.2rem;
+            font-weight: bold;
             cursor: pointer;
-            flex-shrink: 0;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        .modal .grupo .item-livro .btn-excluir-config:active {
-            transform: scale(0.9);
+        .font-size-display {
+            font-weight: bold;
+            font-size: 1rem;
+            color: var(--text-color);
         }
 
-        .modal .grupo .sem-livros {
-            text-align: center;
-            padding: 10px;
-            color: #999;
-            font-size: 10px;
-        }
-
-        .modal .grupo .cor-rainbow {
+        /* Barra de Arco-Íris Exata Estilo Imagem */
+        .rainbow-slider-group {
             display: flex;
             flex-direction: column;
-            gap: 4px;
-        }
-
-        .modal .grupo .cor-rainbow .rainbow-track {
-            width: 100%;
-            height: 36px;
+            gap: 6px;
+            background: var(--surface-color);
+            padding: 8px;
             border-radius: 8px;
-            background: linear-gradient(to right,
-                #000000, #1a0000, #330000, #4d0000, #660000, #800000, #990000, #b30000, #cc0000, #e60000, #ff0000,
-                #ff3300, #ff6600, #ff9900, #ffcc00, #ffff00, #ccff00, #99ff00, #66ff00, #33ff00, #00ff00,
-                #00ff33, #00ff66, #00ff99, #00ffcc, #00ffff, #00ccff, #0099ff, #0066ff, #0033ff, #0000ff,
-                #3300ff, #6600ff, #9900ff, #cc00ff, #ff00ff, #ff00cc, #ff0099, #ff0066, #ff0033, #ff0000,
-                #ff3300, #ff6600, #ff9900, #ffcc00, #ffff00, #ffffff);
-            position: relative;
-            cursor: pointer;
-            touch-action: none;
-            border: 2px solid #E8DDD0;
+            border: 1px solid var(--accent-color);
         }
 
-        .modal .grupo .cor-rainbow .rainbow-track .rainbow-handle {
-            position: absolute;
-            top: 50%;
-            transform: translate(-50%, -50%);
+        .rainbow-label-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        .hex-tag {
+            background-color: var(--accent-color);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: monospace;
+            color: var(--text-color);
+        }
+
+        .rainbow-input {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 28px;
+            border-radius: 14px;
+            outline: none;
+            border: 1px solid #ccc;
+            background: linear-gradient(to right, 
+                #000000 0%, 
+                #990000 15%, 
+                #ff0000 25%, 
+                #ffff00 40%, 
+                #00ff00 55%, 
+                #00ffff 70%, 
+                #0000ff 85%, 
+                #ff00ff 95%, 
+                #ffffff 100%);
+            cursor: pointer;
+        }
+
+        /* Estilização da bolinha (thumb) do seletor */
+        .rainbow-input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
             width: 26px;
             height: 26px;
             border-radius: 50%;
-            background: #FFF;
-            border: 3px solid #5C3D2E;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
-            pointer-events: none;
-            transition: left 0.1s ease;
+            background: #ffffff;
+            border: 2px solid #555;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+            cursor: pointer;
         }
 
-        .modal .grupo .cor-rainbow .rainbow-value {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 10px;
-            color: #555;
-            margin-top: 2px;
+        .rainbow-input::-moz-range-thumb {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 2px solid #555;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+            cursor: pointer;
         }
 
-        .modal .grupo .cor-rainbow .rainbow-value span:first-child {
-            font-weight: 600;
-        }
-
-        .modal .grupo .cor-rainbow .rainbow-value .cor-hex {
-            font-family: monospace;
-            background: #f5f0eb;
-            padding: 2px 10px;
-            border-radius: 4px;
-            font-weight: 700;
-            font-size: 11px;
-        }
-
-        .modal .btn-fechar {
-            width: 100%;
-            padding: 6px;
+        .btn-primary {
+            background-color: var(--trans-color);
+            color: white;
             border: none;
+            padding: 12px;
             border-radius: 6px;
-            background: #5C3D2E;
-            color: #FFF;
-            font-size: 12px;
-            font-weight: 600;
+            font-weight: bold;
             cursor: pointer;
-            margin-top: 4px;
+            text-align: center;
         }
 
-        .modal .btn-fechar:active {
-            transform: scale(0.98);
-        }
-
-        .modal .toggle-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 2px 0;
-        }
-
-        .modal .toggle-row span {
-            font-size: 11px;
-            color: #333;
-        }
-
-        .switch {
-            position: relative;
-            width: 32px;
-            height: 18px;
-            flex-shrink: 0;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .switch .slider {
-            position: absolute;
-            cursor: pointer;
+        /* Leitor Bilíngue */
+        #reader-view {
+            position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background: #CCC;
-            border-radius: 18px;
-            transition: 0.3s;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            z-index: 200;
+            display: none;
+            flex-direction: column;
         }
 
-        .switch .slider::before {
-            content: '';
-            position: absolute;
-            height: 12px;
-            width: 12px;
-            left: 3px;
-            bottom: 3px;
-            background: #FFF;
-            border-radius: 50%;
-            transition: 0.3s;
+        #reader-header {
+            background-color: var(--surface-color);
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        .switch input:checked+.slider {
-            background: #4CAF50;
+        #reader-body {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
         }
 
-        .switch input:checked+.slider::before {
-            transform: translateX(14px);
+        .bilingual-pair {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 10px;
+            border-radius: 6px;
+            background-color: var(--surface-color);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
-        /* ================================================================
-                   ESTILOS GLOBAIS
-                   ================================================================ */
-        .negrito .frase-item .ingles {
-            font-weight: 900 !important;
-        }
-        .negrito .frase-item .portugues {
-            font-weight: 700 !important;
+        .sentence-orig {
+            font-size: var(--font-pixel-size);
+            font-weight: var(--font-weight, normal);
         }
 
-        .fonte-georgia .frase-item .ingles,
-        .fonte-georgia .frase-item .portugues {
-            font-family: 'Georgia', serif !important;
-        }
-        .fonte-times .frase-item .ingles,
-        .fonte-times .frase-item .portugues {
-            font-family: 'Times New Roman', serif !important;
-        }
-        .fonte-arial .frase-item .ingles,
-        .fonte-arial .frase-item .portugues {
-            font-family: 'Arial', sans-serif !important;
-        }
-        .fonte-verdana .frase-item .ingles,
-        .fonte-verdana .frase-item .portugues {
-            font-family: 'Verdana', sans-serif !important;
-        }
-        .fonte-courier .frase-item .ingles,
-        .fonte-courier .frase-item .portugues {
-            font-family: 'Courier New', monospace !important;
+        .sentence-trans {
+            font-size: calc(var(--font-pixel-size) * 0.9);
+            color: var(--trans-color);
+            font-weight: var(--font-weight, normal);
+            border-top: 1px dashed var(--accent-color);
+            padding-top: 4px;
         }
 
-        ::-webkit-scrollbar {
-            width: 2px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #E8DDD0;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #C4B5A0;
-            border-radius: 2px;
-        }
-
-        /* ===== RESPONSIVO ===== */
-        @media (max-width: 420px) {
-            .frase-item .ingles { font-size: 15px; }
-            .frase-item .portugues { font-size: 12px; }
-            .pagina-item { padding: 10px 12px; }
-            .frase-item { padding: 3px 0; margin: 1px 0; }
-            .frase-item .divisor-frase { margin: 2px 0; }
-            .btn-voltar-flutuante { width: 56px; height: 56px; font-size: 30px; bottom: 20px; left: 14px; }
-            .page-indicator { font-size: 10px; padding: 3px 12px; bottom: 14px; }
-            .capa-livro .capa-titulo { font-size: 13px; }
-            .capa-livro .capa-autor { font-size: 9px; }
-            .capa-livro { min-height: 120px; }
-            .compartimentos { gap: 8px; }
-            #splashScreen .logo-icon { font-size: 50px; width: 80px; height: 80px; padding: 12px; }
-            #splashScreen .logo-text { font-size: 18px; }
-            .modal .grupo .cor-rainbow .rainbow-track { height: 30px; }
-        }
-
-        @media (max-width: 360px) {
-            .frase-item .ingles { font-size: 13px; }
-            .frase-item .portugues { font-size: 11px; }
-            .pagina-item { padding: 8px 10px; }
-            .frase-item { padding: 2px 0; margin: 1px 0; }
-            .frase-item .divisor-frase { margin: 2px 0; }
-            .btn-voltar-flutuante { width: 48px; height: 48px; font-size: 26px; bottom: 16px; left: 12px; }
-            .toolbar-leitor .leitor-actions button { font-size: 7px; padding: 1px 4px; }
-            .capa-livro .capa-titulo { font-size: 11px; }
-            .capa-livro .capa-autor { font-size: 8px; }
-            .capa-livro { min-height: 100px; }
-            .compartimentos { gap: 6px; }
-            .modal .grupo .cor-rainbow .rainbow-track { height: 26px; }
-            .modal .grupo .cor-rainbow .rainbow-track .rainbow-handle { width: 20px; height: 20px; }
-        }
-
-        @media (max-height: 600px) {
-            .toolbar-leitor { padding: 2px 6px; min-height: 26px; }
-            .toolbar-leitor .leitor-actions button { font-size: 7px; padding: 1px 4px; }
-            .pagina-item { padding: 6px 8px; }
-            .frase-item .ingles { font-size: 13px; }
-            .frase-item .portugues { font-size: 11px; }
-            .frase-item { padding: 2px 0; margin: 1px 0; }
-            .frase-item .divisor-frase { margin: 2px 0; }
-            .btn-voltar-flutuante { width: 48px; height: 48px; font-size: 26px; bottom: 16px; left: 12px; }
-            .page-indicator { font-size: 9px; padding: 2px 10px; bottom: 10px; }
-            .capa-livro .capa-titulo { font-size: 11px; }
-            .capa-livro .capa-autor { font-size: 8px; }
-            .capa-livro { min-height: 100px; }
-            .compartimentos { gap: 6px; }
-            #splashScreen .logo-icon { font-size: 35px; width: 60px; height: 60px; padding: 10px; }
-            #splashScreen .logo-text { font-size: 14px; }
-            #splashScreen .logo-subtext { font-size: 8px; }
-            .modal .grupo .cor-rainbow .rainbow-track { height: 28px; }
-        }
-
-        @media (min-height: 800px) {
-            .frase-item .ingles { font-size: 20px; }
-            .frase-item .portugues { font-size: 17px; }
-            .frase-item { padding: 6px 0; margin: 3px 0; }
-            .frase-item .divisor-frase { margin: 4px 0; }
-            .pagina-item { padding: 16px 20px; }
-            .capa-livro .capa-titulo { font-size: 20px; }
-            .capa-livro .capa-autor { font-size: 13px; }
-            .capa-livro { min-height: 200px; }
-        }
-
-        @media (min-height: 900px) {
-            .frase-item .ingles { font-size: 23px; }
-            .frase-item .portugues { font-size: 19px; }
-            .frase-item { padding: 8px 0; margin: 4px 0; }
-            .frase-item .divisor-frase { margin: 5px 0; }
-            .pagina-item { padding: 20px 24px; }
-            .capa-livro .capa-titulo { font-size: 24px; }
-            .capa-livro .capa-autor { font-size: 15px; }
-            .capa-livro { min-height: 240px; }
+        /* Toast de Alerta */
+        #toast {
+            position: fixed;
+            bottom: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            display: none;
+            z-index: 2000;
         }
     </style>
 </head>
-
 <body>
 
-    <!-- ===== SPLASH SCREEN ===== -->
-    <div id="splashScreen">
-        <div class="logo-container">
-            <div class="logo-icon">📚</div>
-            <div class="logo-text">YouCan Leitor</div>
-            <div class="logo-subtext">Aprenda inglês lendo</div>
-            <div class="loading-bar">
-                <div class="progress"></div>
+    <header>
+        <h1>PolyglotShelf</h1>
+        <button class="btn-add" onclick="openImportModal()">+ Livro</button>
+    </header>
+
+    <!-- Estante de Prateleiras -->
+    <div class="shelf-container" id="shelfContainer">
+        <!-- Gerado Dinamicamente -->
+    </div>
+
+    <!-- Botão de Configurações no Canto Inferior Direito -->
+    <button class="fab-settings" onclick="openSettingsModal()" title="Configurações">⚙️</button>
+
+    <!-- Modal de Importação / Adição de Livro -->
+    <div class="modal" id="importModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span>Adicionar Novo Livro</span>
+                <button class="close-btn" onclick="closeImportModal()">✕</button>
             </div>
-            <div class="version-info">v1.0.0</div>
+            <div class="form-group">
+                <label>Título do Livro</label>
+                <input type="text" id="bookTitleInput" placeholder="Ex: Alice no País das Maravilhas">
+            </div>
+            <div class="form-group">
+                <label>Arquivo do Livro (.TXT, .DOCX, .CSV, .JSON, .SRT, .VTT, .PDF)</label>
+                <input type="file" id="bookFileInput" accept=".txt,.docx,.csv,.json,.srt,.vtt,.pdf">
+            </div>
+            <div class="form-group">
+                <label>Capa do Livro (Imagem opcional)</label>
+                <input type="file" id="coverFileInput" accept="image/*">
+            </div>
+            <button class="btn-primary" onclick="processAndSaveBook()">Processar e Colocar na Estante</button>
         </div>
     </div>
 
-    <!-- ===== APP ===== -->
-    <div class="app-container" id="appContainer">
-
-        <div class="toolbar" id="toolbarEstante">
-            <h1 id="toolbarTitulo">📚 Minha Estante</h1>
-            <div class="toolbar-actions">
-                <button id="btnImportarTop" title="Importar livro">📤</button>
+    <!-- Modal de Configurações Atualizado com Barras Arco-Íris -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span>Configurações de Leitura</span>
+                <button class="close-btn" onclick="closeSettingsModal()">✕</button>
             </div>
+            <div class="form-group">
+                <label>Tipo de Fonte (10 Opções)</label>
+                <select id="fontSelect" onchange="applySettings()">
+                    <option value="Arial">Arial</option>
+                    <option value="'Courier New', monospace">Courier New</option>
+                    <option value="Georgia">Georgia</option>
+                    <option value="'Times New Roman', serif">Times New Roman</option>
+                    <option value="Verdana">Verdana</option>
+                    <option value="Trebuchet MS">Trebuchet MS</option>
+                    <option value="Impact">Impact</option>
+                    <option value="Comic Sans MS">Comic Sans MS</option>
+                    <option value="'Lucida Console', monospace">Lucida Console</option>
+                    <option value="Tahoma">Tahoma</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Tamanho da Fonte</label>
+                <div class="font-size-control">
+                    <button class="font-size-btn" onclick="changeFontSize(-1)">-</button>
+                    <span class="font-size-display" id="fontSizeDisplay">16px</span>
+                    <button class="font-size-btn" onclick="changeFontSize(1)">+</button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Estilo do Texto</label>
+                <select id="fontWeightSelect" onchange="applySettings()">
+                    <option value="normal" selected>Normal</option>
+                    <option value="bold">Negrito</option>
+                </select>
+            </div>
+            
+            <!-- Barra Arco-Íris 1: Cor do Texto Traduzido -->
+            <div class="rainbow-slider-group">
+                <div class="rainbow-label-row">
+                    <span>🎨 Cor do Texto Traduzido</span>
+                    <span class="hex-tag" id="hexTransColor">#4A90E2</span>
+                </div>
+                <input type="range" class="rainbow-input" id="transColorRange" min="0" max="100" value="30" oninput="updateRainbowColor('trans')">
+            </div>
+
+            <!-- Barra Arco-Íris 2: Cor de Fundo do Leitor -->
+            <div class="rainbow-slider-group">
+                <div class="rainbow-label-row">
+                    <span>🎨 Cor de Fundo do Leitor</span>
+                    <span class="hex-tag" id="hexBgColor">#F7F9FC</span>
+                </div>
+                <input type="range" class="rainbow-input" id="bgColorRange" min="0" max="100" value="0" oninput="updateRainbowColor('bg')">
+            </div>
+
+            <!-- Barra Arco-Íris 3: Cor dos Cartões / Blocos -->
+            <div class="rainbow-slider-group">
+                <div class="rainbow-label-row">
+                    <span>🎨 Cor dos Blocos de Texto</span>
+                    <span class="hex-tag" id="hexSurfaceColor">#FFFFFF</span>
+                </div>
+                <input type="range" class="rainbow-input" id="surfaceColorRange" min="0" max="100" value="100" oninput="updateRainbowColor('surface')">
+            </div>
+
+            <button class="btn-primary" onclick="closeSettingsModal()">Salvar Configurações</button>
         </div>
-
-        <div class="toolbar-leitor" id="toolbarLeitor" style="display:none;">
-            <div class="leitor-actions">
-                <button id="btnTogglePT" class="ativo">🇧🇷 PT</button>
-                <button id="btnAudioFrase" class="btn-audio">🔊 Falar Tudo</button>
-                <button id="btnAudioAutomatico" class="btn-audio">🔁 Auto</button>
-                <button id="btnAnterior">◀</button>
-                <button id="btnProximo" class="primario">▶</button>
-            </div>
-        </div>
-
-        <!-- ===== ESTANTE ===== -->
-        <div id="telaEstante" class="tela ativa" style="position:relative;">
-            <div class="estante-wrapper">
-                <div id="estanteContainer"></div>
-                <button class="fab" id="btnImportar">➕</button>
-            </div>
-            <button class="btn-config" id="btnConfigEstante" title="Configurações">⚙️</button>
-        </div>
-
-        <!-- ===== LEITOR ===== -->
-        <div id="telaLeitor" class="tela" style="padding:4px 6px; flex:1; display:none; flex-direction:column;">
-            <div class="pagina-container" id="paginaContainer" style="flex:1; height:100%;">
-                <div id="paginasLeitor" style="flex:1; height:100%;"></div>
-            </div>
-        </div>
-
-        <!-- ===== BOTÃO VOLTAR - INFERIOR ESQUERDO ===== -->
-        <button class="btn-voltar-flutuante" id="btnVoltarFlutuante" title="Voltar">‹</button>
-
-        <!-- ===== INDICADOR DE PÁGINA ===== -->
-        <div class="page-indicator" id="pageIndicator">1/10</div>
-
-        <!-- ===== IMPORTAÇÃO ===== -->
-        <div id="telaImportar" class="tela">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-                <button class="voltar" id="btnVoltarImportar" style="background:none;border:none;font-size:20px;cursor:pointer;color:#5C3D2E;">‹</button>
-                <h2 style="font-size:14px;color:#5C3D2E;">📤 Importar Livro</h2>
-            </div>
-
-            <div class="import-form">
-                <label>Título do Livro *</label>
-                <input type="text" id="inputTitulo" placeholder="Ex: Harry Potter" />
-
-                <label>Autor (opcional)</label>
-                <input type="text" id="inputAutor" placeholder="Ex: J.K. Rowling" />
-
-                <div class="import-area" id="importArea">
-                    <input type="file" id="fileInput" accept=".txt,.docx,.csv,.json,.srt,.vtt,.pdf" />
-                    <div class="icone">📄</div>
-                    <p>Clique para selecionar o arquivo do livro</p>
-                    <div class="nome-arquivo" id="nomeArquivo"></div>
-                    <div class="formatos-aceitos">
-                        <span class="suportado">📝 .TXT</span>
-                        <span class="suportado">📄 .DOCX</span>
-                        <span class="suportado">📊 .CSV</span>
-                        <span class="suportado">📋 .JSON</span>
-                        <span class="suportado">🎬 .SRT</span>
-                        <span class="suportado">🎬 .VTT</span>
-                        <span class="suportado">📕 .PDF</span>
-                    </div>
-                </div>
-
-                <div class="import-capa-area">
-                    <div class="capa-preview" id="capaPreview">📖</div>
-                    <div class="capa-input-area">
-                        <label class="btn-capa" id="btnCapa">📷 Adicionar Capa</label>
-                        <input type="file" id="capaInput" accept="image/*" />
-                        <span class="capa-nome" id="capaNome">Nenhuma imagem selecionada</span>
-                    </div>
-                </div>
-
-                <button class="btn-importar" id="btnImportarArquivo" disabled>📚 IMPORTAR</button>
-
-                <div class="dica">
-                    💡 <strong>Tradução automática ativada!</strong><br />
-                    O aplicativo detecta automaticamente se o arquivo está em inglês ou português<br />
-                    e gera o livro com ambos os idiomas!<br /><br />
-                    📷 <strong>Adicione uma capa</strong> para o livro aparecer na estante!
-                </div>
-            </div>
-        </div>
-
-        <!-- ===== MODAL CONFIG ===== -->
-        <div class="modal-overlay" id="modalConfig">
-            <div class="modal">
-                <h2>⚙️ Configurações</h2>
-
-                <div class="grupo">
-                    <label>📏 Tamanho da Fonte</label>
-                    <div class="controle-fonte">
-                        <button id="btnFonteMenos">−</button>
-                        <span id="fonteTamanho">17</span>
-                        <button id="btnFonteMais">+</button>
-                    </div>
-                </div>
-
-                <div class="grupo">
-                    <label>🔤 Estilo</label>
-                    <div class="toggle-row">
-                        <span>Negrito</span>
-                        <label class="switch">
-                            <input type="checkbox" id="toggleNegrito" />
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="grupo">
-                    <label>🔊 Velocidade da Voz</label>
-                    <div class="controle-fonte">
-                        <button id="btnVelocidadeMenos">−</button>
-                        <span id="velocidadeVoz">1.0</span>
-                        <button id="btnVelocidadeMais">+</button>
-                    </div>
-                </div>
-
-                <div class="grupo">
-                    <label>🎨 Cor do Texto em Inglês</label>
-                    <div class="cor-rainbow">
-                        <div class="rainbow-track" id="rainbowIngles">
-                            <div class="rainbow-handle" id="handleIngles"></div>
-                        </div>
-                        <div class="rainbow-value">
-                            <span>Selecione a cor</span>
-                            <span class="cor-hex" id="corInglesLabel">#1A237E</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="grupo">
-                    <label>🎨 Cor do Texto em Português</label>
-                    <div class="cor-rainbow">
-                        <div class="rainbow-track" id="rainbowPortugues">
-                            <div class="rainbow-handle" id="handlePortugues"></div>
-                        </div>
-                        <div class="rainbow-value">
-                            <span>Selecione a cor</span>
-                            <span class="cor-hex" id="corPortuguesLabel">#4CAF50</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="grupo">
-                    <label>🎨 Cor de Fundo do Leitor</label>
-                    <div class="cor-rainbow">
-                        <div class="rainbow-track" id="rainbowFundo">
-                            <div class="rainbow-handle" id="handleFundo"></div>
-                        </div>
-                        <div class="rainbow-value">
-                            <span>Selecione a cor</span>
-                            <span class="cor-hex" id="corFundoLabel">#FFFFFF</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="grupo">
-                    <label>📝 Fonte do Livro</label>
-                    <div class="opcoes" id="opcoesFonte">
-                        <button data-fonte="fonte-georgia">Georgia</button>
-                        <button data-fonte="fonte-times">Times</button>
-                        <button data-fonte="fonte-arial" class="selecionado">Arial</button>
-                        <button data-fonte="fonte-verdana">Verdana</button>
-                        <button data-fonte="fonte-courier">Courier</button>
-                    </div>
-                </div>
-
-                <div class="grupo">
-                    <label>📚 Gerenciar Livros</label>
-                    <div class="lista-livros" id="listaLivrosConfig"></div>
-                </div>
-
-                <div class="grupo">
-                    <button id="btnImportarConfig" style="width:100%;padding:6px;border:none;border-radius:6px;background:#2196F3;color:#FFF;font-size:12px;font-weight:600;cursor:pointer;">
-                        📤 Importar Novo Livro
-                    </button>
-                </div>
-
-                <div class="grupo">
-                    <label>ℹ️ Sobre</label>
-                    <div style="padding:4px 8px;background:#f5f0eb;border-radius:4px;font-size:9px;color:#666;">
-                        <strong>YouCan Leitor</strong> v1.0.0<br />
-                        Aprenda inglês lendo frases traduzidas
-                    </div>
-                </div>
-
-                <button class="btn-fechar" id="btnFecharConfig">✅ Fechar</button>
-            </div>
-        </div>
-
     </div>
+
+    <!-- Tela do Leitor Bilíngue -->
+    <div id="reader-view">
+        <div id="reader-header">
+            <button class="btn-add" onclick="closeReader()">← Voltar</button>
+            <h2 id="readerTitle" style="font-size: 1rem; color: var(--trans-color);">Leitor</h2>
+            <div style="width: 50px;"></div>
+        </div>
+        <div id="reader-body">
+            <!-- Conteúdo Bilíngue Intercalado -->
+        </div>
+    </div>
+
+    <div id="toast"></div>
 
     <script>
-        // ================================================================
-        // 🚀 INICIALIZAÇÃO PRINCIPAL
-        // ================================================================
-        (function() {
-            'use strict';
-
-            // ================================================================
-            // 📚 DADOS GLOBAIS
-            // ================================================================
-            var APP_VERSION = '1.0.0';
-            var livros = [];
-            var livroAtual = null;
-            var paginaAtual = 0;
-            var mostrarPT = true;
-            var audioAutomatico = false;
-            var velocidadeVoz = 1.0;
-            var audioFalando = false;
-            var touchStartX = 0;
-            var touchEndX = 0;
-            var timeoutSeta = null;
-            var timeoutIndicador = null;
-            var capaImagem = null;
-            var isTransitioning = false;
-
-            var config = {
-                tamanhoFonte: 17,
-                negrito: false,
-                fonte: 'fonte-arial',
-                velocidadeVoz: 1.0,
-                corIngles: '#1A237E',
-                corPortugues: '#4CAF50',
-                corFundo: '#FFFFFF'
-            };
-
-            var FRASES_POR_PAGINA = 10;
-
-            // ================================================================
-            // 📖 DICIONÁRIO COMPLETO
-            // ================================================================
-            var DICIONARIO = {
-                'i': 'eu',
-                'you': 'você',
-                'he': 'ele',
-                'she': 'ela',
-                'it': 'isso',
-                'we': 'nós',
-                'they': 'eles',
-                'me': 'mim',
-                'him': 'ele',
-                'her': 'ela',
-                'us': 'nós',
-                'them': 'eles',
-                'my': 'meu',
-                'your': 'seu',
-                'his': 'dele',
-                'her': 'dela',
-                'our': 'nosso',
-                'their': 'deles',
-                'am': 'sou',
-                'are': 'são',
-                'is': 'é',
-                'was': 'era',
-                'were': 'eram',
-                'have': 'ter',
-                'has': 'tem',
-                'had': 'tinha',
-                'do': 'fazer',
-                'does': 'faz',
-                'did': 'fez',
-                'say': 'dizer',
-                'said': 'disse',
-                'go': 'ir',
-                'went': 'foi',
-                'get': 'obter',
-                'got': 'obteve',
-                'make': 'fazer',
-                'made': 'fez',
-                'know': 'saber',
-                'knew': 'sabia',
-                'think': 'pensar',
-                'thought': 'pensou',
-                'see': 'ver',
-                'saw': 'viu',
-                'come': 'vir',
-                'came': 'veio',
-                'want': 'querer',
-                'wanted': 'queria',
-                'look': 'olhar',
-                'looked': 'olhou',
-                'use': 'usar',
-                'used': 'usou',
-                'find': 'encontrar',
-                'found': 'encontrou',
-                'give': 'dar',
-                'gave': 'deu',
-                'tell': 'contar',
-                'told': 'contou',
-                'work': 'trabalhar',
-                'worked': 'trabalhou',
-                'call': 'chamar',
-                'called': 'chamou',
-                'try': 'tentar',
-                'tried': 'tentou',
-                'ask': 'perguntar',
-                'asked': 'perguntou',
-                'need': 'precisar',
-                'needed': 'precisou',
-                'feel': 'sentir',
-                'felt': 'sentiu',
-                'become': 'tornar-se',
-                'became': 'tornou-se',
-                'leave': 'sair',
-                'left': 'saiu',
-                'put': 'colocar',
-                'mean': 'significar',
-                'meant': 'significou',
-                'keep': 'manter',
-                'kept': 'manteve',
-                'let': 'deixar',
-                'begin': 'começar',
-                'began': 'começou',
-                'seem': 'parecer',
-                'seemed': 'pareceu',
-                'help': 'ajudar',
-                'helped': 'ajudou',
-                'talk': 'falar',
-                'talked': 'falou',
-                'turn': 'virar',
-                'turned': 'virou',
-                'start': 'começar',
-                'started': 'começou',
-                'show': 'mostrar',
-                'showed': 'mostrou',
-                'hear': 'ouvir',
-                'heard': 'ouviu',
-                'play': 'jogar',
-                'played': 'jogou',
-                'run': 'correr',
-                'ran': 'correu',
-                'move': 'mover',
-                'moved': 'moveu',
-                'like': 'gostar',
-                'liked': 'gostou',
-                'live': 'viver',
-                'lived': 'viveu',
-                'believe': 'acreditar',
-                'believed': 'acreditou',
-                'hold': 'segurar',
-                'held': 'segurou',
-                'bring': 'trazer',
-                'brought': 'trouxe',
-                'happen': 'acontecer',
-                'happened': 'aconteceu',
-                'write': 'escrever',
-                'wrote': 'escreveu',
-                'read': 'ler',
-                'read': 'leu',
-                'learn': 'aprender',
-                'learned': 'aprendeu',
-                'teach': 'ensinar',
-                'taught': 'ensinou',
-                'remember': 'lembrar',
-                'remembered': 'lembrou',
-                'forget': 'esquecer',
-                'forgot': 'esqueceu',
-                'change': 'mudar',
-                'changed': 'mudou',
-                'close': 'fechar',
-                'closed': 'fechou',
-                'open': 'abrir',
-                'opened': 'abriu',
-                'walk': 'andar',
-                'walked': 'andou',
-                'swim': 'nadar',
-                'swam': 'nadou',
-                'fly': 'voar',
-                'flew': 'voou',
-                'drive': 'dirigir',
-                'drove': 'dirigiu',
-                'cook': 'cozinhar',
-                'cooked': 'cozinhou',
-                'hello': 'olá',
-                'hi': 'oi',
-                'good morning': 'bom dia',
-                'good afternoon': 'boa tarde',
-                'good evening': 'boa noite',
-                'good night': 'boa noite',
-                'how are you': 'como você está',
-                'nice to meet you': 'prazer em conhecê-lo',
-                'welcome': 'bem-vindo',
-                'bye': 'tchau',
-                'goodbye': 'adeus',
-                'see you': 'até logo',
-                'see you later': 'até mais tarde',
-                'see you tomorrow': 'até amanhã',
-                'take care': 'se cuide',
-                'have a nice day': 'tenha um bom dia',
-                'you promised': 'você prometeu',
-                'okay': 'ok',
-                'ok': 'ok',
-                'alright': 'tudo bem',
-                'fine': 'bem',
-                'great': 'ótimo',
-                'excellent': 'excelente',
-                'wonderful': 'maravilhoso',
-                'terrible': 'terrível',
-                'bad': 'ruim',
-                'sad': 'triste',
-                'happy': 'feliz',
-                'angry': 'bravo',
-                'tired': 'cansado',
-                'sorry': 'desculpe',
-                'thanks': 'obrigado',
-                'thank you': 'obrigado',
-                'thank you very much': 'muito obrigado',
-                'you are welcome': 'de nada',
-                'you\'re welcome': 'de nada',
-                'no problem': 'sem problema',
-                'father': 'pai',
-                'dad': 'pai',
-                'daddy': 'papai',
-                'mother': 'mãe',
-                'mom': 'mãe',
-                'mommy': 'mamãe',
-                'brother': 'irmão',
-                'sister': 'irmã',
-                'son': 'filho',
-                'daughter': 'filha',
-                'uncle': 'tio',
-                'aunt': 'tia',
-                'grandfather': 'avô',
-                'grandmother': 'avó',
-                'grandma': 'vovó',
-                'grandpa': 'vovô',
-                'family': 'família',
-                'parents': 'pais',
-                'children': 'crianças',
-                'kid': 'criança',
-                'baby': 'bebê',
-                'friend': 'amigo',
-                'friends': 'amigos',
-                'dog': 'cachorro',
-                'cat': 'gato',
-                'horse': 'cavalo',
-                'cow': 'vaca',
-                'pig': 'porco',
-                'sheep': 'ovelha',
-                'bird': 'pássaro',
-                'fish': 'peixe',
-                'lion': 'leão',
-                'tiger': 'tigre',
-                'elephant': 'elefante',
-                'monkey': 'macaco',
-                'rabbit': 'coelho',
-                'snake': 'cobra',
-                'giraffe': 'girafa',
-                'leopard': 'leopardo',
-                'baboon': 'babuíno',
-                'food': 'comida',
-                'water': 'água',
-                'coffee': 'café',
-                'tea': 'chá',
-                'juice': 'suco',
-                'milk': 'leite',
-                'bread': 'pão',
-                'rice': 'arroz',
-                'beans': 'feijão',
-                'meat': 'carne',
-                'chicken': 'frango',
-                'egg': 'ovo',
-                'apple': 'maçã',
-                'banana': 'banana',
-                'orange': 'laranja',
-                'cake': 'bolo',
-                'chocolate': 'chocolate',
-                'red': 'vermelho',
-                'blue': 'azul',
-                'green': 'verde',
-                'yellow': 'amarelo',
-                'black': 'preto',
-                'white': 'branco',
-                'gray': 'cinza',
-                'pink': 'rosa',
-                'purple': 'roxo',
-                'brown': 'marrom',
-                'sun': 'sol',
-                'moon': 'lua',
-                'star': 'estrela',
-                'sky': 'céu',
-                'cloud': 'nuvem',
-                'rain': 'chuva',
-                'wind': 'vento',
-                'snow': 'neve',
-                'ice': 'gelo',
-                'fire': 'fogo',
-                'earth': 'terra',
-                'sea': 'mar',
-                'ocean': 'oceano',
-                'river': 'rio',
-                'lake': 'lago',
-                'forest': 'floresta',
-                'mountain': 'montanha',
-                'tree': 'árvore',
-                'flower': 'flor',
-                'beach': 'praia',
-                'house': 'casa',
-                'home': 'lar',
-                'school': 'escola',
-                'hospital': 'hospital',
-                'bank': 'banco',
-                'shop': 'loja',
-                'store': 'loja',
-                'market': 'mercado',
-                'restaurant': 'restaurante',
-                'hotel': 'hotel',
-                'city': 'cidade',
-                'country': 'país',
-                'world': 'mundo',
-                'time': 'tempo',
-                'day': 'dia',
-                'week': 'semana',
-                'month': 'mês',
-                'year': 'ano',
-                'today': 'hoje',
-                'tomorrow': 'amanhã',
-                'yesterday': 'ontem',
-                'morning': 'manhã',
-                'afternoon': 'tarde',
-                'evening': 'noite',
-                'night': 'noite',
-                'hour': 'hora',
-                'minute': 'minuto',
-                'now': 'agora',
-                'later': 'depois',
-                'soon': 'em breve',
-                'always': 'sempre',
-                'never': 'nunca',
-                'sometimes': 'às vezes',
-                'good': 'bom',
-                'great': 'ótimo',
-                'bad': 'ruim',
-                'big': 'grande',
-                'small': 'pequeno',
-                'large': 'grande',
-                'little': 'pequeno',
-                'tall': 'alto',
-                'short': 'baixo',
-                'long': 'longo',
-                'new': 'novo',
-                'old': 'velho',
-                'young': 'jovem',
-                'fast': 'rápido',
-                'slow': 'lento',
-                'easy': 'fácil',
-                'difficult': 'difícil',
-                'hard': 'duro',
-                'soft': 'macio',
-                'heavy': 'pesado',
-                'light': 'leve',
-                'hot': 'quente',
-                'cold': 'frio',
-                'warm': 'morno',
-                'dark': 'escuro',
-                'very': 'muito',
-                'really': 'realmente',
-                'so': 'tão',
-                'too': 'também',
-                'just': 'apenas',
-                'only': 'somente',
-                'almost': 'quase',
-                'already': 'já',
-                'still': 'ainda',
-                'again': 'novamente',
-                'also': 'também',
-                'well': 'bem',
-                'in': 'em',
-                'on': 'em',
-                'at': 'em',
-                'to': 'para',
-                'for': 'para',
-                'with': 'com',
-                'without': 'sem',
-                'by': 'por',
-                'from': 'de',
-                'of': 'de',
-                'about': 'sobre',
-                'over': 'sobre',
-                'under': 'sob',
-                'between': 'entre',
-                'among': 'entre',
-                'through': 'através',
-                'around': 'ao redor',
-                'near': 'perto',
-                'far': 'longe',
-                'up': 'cima',
-                'down': 'baixo',
-                'above': 'acima',
-                'below': 'abaixo',
-                'and': 'e',
-                'but': 'mas',
-                'or': 'ou',
-                'because': 'porque',
-                'if': 'se',
-                'when': 'quando',
-                'while': 'enquanto',
-                'then': 'então',
-                'than': 'do que',
-                'that': 'que',
-                'which': 'que',
-                'who': 'quem',
-                'the': 'o',
-                'a': 'um',
-                'an': 'um',
-                'this': 'este',
-                'that': 'aquele',
-                'these': 'estes',
-                'those': 'aqueles',
-                'all': 'todos',
-                'some': 'alguns',
-                'any': 'qualquer',
-                'no': 'nenhum',
-                'every': 'cada',
-                'each': 'cada',
-                'few': 'poucos',
-                'many': 'muitos',
-                'much': 'muito',
-                'more': 'mais',
-                'less': 'menos',
-                'what': 'o que',
-                'who': 'quem',
-                'where': 'onde',
-                'when': 'quando',
-                'why': 'por que',
-                'how': 'como',
-                'which': 'qual',
-                'yes': 'sim',
-                'no': 'não',
-                'ok': 'ok',
-                'maybe': 'talvez',
-                'probably': 'provavelmente',
-                'certainly': 'certamente',
-                'absolutely': 'absolutamente',
-                'definitely': 'definitivamente',
-                'of course': 'claro',
-                'sure': 'claro',
-                'right': 'certo',
-                'wrong': 'errado',
-                'true': 'verdadeiro',
-                'false': 'falso',
-                'a bit of': 'um pouco de',
-                'going ape': 'enlouquecendo',
-                'acting like': 'agindo como',
-                'show you how': 'mostrar como',
-                'tick birds': 'pássaros carrapateiros',
-                'old pro': 'velho profissional',
-                'the buzz from the bees': 'o zumbido das abelhas',
-                'over here': 'aqui',
-                'oh my goodness': 'oh meu Deus',
-                'what if': 'e se',
-                'in a couple of': 'em alguns',
-                'most of': 'a maioria de',
-                'really?': 'sério?',
-                'don\'t': 'não',
-                'doesn\'t': 'não',
-                'didn\'t': 'não',
-                'can\'t': 'não pode',
-                'couldn\'t': 'não podia',
-                'wouldn\'t': 'não',
-                'shouldn\'t': 'não deveria',
-                'won\'t': 'não vai',
-                'i\'m': 'eu estou',
-                'you\'re': 'você está',
-                'he\'s': 'ele está',
-                'she\'s': 'ela está',
-                'it\'s': 'é',
-                'we\'re': 'nós estamos',
-                'they\'re': 'eles estão',
-                'i\'ll': 'eu vou',
-                'you\'ll': 'você vai',
-                'he\'ll': 'ele vai',
-                'she\'ll': 'ela vai',
-                'we\'ll': 'nós vamos',
-                'they\'ll': 'eles vão',
-                'i\'ve': 'eu tenho',
-                'you\'ve': 'você tem',
-                'we\'ve': 'nós temos',
-                'they\'ve': 'eles têm',
-                'i\'d': 'eu gostaria',
-                'you\'d': 'você gostaria',
-                'he\'d': 'ele gostaria',
-                'she\'d': 'ela gostaria',
-                'we\'d': 'nós gostaríamos',
-                'they\'d': 'eles gostariam',
-                'let\'s': 'vamos',
-                'let\'s go': 'vamos'
-            };
-
-            // ================================================================
-            // 🔧 FUNÇÕES DE TRADUÇÃO
-            // ================================================================
-
-            function limparPalavra(palavra) {
-                return palavra.replace(/[^a-zA-ZáàâãéêíóôõúçÁÀÂÃÉÊÍÓÔÕÚÇ']/g, '');
-            }
-
-            function traduzirPalavra(palavra, idiomaOrigem) {
-                if (!palavra || palavra.trim() === '') return palavra;
-
-                var prefixo = '';
-                var sufixo = '';
-                var palavraLimpa = palavra;
-
-                var matchPrefixo = palavra.match(/^([^a-zA-ZáàâãéêíóôõúçÁÀÂÃÉÊÍÓÔÕÚÇ']*)(.*)$/);
-                if (matchPrefixo) {
-                    prefixo = matchPrefixo[1] || '';
-                    palavraLimpa = matchPrefixo[2] || '';
-                }
-
-                var matchSufixo = palavraLimpa.match(/^(.*?)([^a-zA-ZáàâãéêíóôõúçÁÀÂÃÉÊÍÓÔÕÚÇ']*)$/);
-                if (matchSufixo) {
-                    palavraLimpa = matchSufixo[1] || '';
-                    sufixo = matchSufixo[2] || '';
-                }
-
-                if (!palavraLimpa) return palavra;
-
-                var traducao = '';
-                var palavraLower = palavraLimpa.toLowerCase();
-
-                // Verifica expressões compostas primeiro
-                var expressaoEncontrada = false;
-                for (var chave in DICIONARIO) {
-                    if (DICIONARIO.hasOwnProperty(chave)) {
-                        if (chave === palavraLower) {
-                            traducao = DICIONARIO[chave];
-                            expressaoEncontrada = true;
-                            break;
-                        }
-                    }
-                }
-
-                if (!expressaoEncontrada) {
-                    if (idiomaOrigem === 'ingles') {
-                        // Busca no dicionário
-                        var entrada = DICIONARIO[palavraLower];
-                        traducao = entrada || palavraLimpa;
-                    } else {
-                        // Português -> Inglês - busca invertida
-                        var encontrado = false;
-                        for (var chave2 in DICIONARIO) {
-                            if (DICIONARIO.hasOwnProperty(chave2)) {
-                                if (DICIONARIO[chave2] === palavraLower) {
-                                    traducao = chave2;
-                                    encontrado = true;
-                                    break;
-                                }
-                            }
-                        }
-                        if (!encontrado) {
-                            traducao = palavraLimpa;
-                        }
-                    }
-                }
-
-                // Preserva maiúsculas
-                if (palavraLimpa.length > 0) {
-                    var primeiraMaiuscula = palavraLimpa[0] === palavraLimpa[0].toUpperCase();
-                    if (primeiraMaiuscula && traducao.length > 0) {
-                        traducao = traducao[0].toUpperCase() + traducao.slice(1);
-                    }
-                }
-
-                return prefixo + traducao + sufixo;
-            }
-
-            function traduzirFrase(texto, idiomaOrigem) {
-                if (!texto || texto.trim() === '') return '';
-
-                var textoProcessado = texto;
-                if (idiomaOrigem === 'ingles') {
-                    textoProcessado = textoProcessado.replace(/\bdon't\b/gi, 'do not');
-                    textoProcessado = textoProcessado.replace(/\bdoesn't\b/gi, 'does not');
-                    textoProcessado = textoProcessado.replace(/\bdidn't\b/gi, 'did not');
-                    textoProcessado = textoProcessado.replace(/\bcan't\b/gi, 'cannot');
-                    textoProcessado = textoProcessado.replace(/\bwon't\b/gi, 'will not');
-                    textoProcessado = textoProcessado.replace(/\bI'm\b/gi, 'I am');
-                    textoProcessado = textoProcessado.replace(/\byou're\b/gi, 'you are');
-                    textoProcessado = textoProcessado.replace(/\bhe's\b/gi, 'he is');
-                    textoProcessado = textoProcessado.replace(/\bshe's\b/gi, 'she is');
-                    textoProcessado = textoProcessado.replace(/\bit's\b/gi, 'it is');
-                    textoProcessado = textoProcessado.replace(/\bwe're\b/gi, 'we are');
-                    textoProcessado = textoProcessado.replace(/\bthey're\b/gi, 'they are');
-                    textoProcessado = textoProcessado.replace(/\bI'll\b/gi, 'I will');
-                    textoProcessado = textoProcessado.replace(/\byou'll\b/gi, 'you will');
-                    textoProcessado = textoProcessado.replace(/\bwe'll\b/gi, 'we will');
-                    textoProcessado = textoProcessado.replace(/\bthey'll\b/gi, 'they will');
-                    textoProcessado = textoProcessado.replace(/\bI've\b/gi, 'I have');
-                    textoProcessado = textoProcessado.replace(/\byou've\b/gi, 'you have');
-                    textoProcessado = textoProcessado.replace(/\bwe've\b/gi, 'we have');
-                    textoProcessado = textoProcessado.replace(/\bthey've\b/gi, 'they have');
-                    textoProcessado = textoProcessado.replace(/\bI'd\b/gi, 'I would');
-                    textoProcessado = textoProcessado.replace(/\byou'd\b/gi, 'you would');
-                    textoProcessado = textoProcessado.replace(/\bwe'd\b/gi, 'we would');
-                    textoProcessado = textoProcessado.replace(/\bthey'd\b/gi, 'they would');
-                }
-
-                var palavras = textoProcessado.match(/\S+|\s+/g) || [];
-                var resultado = [];
-
-                for (var i = 0; i < palavras.length; i++) {
-                    var item = palavras[i];
-                    if (item.trim() === '') {
-                        resultado.push(item);
-                    } else {
-                        resultado.push(traduzirPalavra(item, idiomaOrigem));
-                    }
-                }
-
-                return resultado.join('');
-            }
-
-            function detectarIdioma(texto) {
-                if (!texto || texto.trim() === '') return 'desconhecido';
-
-                var textoLower = texto.toLowerCase();
-                var palavras = textoLower.split(/\s+/);
-                var contadorPT = 0;
-                var contadorEN = 0;
-
-                for (var i = 0; i < palavras.length; i++) {
-                    var palavra = palavras[i];
-                    var palavraLimpa = limparPalavra(palavra);
-                    if (!palavraLimpa) continue;
-
-                    var entrada = DICIONARIO[palavraLimpa];
-                    if (entrada) {
-                        if (entrada === palavraLimpa) {
-                            contadorPT++;
-                        } else {
-                            contadorEN++;
-                        }
-                    } else {
-                        if (/[áàâãéêíóôõúç]/i.test(palavra)) {
-                            contadorPT++;
-                        } else if (/[a-zA-Z]/.test(palavra)) {
-                            contadorEN++;
-                        }
-                    }
-                }
-
-                var palavrasPTComuns = ['de', 'do', 'da', 'que', 'se', 'não', 'sim', 'para', 'com', 'por', 'um', 'uma', 'os',
-                    'as', 'em', 'no', 'na'
-                ];
-                var palavrasENComuns = ['the', 'of', 'and', 'to', 'for', 'with', 'on', 'at', 'by', 'from', 'up', 'down',
-                    'in', 'out'
-                ];
-
-                for (var j = 0; j < palavras.length; j++) {
-                    var limpa = limparPalavra(palavras[j]);
-                    if (!limpa) continue;
-                    if (palavrasPTComuns.indexOf(limpa) !== -1) contadorPT += 2;
-                    if (palavrasENComuns.indexOf(limpa) !== -1) contadorEN += 2;
-                }
-
-                var total = contadorPT + contadorEN;
-                if (total === 0) return 'desconhecido';
-
-                var percentualPT = (contadorPT / total) * 100;
-                return percentualPT > 55 ? 'portugues' : 'ingles';
-            }
-
-            function processarComTraducao(texto) {
-                if (!texto || texto.trim() === '') return [];
-
-                var linhas = texto.split('\n');
-                var linhasFiltradas = [];
-                for (var i = 0; i < linhas.length; i++) {
-                    if (linhas[i].trim() !== '') {
-                        linhasFiltradas.push(linhas[i]);
-                    }
-                }
-
-                if (linhasFiltradas.length === 0) return [];
-
-                var frases = [];
-
-                for (var j = 0; j < linhasFiltradas.length; j++) {
-                    var linhaLimpa = linhasFiltradas[j].trim();
-
-                    if (linhaLimpa.indexOf('||') !== -1) {
-                        var partes = linhaLimpa.split('||');
-                        frases.push({
-                            en: partes[0].trim(),
-                            pt: partes[1].trim()
-                        });
-                        continue;
-                    }
-
-                    var idiomaLinha = detectarIdioma(linhaLimpa);
-
-                    if (idiomaLinha === 'ingles') {
-                        frases.push({
-                            en: linhaLimpa,
-                            pt: traduzirFrase(linhaLimpa, 'ingles')
-                        });
-                    } else if (idiomaLinha === 'portugues') {
-                        frases.push({
-                            en: traduzirFrase(linhaLimpa, 'portugues'),
-                            pt: linhaLimpa
-                        });
-                    } else {
-                        frases.push({
-                            en: linhaLimpa,
-                            pt: traduzirFrase(linhaLimpa, 'ingles')
-                        });
-                    }
-                }
-
-                return frases;
-            }
-
-            // ================================================================
-            // 📚 SEM LIVROS DE EXEMPLO
-            // ================================================================
-            var LIVROS_EXEMPLO = [];
-
-            // ================================================================
-            // 🔧 FUNÇÕES DE PERSISTÊNCIA
-            // ================================================================
-            function salvarDados() {
-                try {
-                    localStorage.setItem('youcan_livros', JSON.stringify(livros));
-                } catch (e) {
-                    console.warn('Erro ao salvar dados:', e);
-                }
-            }
-
-            function carregarDados() {
-                try {
-                    var dados = localStorage.getItem('youcan_livros');
-                    if (dados) {
-                        var parsed = JSON.parse(dados);
-                        if (Array.isArray(parsed) && parsed.length > 0) {
-                            livros = parsed;
-                            return;
-                        }
-                    }
-                } catch (e) {
-                    console.warn('Erro ao carregar dados:', e);
-                }
-                livros = JSON.parse(JSON.stringify(LIVROS_EXEMPLO));
-                salvarDados();
-            }
-
-            function salvarConfig() {
-                try {
-                    localStorage.setItem('youcan_config', JSON.stringify(config));
-                } catch (e) {
-                    console.warn('Erro ao salvar config:', e);
-                }
-            }
-
-            function carregarConfig() {
-                try {
-                    var dados = localStorage.getItem('youcan_config');
-                    if (dados) {
-                        var parsed = JSON.parse(dados);
-                        config = parsed;
-                        velocidadeVoz = config.velocidadeVoz || 1.0;
-                        return;
-                    }
-                } catch (e) {
-                    console.warn('Erro ao carregar config:', e);
-                }
-                config = {
-                    tamanhoFonte: 17,
-                    negrito: false,
-                    fonte: 'fonte-arial',
-                    velocidadeVoz: 1.0,
-                    corIngles: '#1A237E',
-                    corPortugues: '#4CAF50',
-                    corFundo: '#FFFFFF'
-                };
-                velocidadeVoz = 1.0;
-                salvarConfig();
-            }
-
-            // ================================================================
-            // 📐 CALCULAR FRASES POR PÁGINA
-            // ================================================================
-            function calcularFrasesPorPagina() {
-                var altura = window.innerHeight || 800;
-                var alturaUtil = altura - 120;
-                var tamanhoFonte = config.tamanhoFonte || 17;
-                var espacamento = tamanhoFonte * 0.7;
-                var alturaLinha = (tamanhoFonte * 1.5) + espacamento;
-
-                var estimativa = Math.floor(alturaUtil / alturaLinha);
-                estimativa = Math.max(4, Math.min(estimativa, 12));
-
-                FRASES_POR_PAGINA = estimativa;
-                return FRASES_POR_PAGINA;
-            }
-
-            // ================================================================
-            // 🎨 FUNÇÕES DO SELETOR ARCO-ÍRIS
-            // ================================================================
-            function criarRainbowPicker(elementId, handleId, labelId, corInicial, callback) {
-                var track = document.getElementById(elementId);
-                var handle = document.getElementById(handleId);
-                var label = document.getElementById(labelId);
-
-                if (!track || !handle) return;
-
-                var isDragging = false;
-
-                function hexToRgb(hex) {
-                    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-                    return result ? {
-                        r: parseInt(result[1], 16),
-                        g: parseInt(result[2], 16),
-                        b: parseInt(result[3], 16)
-                    } : { r: 0, g: 0, b: 0 };
-                }
-
-                function rgbToHsl(r, g, b) {
-                    r /= 255;
-                    g /= 255;
-                    b /= 255;
-                    var max = Math.max(r, g, b),
-                        min = Math.min(r, g, b);
-                    var h, s, l = (max + min) / 2;
-                    if (max === min) {
-                        h = s = 0;
-                    } else {
-                        var d = max - min;
-                        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-                        switch (max) {
-                            case r:
-                                h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
-                                break;
-                            case g:
-                                h = ((b - r) / d + 2) / 6;
-                                break;
-                            case b:
-                                h = ((r - g) / d + 4) / 6;
-                                break;
-                        }
-                    }
-                    return { h: h * 360, s: s * 100, l: l * 100 };
-                }
-
-                function hslToHex(h, s, l) {
-                    h /= 360;
-                    s /= 100;
-                    l /= 100;
-                    var r, g, b;
-                    if (s === 0) {
-                        r = g = b = l;
-                    } else {
-                        var hue2rgb = function(p, q, t) {
-                            if (t < 0) t += 1;
-                            if (t > 1) t -= 1;
-                            if (t < 1 / 6) return p + (q - p) * 6 * t;
-                            if (t < 1 / 2) return q;
-                            if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-                            return p;
-                        };
-                        var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-                        var p = 2 * l - q;
-                        r = hue2rgb(p, q, h + 1 / 3);
-                        g = hue2rgb(p, q, h);
-                        b = hue2rgb(p, q, h - 1 / 3);
-                    }
-                    var toHex = function(x) {
-                        var hex = Math.round(x * 255).toString(16);
-                        return hex.length === 1 ? '0' + hex : hex;
-                    };
-                    return '#' + toHex(r) + toHex(g) + toHex(b);
-                }
-
-                function updatePosition(posX) {
-                    var rect = track.getBoundingClientRect();
-                    var percent = Math.max(0, Math.min(1, (posX - rect.left) / rect.width));
-                    handle.style.left = (percent * 100) + '%';
-
-                    var hue = percent * 360;
-                    var sat = 80;
-                    var light = 50;
-
-                    if (percent < 0.1) {
-                        light = 10;
-                        sat = 0;
-                    } else if (percent < 0.2) {
-                        light = 30;
-                        sat = 20;
-                    } else if (percent < 0.4) {
-                        light = 50;
-                        sat = 60;
-                    } else if (percent < 0.6) {
-                        light = 60;
-                        sat = 80;
-                    } else if (percent < 0.8) {
-                        light = 70;
-                        sat = 90;
-                    } else if (percent < 0.9) {
-                        light = 85;
-                        sat = 60;
-                    } else {
-                        light = 95;
-                        sat = 10;
-                    }
-
-                    var hex = hslToHex(hue, sat, light);
-                    if (label) label.textContent = hex.toUpperCase();
-                    callback(hex);
-                }
-
-                function handleMove(e) {
-                    if (!isDragging) return;
-                    var posX = e.touches ? e.touches[0].clientX : e.clientX;
-                    updatePosition(posX);
-                }
-
-                function handleStart(e) {
-                    isDragging = true;
-                    var posX = e.touches ? e.touches[0].clientX : e.clientX;
-                    updatePosition(posX);
-                    e.preventDefault();
-                }
-
-                function handleEnd() {
-                    isDragging = false;
-                }
-
-                track.addEventListener('mousedown', handleStart);
-                document.addEventListener('mousemove', handleMove);
-                document.addEventListener('mouseup', handleEnd);
-                track.addEventListener('touchstart', handleStart, { passive: false });
-                document.addEventListener('touchmove', handleMove, { passive: false });
-                document.addEventListener('touchend', handleEnd);
-
-                if (corInicial) {
-                    var rgb = hexToRgb(corInicial);
-                    var hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
-                    var percent = hsl.h / 360;
-                    handle.style.left = (percent * 100) + '%';
-                }
-
-                return { updatePosition: updatePosition };
-            }
-
-            // ================================================================
-            // 🔄 FUNÇÕES DA SETA FLUTUANTE
-            // ================================================================
-            function mostrarSeta() {
-                var seta = document.getElementById('btnVoltarFlutuante');
-                seta.classList.add('visivel');
-                clearTimeout(timeoutSeta);
-                timeoutSeta = setTimeout(function() {
-                    seta.classList.remove('visivel');
-                }, 3000);
-            }
-
-            function esconderSeta() {
-                var seta = document.getElementById('btnVoltarFlutuante');
-                seta.classList.remove('visivel');
-                clearTimeout(timeoutSeta);
-            }
-
-            function mostrarIndicador(texto) {
-                var indicador = document.getElementById('pageIndicator');
-                indicador.textContent = texto;
-                indicador.classList.add('visivel');
-                clearTimeout(timeoutIndicador);
-                timeoutIndicador = setTimeout(function() {
-                    indicador.classList.remove('visivel');
-                }, 1500);
-            }
-
-            // ================================================================
-            // 🔊 ÁUDIO
-            // ================================================================
-            function falarFrase(texto, callback) {
-                if (!window.speechSynthesis) {
-                    if (callback) callback();
-                    return;
-                }
-
-                try {
-                    window.speechSynthesis.cancel();
-
-                    var utterance = new SpeechSynthesisUtterance(texto);
-                    utterance.lang = 'en-US';
-                    utterance.rate = velocidadeVoz;
-                    utterance.pitch = 1.0;
-                    utterance.volume = 1.0;
-
-                    var vozes = window.speechSynthesis.getVoices();
-                    var vozInglesa = null;
-                    for (var i = 0; i < vozes.length; i++) {
-                        if (vozes[i].lang.startsWith('en')) {
-                            vozInglesa = vozes[i];
-                            break;
-                        }
-                    }
-                    if (vozInglesa) utterance.voice = vozInglesa;
-
-                    if (callback) {
-                        utterance.onend = function() {
-                            audioFalando = false;
-                            callback();
-                        };
-                        utterance.onerror = function() {
-                            audioFalando = false;
-                            callback();
-                        };
-                    } else {
-                        utterance.onend = function() { audioFalando = false; };
-                        utterance.onerror = function() { audioFalando = false; };
-                    }
-
-                    audioFalando = true;
-                    window.speechSynthesis.speak(utterance);
-
-                } catch (e) {
-                    console.warn('Erro no áudio:', e);
-                    audioFalando = false;
-                    if (callback) callback();
-                }
-            }
-
-            function falarFraseAtual(index) {
-                if (livroAtual === null || livroAtual >= livros.length) return;
-
-                var livro = livros[livroAtual];
-                if (!livro || !livro.paginas || paginaAtual >= livro.paginas.length) return;
-
-                var pagina = livro.paginas[paginaAtual];
-                if (!pagina || !Array.isArray(pagina)) return;
-
-                var idx = (index !== undefined) ? index : 0;
-                if (idx >= pagina.length) return;
-
-                var frase = pagina[idx];
-                if (!frase || !frase.en) return;
-
-                var elementos = document.querySelectorAll('.frase-item .ingles');
-                for (var i = 0; i < elementos.length; i++) {
-                    elementos[i].classList.remove('falando');
-                }
-
-                if (elementos[idx]) {
-                    elementos[idx].classList.add('falando');
-                }
-
-                falarFrase(frase.en, function() {
-                    if (elementos[idx]) {
-                        elementos[idx].classList.remove('falando');
-                    }
-                    if (audioAutomatico && idx < pagina.length - 1) {
-                        setTimeout(function() {
-                            falarFraseAtual(idx + 1);
-                        }, 500);
-                    } else if (audioAutomatico && idx === pagina.length - 1) {
-                        setTimeout(function() {
-                            if (livroAtual !== null && livroAtual < livros.length) {
-                                var livro = livros[livroAtual];
-                                if (livro && paginaAtual < livro.paginas.length - 1) {
-                                    paginaAtual++;
-                                    renderizarPagina();
-                                    mostrarIndicador((paginaAtual + 1) + '/' + livro.paginas.length);
-                                    setTimeout(function() {
-                                        falarFraseAtual(0);
-                                    }, 500);
-                                }
-                            }
-                        }, 800);
-                    }
-                });
-            }
-
-            function falarTudoPagina() {
-                if (livroAtual === null || livroAtual >= livros.length) return;
-
-                var livro = livros[livroAtual];
-                if (!livro || !livro.paginas || paginaAtual >= livro.paginas.length) return;
-
-                var pagina = livro.paginas[paginaAtual];
-                if (!pagina || !Array.isArray(pagina) || pagina.length === 0) return;
-
-                audioAutomatico = false;
-                var btnAuto = document.getElementById('btnAudioAutomatico');
-                if (btnAuto) btnAuto.classList.remove('ativo-audio');
-
-                falarFraseAtual(0);
-            }
-
-            // ================================================================
-            // 🏠 RENDERIZAR ESTANTE
-            // ================================================================
-            function renderizarEstante() {
-                var container = document.getElementById('estanteContainer');
-                if (!container) return;
-
-                if (!livros || livros.length === 0) {
-                    container.innerHTML =
-                        '<div class="prateleira">' +
-                        '<div class="estante-vazia">' +
-                        '<div class="icone">📚</div>' +
-                        '<p>Nenhum livro na estante.</p>' +
-                        '<p style="font-size:12px;opacity:0.6;">Toque em ➕ para importar</p>' +
-                        '</div>' +
-                        '</div>';
-                    return;
-                }
-
-                var livrosPorPrateleira = 4;
-                var html = '';
-
-                for (var i = 0; i < livros.length; i += livrosPorPrateleira) {
-                    var grupo = livros.slice(i, i + livrosPorPrateleira);
-                    var numPrateleira = Math.floor(i / livrosPorPrateleira) + 1;
-
-                    html += '<div class="prateleira">';
-                    html += '<div class="prateleira-header">';
-                    html += '<span class="titulo">📚 Prateleira ' + numPrateleira + '</span>';
-                    html += '<span class="contador">' + grupo.length + ' livros</span>';
-                    html += '</div>';
-                    html += '<div class="compartimentos">';
-
-                    for (var j = 0; j < grupo.length; j++) {
-                        var livro = grupo[j];
-                        var indexGlobal = i + j;
-                        var total = livro.paginas ? livro.paginas.length : 0;
-                        var lidas = livro.paginaAtual || 0;
-                        var percentual = total > 0 ? Math.round((lidas / total) * 100) : 0;
-
-                        var temCapa = livro.capa && livro.capa.indexOf('data:') === 0;
-                        var iconeCapa = livro.capa && !temCapa ? livro.capa : '📖';
-
-                        html += '<div class="compartimento">';
-                        html += '<div class="livro-card" data-index="' + indexGlobal + '">';
-                        html += '<div class="capa-livro" style="background: ' + (livro.cor || '#5C3D2E') + '">';
-                        if (temCapa) {
-                            html += '<img src="' + livro.capa + '" alt="Capa do livro" />';
-                        }
-                        html += '<div class="capa-overlay"></div>';
-                        html += '<div class="capa-texto">';
-                        if (!temCapa) {
-                            html += '<span class="capa-titulo">' + (livro.titulo || 'Sem título') + '</span>';
-                        }
-                        if (!temCapa) {
-                            html += '<span class="capa-autor">' + (livro.autor || '') + '</span>';
-                        }
-                        html += '</div>';
-                        if (!temCapa) {
-                            html += '<span class="capa-badge">' + iconeCapa + '</span>';
-                        }
-                        html += '<span class="capa-progresso">' + percentual + '%</span>';
-                        html += '</div>';
-                        html += '<button class="btn-excluir-livro" data-index="' + indexGlobal + '">✕</button>';
-                        html += '</div>';
-                        html += '</div>';
-                    }
-
-                    html += '</div>';
-                    html += '</div>';
-                }
-
-                container.innerHTML = html;
-
-                var cards = container.querySelectorAll('.livro-card');
-                for (var k = 0; k < cards.length; k++) {
-                    var card = cards[k];
-                    var index = parseInt(card.dataset.index);
-                    card.addEventListener('click', function(e) {
-                        if (e.target.closest('.btn-excluir-livro')) return;
-                        var idx = parseInt(this.dataset.index);
-                        abrirLeitor(idx);
-                    });
-
-                    var btnExcluir = card.querySelector('.btn-excluir-livro');
-                    if (btnExcluir) {
-                        btnExcluir.addEventListener('click', function(e) {
-                            e.stopPropagation();
-                            var idx = parseInt(this.dataset.index);
-                            excluirLivro(idx);
-                        });
-                    }
-                }
-            }
-
-            function excluirLivro(index) {
-                if (index < 0 || index >= livros.length) return;
-
-                var livro = livros[index];
-                if (!livro) return;
-
-                if (confirm('⚠️ Tem certeza que deseja excluir "' + livro.titulo + '" da estante?')) {
-                    try {
-                        window.speechSynthesis.cancel();
-                    } catch (e) {}
-
-                    if (livroAtual === index) {
-                        livroAtual = null;
-                        mostrarTela('estante');
-                    } else if (livroAtual !== null && livroAtual > index) {
-                        livroAtual--;
-                    }
-
-                    livros.splice(index, 1);
-                    salvarDados();
-                    renderizarEstante();
-                    atualizarListaLivrosConfig();
-
-                    if (livros.length === 0) {
-                        mostrarTela('estante');
-                    }
-                }
-            }
-
-            // ================================================================
-            // 📖 LEITOR COM CORES FUNCIONANDO
-            // ================================================================
-            function abrirLeitor(index) {
-                if (index < 0 || index >= livros.length) return;
-
-                try {
-                    window.speechSynthesis.cancel();
-                } catch (e) {}
-
-                audioAutomatico = false;
-                audioFalando = false;
-                var btnAuto = document.getElementById('btnAudioAutomatico');
-                if (btnAuto) btnAuto.classList.remove('ativo-audio');
-
-                livroAtual = index;
-                var livro = livros[index];
-                paginaAtual = livro.paginaAtual || 0;
-                mostrarPT = true;
-
-                var btnPT = document.getElementById('btnTogglePT');
-                if (btnPT) {
-                    btnPT.textContent = '🇧🇷 PT';
-                    btnPT.classList.add('ativo');
-                }
-
-                document.getElementById('toolbarEstante').style.display = 'none';
-                document.getElementById('toolbarLeitor').style.display = 'flex';
-                document.getElementById('telaLeitor').style.display = 'flex';
-
-                calcularFrasesPorPagina();
-
-                mostrarTela('leitor');
-                renderizarPagina();
-                aplicarConfiguracoes();
-
-                esconderSeta();
-                isTransitioning = false;
-            }
-
-            function renderizarPagina(direcao) {
-                if (livroAtual === null || livroAtual >= livros.length) return;
-
-                var livro = livros[livroAtual];
-                if (!livro || !livro.paginas) return;
-
-                var total = livro.paginas.length;
-                if (paginaAtual >= total) paginaAtual = total - 1;
-                if (paginaAtual < 0) paginaAtual = 0;
-
-                var pagina = livro.paginas[paginaAtual];
-                if (!pagina || !Array.isArray(pagina)) return;
-
-                var btnAnt = document.getElementById('btnAnterior');
-                var btnProx = document.getElementById('btnProximo');
-                if (btnAnt) btnAnt.disabled = paginaAtual === 0;
-                if (btnProx) btnProx.disabled = paginaAtual >= total - 1;
-
-                var container = document.getElementById('paginasLeitor');
-                if (!container) return;
-
-                var ptClass = mostrarPT ? '' : 'oculto';
-                var corIngles = config.corIngles || '#1A237E';
-                var corPortugues = config.corPortugues || '#4CAF50';
-                var corFundo = config.corFundo || '#FFFFFF';
-                var tamanhoFonte = config.tamanhoFonte || 17;
-
-                var espacamento = tamanhoFonte * 0.7;
-
-                var wrapper = document.createElement('div');
-                wrapper.className = 'pagina-wrapper';
-                if (direcao === 'left') {
-                    wrapper.classList.add('slide-left');
-                } else if (direcao === 'right') {
-                    wrapper.classList.add('slide-right');
-                }
-
-                var html =
-                    '<div class="pagina-item" style="background-color: ' + corFundo +
-                    ' !important; padding: ' + (espacamento * 0.6) + 'px ' + (espacamento * 0.8) + 'px;">';
-
-                for (var idx = 0; idx < pagina.length; idx++) {
-                    var frase = pagina[idx];
-                    html += '<div class="frase-item" style="padding: ' + (espacamento * 0.15) +
-                        'px 0; margin: ' + (espacamento * 0.15) + 'px 0;">';
-                    html += '<div class="ingles" data-frase-index="' + idx + '" style="color: ' + corIngles +
-                        ' !important; font-size: ' + tamanhoFonte +
-                        'px !important; line-height: ' + (tamanhoFonte * 1.4) +
-                        'px !important; padding: ' + (espacamento * 0.1) + 'px ' + (espacamento * 0.15) +
-                        'px; text-align: left !important; width: 100% !important;">' +
-                        (frase.en || '') + '</div>';
-                    html += '<div class="portugues ' + ptClass + '" style="color: ' + corPortugues +
-                        ' !important; font-size: ' + (tamanhoFonte * 0.85) +
-                        'px !important; line-height: ' + (tamanhoFonte * 1.3) +
-                        'px !important; padding: ' + (espacamento * 0.08) + 'px ' + (espacamento * 0.15) +
-                        'px ' + (espacamento * 0.15) + 'px ' + (espacamento * 0.15) +
-                        'px; text-align: left !important; width: 100% !important;">' +
-                        (frase.pt || '') + '</div>';
-                    if (idx < pagina.length - 1) {
-                        html += '<div class="divisor-frase" style="margin: ' + (espacamento * 0.15) +
-                            'px 0; height: 1px; width: 100%;"></div>';
-                    }
-                    html += '</div>';
-                }
-
-                html += '</div>';
-                wrapper.innerHTML = html;
-
-                container.innerHTML = '';
-                container.appendChild(wrapper);
-
-                if (direcao === 'left' || direcao === 'right') {
-                    requestAnimationFrame(function() {
-                        wrapper.classList.remove('slide-left', 'slide-right');
-                    });
-                }
-
-                // Aplicar cores e fontes com !important
-                var inglesEls = document.querySelectorAll('.frase-item .ingles');
-                for (var i = 0; i < inglesEls.length; i++) {
-                    var el = inglesEls[i];
-                    el.style.setProperty('color', corIngles, 'important');
-                    el.style.setProperty('font-size', tamanhoFonte + 'px', 'important');
-                    el.style.setProperty('line-height', (tamanhoFonte * 1.4) + 'px', 'important');
-                    el.style.setProperty('text-align', 'left', 'important');
-                    el.style.setProperty('width', '100%', 'important');
-                }
-
-                var portuguesEls = document.querySelectorAll('.frase-item .portugues');
-                for (var j = 0; j < portuguesEls.length; j++) {
-                    var el2 = portuguesEls[j];
-                    el2.style.setProperty('color', corPortugues, 'important');
-                    el2.style.setProperty('font-size', (tamanhoFonte * 0.85) + 'px', 'important');
-                    el2.style.setProperty('line-height', (tamanhoFonte * 1.3) + 'px', 'important');
-                    el2.style.setProperty('text-align', 'left', 'important');
-                    el2.style.setProperty('width', '100%', 'important');
-                }
-
-                var paginaItems = document.querySelectorAll('.pagina-item');
-                for (var k = 0; k < paginaItems.length; k++) {
-                    paginaItems[k].style.setProperty('background-color', corFundo, 'important');
-                }
-
-                var inglesClicks = container.querySelectorAll('.frase-item .ingles');
-                for (var l = 0; l < inglesClicks.length; l++) {
-                    (function(el) {
-                        el.addEventListener('click', function(e) {
-                            e.stopPropagation();
-                            var index = parseInt(this.dataset.fraseIndex);
-                            if (audioAutomatico) {
-                                audioAutomatico = false;
-                                var btnAuto = document.getElementById('btnAudioAutomatico');
-                                if (btnAuto) btnAuto.classList.remove('ativo-audio');
-                                try { window.speechSynthesis.cancel(); } catch (ex) {}
-                            }
-                            falarFraseAtual(index);
-                        });
-                    })(inglesClicks[l]);
-                }
-
-                livro.paginaAtual = paginaAtual;
-                salvarDados();
-                renderizarEstante();
-                atualizarListaLivrosConfig();
-
-                mostrarIndicador((paginaAtual + 1) + '/' + total);
-            }
-
-            // ================================================================
-            // 🎨 APLICAR CONFIGURAÇÕES - GARANTINDO CORES
-            // ================================================================
-            function aplicarConfiguracoes() {
-                var container = document.getElementById('appContainer');
-                if (!container) return;
-
-                var tamanho = config.tamanhoFonte || 17;
-                var corIngles = config.corIngles || '#1A237E';
-                var corPortugues = config.corPortugues || '#4CAF50';
-                var corFundo = config.corFundo || '#FFFFFF';
-                var espacamento = tamanho * 0.7;
-
-                // Aplicar em TODOS os elementos com !important
-                var inglesEls = document.querySelectorAll('.frase-item .ingles');
-                for (var i = 0; i < inglesEls.length; i++) {
-                    var el = inglesEls[i];
-                    el.style.setProperty('color', corIngles, 'important');
-                    el.style.setProperty('font-size', tamanho + 'px', 'important');
-                    el.style.setProperty('line-height', (tamanho * 1.4) + 'px', 'important');
-                    el.style.setProperty('text-align', 'left', 'important');
-                    el.style.setProperty('width', '100%', 'important');
-                }
-
-                var portuguesEls = document.querySelectorAll('.frase-item .portugues');
-                for (var j = 0; j < portuguesEls.length; j++) {
-                    var el2 = portuguesEls[j];
-                    el2.style.setProperty('color', corPortugues, 'important');
-                    el2.style.setProperty('font-size', (tamanho * 0.85) + 'px', 'important');
-                    el2.style.setProperty('line-height', (tamanho * 1.3) + 'px', 'important');
-                    el2.style.setProperty('text-align', 'left', 'important');
-                    el2.style.setProperty('width', '100%', 'important');
-                }
-
-                var paginaItems = document.querySelectorAll('.pagina-item');
-                for (var k = 0; k < paginaItems.length; k++) {
-                    paginaItems[k].style.setProperty('background-color', corFundo, 'important');
-                }
-
-                var fraseItems = document.querySelectorAll('.frase-item');
-                for (var l = 0; l < fraseItems.length; l++) {
-                    fraseItems[l].style.padding = (espacamento * 0.15) + 'px 0';
-                    fraseItems[l].style.margin = (espacamento * 0.15) + 'px 0';
-                }
-
-                var paginaItems2 = document.querySelectorAll('.pagina-item');
-                for (var m = 0; m < paginaItems2.length; m++) {
-                    paginaItems2[m].style.padding = (espacamento * 0.6) + 'px ' + (espacamento * 0.8) + 'px';
-                }
-
-                var divisores = document.querySelectorAll('.divisor-frase');
-                for (var n = 0; n < divisores.length; n++) {
-                    divisores[n].style.margin = (espacamento * 0.15) + 'px 0';
-                }
-
-                var fonteTamanho = document.getElementById('fonteTamanho');
-                if (fonteTamanho) fonteTamanho.textContent = tamanho;
-
-                var velocidadeEl = document.getElementById('velocidadeVoz');
-                if (velocidadeEl) velocidadeEl.textContent = velocidadeVoz.toFixed(1);
-
-                var corInglesLabel = document.getElementById('corInglesLabel');
-                var corPortuguesLabel = document.getElementById('corPortuguesLabel');
-                var corFundoLabel = document.getElementById('corFundoLabel');
-
-                if (corInglesLabel) corInglesLabel.textContent = corIngles.toUpperCase();
-                if (corPortuguesLabel) corPortuguesLabel.textContent = corPortugues.toUpperCase();
-                if (corFundoLabel) corFundoLabel.textContent = corFundo.toUpperCase();
-
-                container.classList.toggle('negrito', config.negrito);
-
-                var toggleNegrito = document.getElementById('toggleNegrito');
-                if (toggleNegrito) toggleNegrito.checked = config.negrito;
-
-                var fontes = ['fonte-georgia', 'fonte-times', 'fonte-arial', 'fonte-verdana', 'fonte-courier'];
-                for (var o = 0; o < fontes.length; o++) {
-                    container.classList.remove(fontes[o]);
-                }
-                if (config.fonte) container.classList.add(config.fonte);
-
-                var opcoesFonte = document.querySelectorAll('#opcoesFonte button');
-                for (var p = 0; p < opcoesFonte.length; p++) {
-                    var btn = opcoesFonte[p];
-                    btn.classList.toggle('selecionado', btn.dataset.fonte === config.fonte);
-                }
-
-                calcularFrasesPorPagina();
-                salvarConfig();
-            }
-
-            // ================================================================
-            // 📚 GERENCIAR LIVROS NAS CONFIGURAÇÕES
-            // ================================================================
-            function atualizarListaLivrosConfig() {
-                var container = document.getElementById('listaLivrosConfig');
-                if (!container) return;
-
-                if (!livros || livros.length === 0) {
-                    container.innerHTML =
-                        '<div class="sem-livros">📭 Nenhum livro na estante</div>';
-                    return;
-                }
-
-                var html = '';
-                for (var i = 0; i < livros.length; i++) {
-                    var livro = livros[i];
-                    var total = livro.paginas ? livro.paginas.length : 0;
-                    var lidas = livro.paginaAtual || 0;
-                    var percentual = total > 0 ? Math.round((lidas / total) * 100) : 0;
-
-                    html += '<div class="item-livro">';
-                    html += '<div class="info">';
-                    html += '<div class="titulo-item">' + (livro.titulo || 'Sem título') + '</div>';
-                    html += '<div class="autor-item">' + (livro.autor || 'Autor desconhecido') + ' • ' +
-                        percentual + '% lido • ' + total + ' páginas</div>';
-                    html += '</div>';
-                    html +=
-                        '<button class="btn-excluir-config" data-index="' + i + '" title="Excluir livro">✕</button>';
-                    html += '</div>';
-                }
-
-                container.innerHTML = html;
-
-                var botoes = container.querySelectorAll('.btn-excluir-config');
-                for (var j = 0; j < botoes.length; j++) {
-                    (function(btn) {
-                        btn.addEventListener('click', function(e) {
-                            e.stopPropagation();
-                            var index = parseInt(this.dataset.index);
-                            excluirLivroConfig(index);
-                        });
-                    })(botoes[j]);
-                }
-            }
-
-            function excluirLivroConfig(index) {
-                if (index < 0 || index >= livros.length) return;
-
-                var livro = livros[index];
-                if (!livro) return;
-
-                if (confirm('⚠️ Tem certeza que deseja excluir "' + livro.titulo +
-                        '" da estante?\n\nEsta ação não pode ser desfeita!')) {
-                    try {
-                        window.speechSynthesis.cancel();
-                    } catch (e) {}
-
-                    if (livroAtual === index) {
-                        livroAtual = null;
-                        mostrarTela('estante');
-                    } else if (livroAtual !== null && livroAtual > index) {
-                        livroAtual--;
-                    }
-
-                    livros.splice(index, 1);
-                    salvarDados();
-
-                    renderizarEstante();
-                    atualizarListaLivrosConfig();
-
-                    if (livros.length === 0) {
-                        fecharConfig();
-                        mostrarTela('estante');
-                    }
-                }
-            }
-
-            // ================================================================
-            // 📤 IMPORTAÇÃO
-            // ================================================================
-            function importarArquivo() {
-                var titulo = document.getElementById('inputTitulo');
-                var autor = document.getElementById('inputAutor');
-                var fileInput = document.getElementById('fileInput');
-
-                if (!titulo || !autor || !fileInput) return;
-
-                var tituloValue = titulo.value.trim();
-                var autorValue = autor.value.trim() || 'Desconhecido';
-                var file = fileInput.files[0];
-
-                if (!tituloValue) { alert('Digite um título para o livro.'); return; }
-                if (!file) { alert('Selecione um arquivo.'); return; }
-
-                var extensao = file.name.split('.').pop().toLowerCase();
-
-                var processarConteudo = function(texto) {
-                    var frases = processarComTraducao(texto);
-
-                    if (frases.length === 0) {
-                        alert('Nenhuma frase válida encontrada no arquivo.');
-                        return;
-                    }
-
-                    var paginas = [];
-                    for (var i = 0; i < frases.length; i += FRASES_POR_PAGINA) {
-                        paginas.push(frases.slice(i, i + FRASES_POR_PAGINA));
-                    }
-
-                    criarLivro(paginas, tituloValue, autorValue);
-                };
-
-                if (extensao === 'txt' || extensao === 'docx') {
-                    var reader = new FileReader();
-                    reader.onload = function(e) {
-                        if (extensao === 'docx') {
-                            mammoth.extractRawText({ arrayBuffer: e.target.result })
-                                .then(function(r) { processarConteudo(r.value); })
-                                .catch(function(err) { alert('Erro ao ler DOCX: ' + err.message); });
-                            return;
-                        }
-                        processarConteudo(e.target.result);
-                    };
-                    if (extensao === 'docx') {
-                        reader.readAsArrayBuffer(file);
-                    } else {
-                        reader.readAsText(file, 'UTF-8');
-                    }
-                } else if (extensao === 'csv') {
-                    var reader = new FileReader();
-                    reader.onload = function(e) {
-                        processarConteudo(e.target.result);
-                    };
-                    reader.readAsText(file, 'UTF-8');
-                } else if (extensao === 'json') {
-                    var reader = new FileReader();
-                    reader.onload = function(e) {
-                        processarConteudo(e.target.result);
-                    };
-                    reader.readAsText(file, 'UTF-8');
-                } else if (extensao === 'srt' || extensao === 'vtt') {
-                    var reader = new FileReader();
-                    reader.onload = function(e) {
-                        processarConteudo(e.target.result);
-                    };
-                    reader.readAsText(file, 'UTF-8');
-                } else if (extensao === 'pdf') {
-                    var reader = new FileReader();
-                    reader.onload = function(e) {
-                        processarPDF(e.target.result, tituloValue, autorValue);
-                    };
-                    reader.readAsArrayBuffer(file);
-                } else {
-                    alert('Formato não suportado. Use .txt, .docx, .csv, .json, .srt, .vtt ou .pdf');
-                }
-            }
-
-            async function processarPDF(arrayBuffer, titulo, autor) {
-                try {
-                    var pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-                    var totalPages = pdf.numPages;
-                    var textoCompleto = '';
-
-                    for (var i = 1; i <= totalPages; i++) {
-                        var page = await pdf.getPage(i);
-                        var textContent = await page.getTextContent();
-                        var texto = '';
-                        for (var j = 0; j < textContent.items.length; j++) {
-                            texto += textContent.items[j].str + ' ';
-                        }
-                        textoCompleto += texto + '\n';
-                    }
-
-                    var frases = processarComTraducao(textoCompleto);
-
-                    if (frases.length === 0) {
-                        alert('Não foi possível extrair texto do PDF.');
-                        return;
-                    }
-
-                    var paginas = [];
-                    for (var k = 0; k < frases.length; k += FRASES_POR_PAGINA) {
-                        paginas.push(frases.slice(k, k + FRASES_POR_PAGINA));
-                    }
-
-                    criarLivro(paginas, titulo, autor);
-
-                } catch (error) {
-                    console.error('Erro ao processar PDF:', error);
-                    alert('Erro ao processar PDF: ' + error.message);
-                }
-            }
-
-            function criarLivro(paginas, titulo, autor) {
-                var cores = ['#1a5276', '#6a1b4d', '#1b5e20', '#b71c1c', '#004d40', '#4a148c',
-                    '#e65100', '#0d47a1', '#4e342e', '#33691e', '#880e4f', '#006064'
-                ];
-
-                var capaFinal = capaImagem || '📖';
-
-                var novoLivro = {
-                    id: Date.now(),
-                    titulo: titulo,
-                    autor: autor,
-                    cor: cores[Math.floor(Math.random() * cores.length)],
-                    capa: capaFinal,
-                    paginas: paginas,
-                    paginaAtual: 0
-                };
-
-                livros.push(novoLivro);
-                salvarDados();
-
-                capaImagem = null;
-                document.getElementById('capaPreview').innerHTML = '📖';
-                document.getElementById('capaNome').textContent = 'Nenhuma imagem selecionada';
-                document.getElementById('capaInput').value = '';
-
-                renderizarEstante();
-                atualizarListaLivrosConfig();
-
-                var inputTitulo = document.getElementById('inputTitulo');
-                var inputAutor = document.getElementById('inputAutor');
-                var fileInput = document.getElementById('fileInput');
-                var nomeArquivo = document.getElementById('nomeArquivo');
-
-                if (inputTitulo) inputTitulo.value = '';
-                if (inputAutor) inputAutor.value = '';
-                if (fileInput) fileInput.value = '';
-                if (nomeArquivo) nomeArquivo.textContent = '';
-
-                var btnImportar = document.getElementById('btnImportarArquivo');
-                if (btnImportar) btnImportar.disabled = true;
-
-                var totalFrases = 0;
-                for (var i = 0; i < paginas.length; i++) {
-                    totalFrases += paginas[i].length;
-                }
-                alert('📚 "' + titulo + '" importado com sucesso!\n📄 ' + paginas.length +
-                    ' páginas\n📝 ' + totalFrases + ' frases');
-
-                var progressoSalvo = localStorage.getItem('youcan_progresso_' + novoLivro.id);
-                if (progressoSalvo) {
-                    var progresso = JSON.parse(progressoSalvo);
-                    var livroIndex = -1;
-                    for (var j = 0; j < livros.length; j++) {
-                        if (livros[j].id === novoLivro.id) {
-                            livroIndex = j;
-                            break;
-                        }
-                    }
-                    if (livroIndex !== -1) {
-                        livros[livroIndex].paginaAtual = progresso.pagina || 0;
-                        salvarDados();
-                    }
-                }
-
-                mostrarTela('estante');
-            }
-
-            // ================================================================
-            // 💾 SALVAR PROGRESSO
-            // ================================================================
-            function salvarProgresso(livroId, pagina) {
-                try {
-                    localStorage.setItem('youcan_progresso_' + livroId, JSON.stringify({ pagina: pagina }));
-                } catch (e) {
-                    console.warn('Erro ao salvar progresso:', e);
-                }
-            }
-
-            // ================================================================
-            // 🧭 NAVEGAÇÃO
-            // ================================================================
-            function mostrarTela(tela) {
-                if (tela !== 'leitor') {
-                    try {
-                        window.speechSynthesis.cancel();
-                    } catch (e) {}
-                    audioAutomatico = false;
-                    audioFalando = false;
-                    var btnAuto = document.getElementById('btnAudioAutomatico');
-                    if (btnAuto) btnAuto.classList.remove('ativo-audio');
-
-                    document.getElementById('toolbarEstante').style.display = 'flex';
-                    document.getElementById('toolbarLeitor').style.display = 'none';
-                    document.getElementById('telaLeitor').style.display = 'none';
-
-                    esconderSeta();
-                    document.getElementById('pageIndicator').classList.remove('visivel');
-                }
-
-                var telas = document.querySelectorAll('.tela');
-                for (var i = 0; i < telas.length; i++) {
-                    telas[i].classList.remove('ativa');
-                }
-
-                if (tela === 'estante') {
-                    var el = document.getElementById('telaEstante');
-                    if (el) el.classList.add('ativa');
-                    atualizarToolbar('estante');
-                } else if (tela === 'leitor') {
-                    var el2 = document.getElementById('telaLeitor');
-                    if (el2) {
-                        el2.classList.add('ativa');
-                        el2.style.display = 'flex';
-                    }
-                    atualizarToolbar('leitor');
-                } else {
-                    var el3 = document.getElementById('telaImportar');
-                    if (el3) el3.classList.add('ativa');
-                    atualizarToolbar('importar');
-                }
-            }
-
-            function atualizarToolbar(tela) {
-                var titulo = document.getElementById('toolbarTitulo');
-                if (!titulo) return;
-
-                if (tela === 'estante') titulo.textContent = '📚 Minha Estante';
-                else if (tela === 'leitor') titulo.textContent = '';
-                else titulo.textContent = '📤 Importar';
-            }
-
-            // ================================================================
-            // 📖 NAVEGAÇÃO POR SWIPE
-            // ================================================================
-            function setupSwipe() {
-                var container = document.getElementById('paginaContainer');
-                if (!container) return;
-
-                container.addEventListener('touchstart', function(e) {
-                    if (isTransitioning) return;
-                    touchStartX = e.changedTouches[0].screenX;
-                }, { passive: true });
-
-                container.addEventListener('touchend', function(e) {
-                    if (isTransitioning) return;
-                    touchEndX = e.changedTouches[0].screenX;
-                    handleSwipe();
-                }, { passive: true });
-
-                var mouseDown = false;
-                var mouseStartX = 0;
-
-                container.addEventListener('mousedown', function(e) {
-                    if (isTransitioning) return;
-                    mouseDown = true;
-                    mouseStartX = e.screenX;
-                });
-
-                container.addEventListener('mouseup', function(e) {
-                    if (!mouseDown || isTransitioning) return;
-                    mouseDown = false;
-                    var diff = mouseStartX - e.screenX;
-                    if (Math.abs(diff) > 50) {
-                        if (diff > 0) {
-                            proximaPagina();
-                        } else {
-                            paginaAnterior();
-                        }
-                    }
-                });
-
-                container.addEventListener('mouseleave', function() {
-                    mouseDown = false;
-                });
-            }
-
-            function handleSwipe() {
-                var diff = touchStartX - touchEndX;
-                var threshold = 40;
-
-                if (Math.abs(diff) > threshold) {
-                    if (diff > 0) {
-                        proximaPagina();
-                    } else {
-                        paginaAnterior();
-                    }
-                }
-            }
-
-            function proximaPagina() {
-                if (isTransitioning) return;
-                if (livroAtual !== null && livroAtual < livros.length) {
-                    var livro = livros[livroAtual];
-                    if (livro && paginaAtual < livro.paginas.length - 1) {
-                        if (audioAutomatico || audioFalando) {
-                            audioAutomatico = false;
-                            audioFalando = false;
-                            var btnAuto = document.getElementById('btnAudioAutomatico');
-                            if (btnAuto) btnAuto.classList.remove('ativo-audio');
-                            try { window.speechSynthesis.cancel(); } catch (e) {}
-                        }
-                        isTransitioning = true;
-                        paginaAtual++;
-                        renderizarPagina('left');
-                        mostrarSeta();
-                        if (livro.id) {
-                            salvarProgresso(livro.id, paginaAtual);
-                        }
-                        setTimeout(function() {
-                            isTransitioning = false;
-                        }, 400);
-                    }
-                }
-            }
-
-            function paginaAnterior() {
-                if (isTransitioning) return;
-                if (paginaAtual > 0) {
-                    if (audioAutomatico || audioFalando) {
-                        audioAutomatico = false;
-                        audioFalando = false;
-                        var btnAuto = document.getElementById('btnAudioAutomatico');
-                        if (btnAuto) btnAuto.classList.remove('ativo-audio');
-                        try { window.speechSynthesis.cancel(); } catch (e) {}
-                    }
-                    isTransitioning = true;
-                    paginaAtual--;
-                    renderizarPagina('right');
-                    var livro = livros[livroAtual];
-                    if (livro && livro.id) {
-                        salvarProgresso(livro.id, paginaAtual);
-                    }
-                    mostrarSeta();
-                    setTimeout(function() {
-                        isTransitioning = false;
-                    }, 400);
-                }
-            }
-
-            // ================================================================
-            // ⚙️ CONFIG
-            // ================================================================
-            function abrirConfig() {
-                var modal = document.getElementById('modalConfig');
-                if (modal) {
-                    modal.classList.add('ativo');
-                    atualizarListaLivrosConfig();
-                    aplicarConfiguracoes();
-                }
-            }
-
-            function fecharConfig() {
-                var modal = document.getElementById('modalConfig');
-                if (modal) modal.classList.remove('ativo');
-            }
-
-            // ================================================================
-            // 🚀 SPLASH SCREEN
-            // ================================================================
-            function hideSplash() {
-                var splash = document.getElementById('splashScreen');
-                var app = document.getElementById('appContainer');
-
-                if (splash) splash.classList.add('fade-out');
-
-                setTimeout(function() {
-                    if (splash) splash.style.display = 'none';
-                    if (app) app.classList.add('visible');
-                }, 800);
-            }
-
-            // ================================================================
-            // 🎯 EVENTOS
-            // ================================================================
-            function setupEventos() {
-                var btnCapa = document.getElementById('btnCapa');
-                var capaInput = document.getElementById('capaInput');
-                var capaPreview = document.getElementById('capaPreview');
-                var capaNome = document.getElementById('capaNome');
-
-                if (btnCapa && capaInput) {
-                    btnCapa.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        capaInput.click();
-                    });
-                }
-
-                if (capaInput) {
-                    capaInput.addEventListener('change', function(e) {
-                        var file = this.files[0];
-                        if (file) {
-                            var reader = new FileReader();
-                            reader.onload = function(e) {
-                                capaPreview.innerHTML = '<img src="' + e.target.result + '" alt="Capa" />';
-                                capaNome.textContent = file.name;
-                                capaImagem = e.target.result;
-                            };
-                            reader.readAsDataURL(file);
-                        }
-                    });
-                }
-
-                var btnVoltar = document.getElementById('btnVoltarFlutuante');
-                if (btnVoltar) {
-                    btnVoltar.addEventListener('click', function() {
-                        mostrarTela('estante');
-                        esconderSeta();
-                    });
-                }
-
-                var paginaContainer = document.getElementById('paginaContainer');
-                if (paginaContainer) {
-                    paginaContainer.addEventListener('click', function(e) {
-                        if (e.target.closest('.ingles')) return;
-                        if (document.getElementById('telaLeitor').classList.contains('ativa')) {
-                            mostrarSeta();
-                        }
-                    });
-                }
-
-                var btnImportar = document.getElementById('btnImportar');
-                var btnImportarTop = document.getElementById('btnImportarTop');
-                var btnImportarConfig = document.getElementById('btnImportarConfig');
-                var btnVoltarImportar = document.getElementById('btnVoltarImportar');
-
-                if (btnImportar) btnImportar.addEventListener('click', function() { mostrarTela('importar'); });
-                if (btnImportarTop) btnImportarTop.addEventListener('click', function() { mostrarTela('importar'); });
-                if (btnImportarConfig) btnImportarConfig.addEventListener('click', function() {
-                    fecharConfig();
-                    setTimeout(function() { mostrarTela('importar'); }, 300);
-                });
-                if (btnVoltarImportar) btnVoltarImportar.addEventListener('click', function() { mostrarTela(
-                    'estante'); });
-
-                var btnConfig = document.getElementById('btnConfigEstante');
-                var btnFecharConfig = document.getElementById('btnFecharConfig');
-                var modalConfig = document.getElementById('modalConfig');
-
-                if (btnConfig) btnConfig.addEventListener('click', abrirConfig);
-                if (btnFecharConfig) btnFecharConfig.addEventListener('click', fecharConfig);
-                if (modalConfig) {
-                    modalConfig.addEventListener('click', function(e) {
-                        if (e.target === this) fecharConfig();
-                    });
-                }
-
-                criarRainbowPicker('rainbowIngles', 'handleIngles', 'corInglesLabel', config.corIngles, function(hex) {
-                    config.corIngles = hex;
-                    aplicarConfiguracoes();
-                    salvarConfig();
-                });
-
-                criarRainbowPicker('rainbowPortugues', 'handlePortugues', 'corPortuguesLabel', config.corPortugues,
-                    function(hex) {
-                        config.corPortugues = hex;
-                        aplicarConfiguracoes();
-                        salvarConfig();
-                    });
-
-                criarRainbowPicker('rainbowFundo', 'handleFundo', 'corFundoLabel', config.corFundo, function(hex) {
-                    config.corFundo = hex;
-                    aplicarConfiguracoes();
-                    salvarConfig();
-                });
-
-                var btnAudioFrase = document.getElementById('btnAudioFrase');
-                if (btnAudioFrase) {
-                    btnAudioFrase.addEventListener('click', function() {
-                        if (audioAutomatico) {
-                            audioAutomatico = false;
-                            var btnAuto = document.getElementById('btnAudioAutomatico');
-                            if (btnAuto) btnAuto.classList.remove('ativo-audio');
-                            try { window.speechSynthesis.cancel(); } catch (e) {}
-                            setTimeout(function() { falarTudoPagina(); }, 300);
-                        } else {
-                            falarTudoPagina();
-                        }
-                    });
-                }
-
-                var btnAudioAuto = document.getElementById('btnAudioAutomatico');
-                if (btnAudioAuto) {
-                    btnAudioAuto.addEventListener('click', function() {
-                        audioAutomatico = !audioAutomatico;
-                        this.classList.toggle('ativo-audio', audioAutomatico);
-                        if (audioAutomatico) {
-                            try { window.speechSynthesis.cancel(); } catch (e) {}
-                            setTimeout(function() {
-                                falarFraseAtual(0);
-                            }, 300);
-                        } else {
-                            try { window.speechSynthesis.cancel(); } catch (e) {}
-                            audioFalando = false;
-                            var els = document.querySelectorAll('.frase-item .ingles');
-                            for (var i = 0; i < els.length; i++) {
-                                els[i].classList.remove('falando');
-                            }
-                        }
-                    });
-                }
-
-                var btnAnt = document.getElementById('btnAnterior');
-                var btnProx = document.getElementById('btnProximo');
-
-                if (btnAnt) {
-                    btnAnt.addEventListener('click', function() {
-                        paginaAnterior();
-                    });
-                }
-
-                if (btnProx) {
-                    btnProx.addEventListener('click', function() {
-                        proximaPagina();
-                    });
-                }
-
-                var btnTogglePT = document.getElementById('btnTogglePT');
-                if (btnTogglePT) {
-                    btnTogglePT.addEventListener('click', function() {
-                        mostrarPT = !mostrarPT;
-                        this.textContent = mostrarPT ? '🇧🇷 PT' : '🇧🇷 PT (oculto)';
-                        this.classList.toggle('ativo');
-                        renderizarPagina();
-                    });
-                }
-
-                var importArea = document.getElementById('importArea');
-                var fileInput = document.getElementById('fileInput');
-                var btnImportarArquivo = document.getElementById('btnImportarArquivo');
-
-                if (importArea) {
-                    importArea.addEventListener('click', function() {
-                        var input = document.getElementById('fileInput');
-                        if (input) input.click();
-                    });
-                }
-
-                if (fileInput) {
-                    fileInput.addEventListener('change', function() {
-                        var nome = this.files[0] ? this.files[0].name : '';
-                        var nomeEl = document.getElementById('nomeArquivo');
-                        if (nomeEl) nomeEl.textContent = nome;
-                        if (btnImportarArquivo) btnImportarArquivo.disabled = !nome;
-                    });
-                }
-
-                if (btnImportarArquivo) {
-                    btnImportarArquivo.addEventListener('click', importarArquivo);
-                }
-
-                var btnFonteMais = document.getElementById('btnFonteMais');
-                var btnFonteMenos = document.getElementById('btnFonteMenos');
-
-                if (btnFonteMais) {
-                    btnFonteMais.addEventListener('click', function() {
-                        if (config.tamanhoFonte < 40) {
-                            config.tamanhoFonte += 2;
-                            calcularFrasesPorPagina();
-                            aplicarConfiguracoes();
-                            if (document.getElementById('telaLeitor').classList.contains('ativa')) {
-                                renderizarPagina();
-                            }
-                        }
-                    });
-                }
-
-                if (btnFonteMenos) {
-                    btnFonteMenos.addEventListener('click', function() {
-                        if (config.tamanhoFonte > 10) {
-                            config.tamanhoFonte -= 2;
-                            calcularFrasesPorPagina();
-                            aplicarConfiguracoes();
-                            if (document.getElementById('telaLeitor').classList.contains('ativa')) {
-                                renderizarPagina();
-                            }
-                        }
-                    });
-                }
-
-                var btnVelocidadeMais = document.getElementById('btnVelocidadeMais');
-                var btnVelocidadeMenos = document.getElementById('btnVelocidadeMenos');
-
-                if (btnVelocidadeMais) {
-                    btnVelocidadeMais.addEventListener('click', function() {
-                        if (velocidadeVoz < 2.0) {
-                            velocidadeVoz = Math.round((velocidadeVoz + 0.1) * 10) / 10;
-                            aplicarConfiguracoes();
-                        }
-                    });
-                }
-
-                if (btnVelocidadeMenos) {
-                    btnVelocidadeMenos.addEventListener('click', function() {
-                        if (velocidadeVoz > 0.5) {
-                            velocidadeVoz = Math.round((velocidadeVoz - 0.1) * 10) / 10;
-                            aplicarConfiguracoes();
-                        }
-                    });
-                }
-
-                var toggleNegrito = document.getElementById('toggleNegrito');
-                if (toggleNegrito) {
-                    toggleNegrito.addEventListener('change', function() {
-                        config.negrito = this.checked;
-                        aplicarConfiguracoes();
-                    });
-                }
-
-                var opcoesFonte = document.querySelectorAll('#opcoesFonte button');
-                for (var i = 0; i < opcoesFonte.length; i++) {
-                    (function(btn) {
-                        btn.addEventListener('click', function() {
-                            config.fonte = this.dataset.fonte;
-                            aplicarConfiguracoes();
-                        });
-                    })(opcoesFonte[i]);
-                }
-
-                document.addEventListener('keydown', function(e) {
-                    var leitorAtivo = document.getElementById('telaLeitor') &&
-                        document.getElementById('telaLeitor').classList.contains('ativa');
-                    if (leitorAtivo) {
-                        if (e.key === 'ArrowRight') { e.preventDefault();
-                            proximaPagina(); }
-                        if (e.key === 'ArrowLeft') { e.preventDefault();
-                            paginaAnterior(); }
-                        if (e.key === 'f' || e.key === 'F') { e.preventDefault();
-                            falarTudoPagina(); }
-                        if (e.key === ' ') { e.preventDefault(); }
-                        if (e.key === 'Escape') { mostrarTela('estante'); }
-                    }
-                    if (e.key === 'Escape') fecharConfig();
-                });
-
-                if (window.speechSynthesis) {
-                    var carregarVozes = function() {
-                        var vozes = window.speechSynthesis.getVoices();
-                        if (vozes.length > 0) {
-                            console.log('🔊 Vozes carregadas:', vozes.length);
-                            return true;
-                        }
-                        return false;
-                    };
-
-                    carregarVozes();
-                    window.speechSynthesis.onvoiceschanged = function() {
-                        carregarVozes();
-                    };
-
-                    setTimeout(carregarVozes, 1000);
-                }
-
-                document.addEventListener('touchstart', function() {
-                    if (window.speechSynthesis) {
-                        window.speechSynthesis.getVoices();
-                    }
-                }, { once: true });
-
-                document.addEventListener('click', function() {
-                    if (window.speechSynthesis) {
-                        window.speechSynthesis.getVoices();
-                    }
-                }, { once: true });
-
-                var resizeTimeout;
-                window.addEventListener('resize', function() {
-                    clearTimeout(resizeTimeout);
-                    resizeTimeout = setTimeout(function() {
-                        calcularFrasesPorPagina();
-                        if (document.getElementById('telaLeitor').classList.contains('ativa')) {
-                            renderizarPagina();
-                        }
-                    }, 300);
-                });
-
-                setupSwipe();
-
-                setTimeout(function() {
-                    var livrosComProgresso = [];
-                    for (var i = 0; i < livros.length; i++) {
-                        if (livros[i].id && livros[i].paginaAtual > 0) {
-                            livrosComProgresso.push(livros[i]);
-                        }
-                    }
-                    if (livrosComProgresso.length > 0) {
-                        var ultimoLivro = livrosComProgresso[livrosComProgresso.length - 1];
-                        var index = -1;
-                        for (var j = 0; j < livros.length; j++) {
-                            if (livros[j].id === ultimoLivro.id) {
-                                index = j;
-                                break;
-                            }
-                        }
-                        if (index !== -1) {
-                            setTimeout(function() {
-                                abrirLeitor(index);
-                            }, 500);
-                        }
-                    }
-                }, 1000);
-            }
-
-            // ================================================================
-            // 🚀 INICIAR
-            // ================================================================
-            function init() {
-                carregarConfig();
-                carregarDados();
-                renderizarEstante();
-                aplicarConfiguracoes();
-                setupEventos();
-                atualizarToolbar('estante');
-                atualizarListaLivrosConfig();
-
-                calcularFrasesPorPagina();
-
-                setTimeout(hideSplash, 1500);
-
-                console.log('📚 YouCan Leitor v' + APP_VERSION + ' iniciado!');
-                console.log('📚 Livros carregados:', livros.length);
-                console.log('🔊 Áudio: ' + (window.speechSynthesis ? 'Disponível' : 'Indisponível'));
-                console.log('📐 Frases por página: ' + FRASES_POR_PAGINA);
-                console.log('📖 Dicionário carregado com ' + Object.keys(DICIONARIO).length + ' palavras');
-                console.log('🎨 Cor Inglês: ' + config.corIngles);
-                console.log('🎨 Cor Português: ' + config.corPortugues);
-                console.log('🎨 Cor Fundo: ' + config.corFundo);
-            }
-
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', init);
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+        let books = JSON.parse(localStorage.getItem('polyglot_books') || '[]');
+        let settings = JSON.parse(localStorage.getItem('polyglot_settings') || JSON.stringify({
+            font: 'Arial',
+            pixelSize: 16,
+            weight: 'normal',
+            transVal: 30,
+            bgVal: 0,
+            surfaceVal: 100
+        }));
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSettingsToUI();
+            renderShelf();
+        });
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 3000);
+        }
+
+        function openImportModal() { document.getElementById('importModal').classList.add('active'); }
+        function closeImportModal() { document.getElementById('importModal').classList.remove('active'); }
+        function openSettingsModal() { document.getElementById('settingsModal').classList.add('active'); }
+        function closeSettingsModal() { document.getElementById('settingsModal').classList.remove('active'); }
+
+        function loadSettingsToUI() {
+            document.getElementById('fontSelect').value = settings.font;
+            document.getElementById('fontWeightSelect').value = settings.weight;
+            if (!settings.pixelSize) settings.pixelSize = 16;
+            document.getElementById('fontSizeDisplay').innerText = settings.pixelSize + 'px';
+
+            document.getElementById('transColorRange').value = settings.transVal !== undefined ? settings.transVal : 30;
+            document.getElementById('bgColorRange').value = settings.bgVal !== undefined ? settings.bgVal : 0;
+            document.getElementById('surfaceColorRange').value = settings.surfaceVal !== undefined ? settings.surfaceVal : 100;
+
+            applySettings();
+        }
+
+        function changeFontSize(delta) {
+            settings.pixelSize += delta;
+            if (settings.pixelSize < 10) settings.pixelSize = 10;
+            if (settings.pixelSize > 40) settings.pixelSize = 40;
+            
+            document.getElementById('fontSizeDisplay').innerText = settings.pixelSize + 'px';
+            applySettings();
+        }
+
+        // Converte valor de 0 a 100 da barra arco-íris em uma cor Hex exata
+        function getColorFromSliderValue(val) {
+            let p = parseInt(val);
+            let r, g, b;
+
+            if (p <= 15) {
+                let f = p / 15;
+                r = Math.floor(153 * f); g = 0; b = 0;
+            } else if (p <= 25) {
+                let f = (p - 15) / 10;
+                r = 153 + Math.floor(102 * f); g = 0; b = 0;
+            } else if (p <= 40) {
+                let f = (p - 25) / 15;
+                r = 255; g = Math.floor(255 * f); b = 0;
+            } else if (p <= 55) {
+                let f = (p - 40) / 15;
+                r = 255 - Math.floor(255 * f); g = 255; b = 0;
+            } else if (p <= 70) {
+                let f = (p - 55) / 15;
+                r = 0; g = 255; b = Math.floor(255 * f);
+            } else if (p <= 85) {
+                let f = (p - 70) / 15;
+                r = 0; g = 255 - Math.floor(255 * f); b = 255;
+            } else if (p <= 95) {
+                let f = (p - 85) / 10;
+                r = Math.floor(255 * f); g = 0; b = 255;
             } else {
-                init();
+                let f = (p - 95) / 5;
+                r = 255 + Math.floor(0 * f); g = Math.floor(255 * f); b = 255 + Math.floor(0 * f);
+                r = 255; g = 255; b = 255;
+            }
+            
+            let hex = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+            return hex;
+        }
+
+        function updateRainbowColor(type) {
+            if(type === 'trans') {
+                settings.transVal = document.getElementById('transColorRange').value;
+                let hex = getColorFromSliderValue(settings.transVal);
+                document.getElementById('hexTransColor').innerText = hex;
+                document.documentElement.style.setProperty('--trans-color', hex);
+            } else if(type === 'bg') {
+                settings.bgVal = document.getElementById('bgColorRange').value;
+                let hex = getColorFromSliderValue(settings.bgVal);
+                document.getElementById('hexBgColor').innerText = hex;
+                document.documentElement.style.setProperty('--bg-color', hex);
+            } else if(type === 'surface') {
+                settings.surfaceVal = document.getElementById('surfaceColorRange').value;
+                let hex = getColorFromSliderValue(settings.surfaceVal);
+                document.getElementById('hexSurfaceColor').innerText = hex;
+                document.documentElement.style.setProperty('--surface-color', hex);
+                document.documentElement.style.setProperty('--card-bg', hex);
+            }
+            localStorage.setItem('polyglot_settings', JSON.stringify(settings));
+        }
+
+        function applySettings() {
+            settings.font = document.getElementById('fontSelect').value;
+            settings.weight = document.getElementById('fontWeightSelect').value;
+
+            document.documentElement.style.setProperty('--selected-font', settings.font);
+            document.documentElement.style.setProperty('--font-pixel-size', settings.pixelSize + 'px');
+            document.documentElement.style.setProperty('--font-weight', settings.weight);
+
+            // Atualiza cores pelas posições atuais dos seletores arco-íris
+            updateRainbowColor('trans');
+            updateRainbowColor('bg');
+            updateRainbowColor('surface');
+
+            document.documentElement.style.setProperty('--accent-color', '#cccccc');
+            localStorage.setItem('polyglot_settings', JSON.stringify(settings));
+        }
+
+        // Renderiza a Estante: 3 livros por prateleira
+        function renderShelf() {
+            const container = document.getElementById('shelfContainer');
+            container.innerHTML = '';
+
+            let rows = [];
+            for (let i = 0; i < books.length; i += 3) {
+                rows.push(books.slice(i, i + 3));
             }
 
-        })();
-    </script>
+            if (rows.length === 0) {
+                rows.push([]);
+            }
 
+            rows.forEach((rowBooks) => {
+                const rowEl = document.createElement('div');
+                rowEl.className = 'shelf-row';
+
+                for (let i = 0; i < 3; i++) {
+                    if (rowBooks[i]) {
+                        const book = rowBooks[i];
+                        const card = document.createElement('div');
+                        card.className = 'book-card';
+                        card.onclick = () => openReader(book);
+
+                        const coverDiv = document.createElement('div');
+                        coverDiv.className = 'book-cover';
+                        if (book.cover) {
+                            const img = document.createElement('img');
+                            img.src = book.cover;
+                            coverDiv.appendChild(img);
+                        } else {
+                            const span = document.createElement('span');
+                            span.innerText = "📖 Livro";
+                            coverDiv.appendChild(span);
+                        }
+
+                        const titleLabel = document.createElement('div');
+                        titleLabel.className = 'book-title-label';
+                        titleLabel.innerText = book.title;
+
+                        card.appendChild(coverDiv);
+                        card.appendChild(titleLabel);
+                        rowEl.appendChild(card);
+                    } else {
+                        const empty = document.createElement('div');
+                        empty.className = 'empty-slot';
+                        empty.innerText = '+';
+                        empty.onclick = openImportModal;
+                        rowEl.appendChild(empty);
+                    }
+                }
+                container.appendChild(rowEl);
+            });
+        }
+
+        async function processAndSaveBook() {
+            const titleInput = document.getElementById('bookTitleInput').value.trim();
+            const fileInput = document.getElementById('bookFileInput');
+            const coverInput = document.getElementById('coverFileInput');
+
+            if (!titleInput || fileInput.files.length === 0) {
+                showToast("Por favor, informe o título e selecione o arquivo do livro.");
+                return;
+            }
+
+            showToast("Processando arquivo e traduzindo...");
+            closeImportModal();
+
+            const file = fileInput.files[0];
+            let rawText = "";
+
+            try {
+                const ext = file.name.split('.').pop().toLowerCase();
+                if (ext === 'txt' || ext === 'csv' || ext === 'json' || ext === 'srt' || ext === 'vtt') {
+                    rawText = await file.text();
+                } else if (ext === 'docx') {
+                    const arrayBuffer = await file.arrayBuffer();
+                    const result = await mammoth.extractRawText({ arrayBuffer });
+                    rawText = result.value;
+                } else if (ext === 'pdf') {
+                    const arrayBuffer = await file.arrayBuffer();
+                    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                    let fullText = "";
+                    for (let i = 1; i <= pdf.numPages; i++) {
+                        const page = await pdf.getPage(i);
+                        const textContent = await page.getTextContent();
+                        fullText += textContent.items.map(item => item.str).join(" ") + "\n";
+                    }
+                    rawText = fullText;
+                }
+
+                let sentences = rawText.replace(/\r/g, '').split(/[\.!?\n]+/).map(s => s.trim()).filter(s => s.length > 2);
+
+                let bilingualPairs = [];
+                for (let i = 0; i < Math.min(sentences.length, 300); i++) {
+                    let orig = sentences[i];
+                    let trans = await translateSentence(orig);
+                    bilingualPairs.push({ orig, trans });
+                }
+
+                let coverDataUrl = "";
+                if (coverInput.files.length > 0) {
+                    coverDataUrl = await fileToDataUrl(coverInput.files[0]);
+                }
+
+                const newBook = {
+                    id: Date.now(),
+                    title: titleInput,
+                    cover: coverDataUrl,
+                    content: bilingualPairs
+                };
+
+                books.push(newBook);
+                localStorage.setItem('polyglot_books', JSON.stringify(books));
+                renderShelf();
+                showToast("Livro adicionado com sucesso à estante!");
+
+                document.getElementById('bookTitleInput').value = "";
+                document.getElementById('bookFileInput').value = "";
+                document.getElementById('coverFileInput').value = "";
+
+            } catch (err) {
+                console.error(err);
+                showToast("Erro ao processar o arquivo. Verifique o formato.");
+            }
+        }
+
+        function fileToDataUrl(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function translateSentence(text) {
+            try {
+                let langPair = /[a-zA-Z]{5,}/.test(text) ? "en|pt" : "pt|en";
+                let url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${langPair}`;
+                let res = await fetch(url);
+                let data = await res.json();
+                if (data && data.responseData && data.responseData.translatedText) {
+                    return data.responseData.translatedText;
+                }
+            } catch (e) {}
+            return "[Tradução pendente / Offline]";
+        }
+
+        let currentActiveBookId = null;
+
+        function openReader(book) {
+            currentActiveBookId = book.id;
+            document.getElementById('readerTitle').innerText = book.title;
+            const body = document.getElementById('reader-body');
+            body.innerHTML = '';
+
+            book.content.forEach((pair, index) => {
+                const pairDiv = document.createElement('div');
+                pairDiv.className = 'bilingual-pair';
+                pairDiv.dataset.index = index;
+
+                const origDiv = document.createElement('div');
+                origDiv.className = 'sentence-orig';
+                origDiv.innerText = pair.orig;
+
+                const transDiv = document.createElement('div');
+                transDiv.className = 'sentence-trans';
+                transDiv.innerText = pair.trans;
+
+                pairDiv.appendChild(origDiv);
+                pairDiv.appendChild(transDiv);
+                body.appendChild(pairDiv);
+            });
+
+            document.getElementById('reader-view').style.display = 'flex';
+
+            setTimeout(() => {
+                if (book.scrollTop) {
+                    body.scrollTop = book.scrollTop;
+                }
+            }, 50);
+
+            body.onscroll = () => {
+                let currentBook = books.find(b => b.id === currentActiveBookId);
+                if (currentBook) {
+                    currentBook.scrollTop = body.scrollTop;
+                    localStorage.setItem('polyglot_books', JSON.stringify(books));
+                }
+            };
+        }
+
+        function closeReader() {
+            document.getElementById('reader-view').style.display = 'none';
+            currentActiveBookId = null;
+        }
+    </script>
 </body>
 </html>

@@ -9,14 +9,19 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
     <style>
         :root {
-            --bg-color: #f7f9fc;
-            --surface-color: #ffffff;
-            --text-color: #2d3748;
-            --trans-color: #4a90e2;
-            --accent-color: #e2e8f0;
-            --shelf-color: #8b5a2b;
-            --shelf-shadow: rgba(0,0,0,0.2);
-            --card-bg: #ffffff;
+            /* Cores Fixas da Interface Principal (Extraídas da Imagem Enviada) */
+            --app-bg: #d7d0c7;         /* Cor da parte inferior/fundo da imagem */
+            --app-surface: #eae5df;    /* Tom complementar suave derivado */
+            --app-text: #3e332a;       /* Tom escuro armonioso com o marrom */
+            --app-primary: #8b6b4f;    /* Marrom principal da estante */
+            --app-accent: #c4bbb0;     /* Tom de borda/separador */
+            --shelf-color: #6a503a;    /* Tom mais escuro para a base da prateleira (marrom superior da imagem) */
+            --shelf-shadow: rgba(0,0,0,0.3);
+
+            /* Cores Dinâmicas Exclusivas do Leitor (Personalizáveis) */
+            --reader-bg: #f7f9fc;
+            --reader-surface: #ffffff;
+            --reader-trans: #8b6b4f;
             --font-pixel-size: 16px;
         }
 
@@ -24,48 +29,19 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: var(--selected-font, 'Arial', sans-serif);
+            font-family: 'Arial', sans-serif;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            background-color: var(--app-bg);
+            color: var(--app-text);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             overflow-x: hidden;
         }
 
-        header {
-            background-color: var(--surface-color);
-            padding: 16px;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        h1 {
-            font-size: 1.2rem;
-            color: var(--trans-color);
-        }
-
-        .btn-add {
-            background-color: var(--trans-color);
-            color: #fff;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-
-        /* Estante de Livros */
+        /* Estante de Livros - Interface Fixa */
         .shelf-container {
             flex: 1;
             padding: 16px;
@@ -87,7 +63,7 @@
         }
 
         .book-card {
-            background-color: var(--card-bg);
+            background-color: var(--app-surface);
             border-radius: 6px;
             overflow: hidden;
             box-shadow: 0 3px 6px rgba(0,0,0,0.15);
@@ -105,7 +81,7 @@
 
         .book-cover {
             flex: 1;
-            background-color: var(--accent-color);
+            background-color: var(--app-accent);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -123,14 +99,14 @@
             font-size: 0.75rem;
             padding: 4px;
             text-align: center;
-            color: var(--text-color);
+            color: var(--app-text);
         }
 
         .book-title-label {
             font-size: 0.7rem;
             padding: 4px;
             text-align: center;
-            background-color: var(--surface-color);
+            background-color: var(--app-surface);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -138,24 +114,26 @@
         }
 
         .empty-slot {
-            border: 2px dashed var(--accent-color);
+            border: 2px dashed var(--app-accent);
             border-radius: 6px;
             height: 140px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--accent-color);
+            color: var(--app-text);
             font-size: 1.5rem;
+            cursor: pointer;
+            opacity: 0.7;
         }
 
-        /* Botão de Configurações Flutuante (Inferior Direito) */
+        /* Botão de Configurações Flutuante (Interface Fixa) */
         .fab-settings {
             position: fixed;
             bottom: 20px;
             right: 20px;
             width: 56px;
             height: 56px;
-            background-color: var(--trans-color);
+            background-color: var(--app-primary);
             color: white;
             border-radius: 50%;
             display: flex;
@@ -173,7 +151,7 @@
             transform: scale(0.9);
         }
 
-        /* Modal / Telas */
+        /* Modal de Configurações (Interface Fixa) */
         .modal {
             position: fixed;
             top: 0;
@@ -193,7 +171,8 @@
         }
 
         .modal-content {
-            background-color: var(--surface-color);
+            background-color: var(--app-surface);
+            color: var(--app-text);
             padding: 20px;
             border-radius: 12px;
             width: 100%;
@@ -212,7 +191,7 @@
             align-items: center;
             font-weight: bold;
             font-size: 1.1rem;
-            color: var(--trans-color);
+            color: var(--app-primary);
         }
 
         .close-btn {
@@ -220,7 +199,7 @@
             border: none;
             font-size: 1.2rem;
             cursor: pointer;
-            color: var(--text-color);
+            color: var(--app-text);
         }
 
         .form-group {
@@ -237,25 +216,25 @@
         .form-group select, .form-group input {
             padding: 10px;
             border-radius: 6px;
-            border: 1px solid var(--accent-color);
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            border: 1px solid var(--app-accent);
+            background-color: var(--app-bg);
+            color: var(--app-text);
             font-size: 0.9rem;
         }
 
-        /* Controles de Tamanho de Fonte com Botões de + e - */
+        /* Controles de Tamanho de Fonte */
         .font-size-control {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background-color: var(--bg-color);
-            border: 1px solid var(--accent-color);
+            background-color: var(--app-bg);
+            border: 1px solid var(--app-accent);
             border-radius: 6px;
             padding: 4px;
         }
 
         .font-size-btn {
-            background-color: var(--trans-color);
+            background-color: var(--app-primary);
             color: white;
             border: none;
             width: 36px;
@@ -272,18 +251,18 @@
         .font-size-display {
             font-weight: bold;
             font-size: 1rem;
-            color: var(--text-color);
+            color: var(--app-text);
         }
 
-        /* Barra de Arco-Íris Exata Estilo Imagem */
+        /* Barras Arco-Íris */
         .rainbow-slider-group {
             display: flex;
             flex-direction: column;
             gap: 6px;
-            background: var(--surface-color);
+            background: var(--app-surface);
             padding: 8px;
             border-radius: 8px;
-            border: 1px solid var(--accent-color);
+            border: 1px solid var(--app-accent);
         }
 
         .rainbow-label-row {
@@ -295,12 +274,12 @@
         }
 
         .hex-tag {
-            background-color: var(--accent-color);
+            background-color: var(--app-accent);
             padding: 2px 8px;
             border-radius: 4px;
             font-size: 0.8rem;
             font-family: monospace;
-            color: var(--text-color);
+            color: var(--app-text);
         }
 
         .rainbow-input {
@@ -323,7 +302,6 @@
             cursor: pointer;
         }
 
-        /* Estilização da bolinha (thumb) do seletor */
         .rainbow-input::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
@@ -347,7 +325,7 @@
         }
 
         .btn-primary {
-            background-color: var(--trans-color);
+            background-color: var(--app-primary);
             color: white;
             border: none;
             padding: 12px;
@@ -357,21 +335,62 @@
             text-align: center;
         }
 
-        /* Leitor Bilíngue */
+        .settings-import-section {
+            border-top: 1px solid var(--app-accent);
+            padding-top: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* Barra de Progresso de Tradução */
+        .progress-container {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            background: var(--app-bg);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--app-accent);
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 12px;
+            background-color: var(--app-accent);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            width: 0%;
+            height: 100%;
+            background-color: var(--app-primary);
+            transition: width 0.2s ease;
+        }
+
+        .progress-text {
+            font-size: 0.8rem;
+            text-align: center;
+            font-weight: bold;
+            color: var(--app-text);
+        }
+
+        /* Leitor Bilíngue (Usa as cores dinâmicas variáveis) */
         #reader-view {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: var(--bg-color);
+            background-color: var(--reader-bg);
             z-index: 200;
             display: none;
             flex-direction: column;
         }
 
         #reader-header {
-            background-color: var(--surface-color);
+            background-color: var(--reader-surface);
             padding: 12px 16px;
             display: flex;
             justify-content: space-between;
@@ -394,20 +413,22 @@
             gap: 4px;
             padding: 10px;
             border-radius: 6px;
-            background-color: var(--surface-color);
+            background-color: var(--reader-surface);
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
         .sentence-orig {
             font-size: var(--font-pixel-size);
             font-weight: var(--font-weight, normal);
+            font-family: var(--selected-font, 'Arial', sans-serif);
         }
 
         .sentence-trans {
             font-size: calc(var(--font-pixel-size) * 0.9);
-            color: var(--trans-color);
+            color: var(--reader-trans);
             font-weight: var(--font-weight, normal);
-            border-top: 1px dashed var(--accent-color);
+            font-family: var(--selected-font, 'Arial', sans-serif);
+            border-top: 1px dashed rgba(128,128,128,0.3);
             padding-top: 4px;
         }
 
@@ -429,49 +450,50 @@
 </head>
 <body>
 
-    <header>
-        <h1>PolyglotShelf</h1>
-        <button class="btn-add" onclick="openImportModal()">+ Livro</button>
-    </header>
-
-    <!-- Estante de Prateleiras -->
+    <!-- Estante de Prateleiras (Interface Fixa) -->
     <div class="shelf-container" id="shelfContainer">
         <!-- Gerado Dinamicamente -->
     </div>
 
     <!-- Botão de Configurações no Canto Inferior Direito -->
-    <button class="fab-settings" onclick="openSettingsModal()" title="Configurações">⚙️</button>
+    <button class="fab-settings" onclick="openSettingsModal()" title="Configurações e Adicionar Livro">⚙️</button>
 
-    <!-- Modal de Importação / Adição de Livro -->
-    <div class="modal" id="importModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span>Adicionar Novo Livro</span>
-                <button class="close-btn" onclick="closeImportModal()">✕</button>
-            </div>
-            <div class="form-group">
-                <label>Título do Livro</label>
-                <input type="text" id="bookTitleInput" placeholder="Ex: Alice no País das Maravilhas">
-            </div>
-            <div class="form-group">
-                <label>Arquivo do Livro (.TXT, .DOCX, .CSV, .JSON, .SRT, .VTT, .PDF)</label>
-                <input type="file" id="bookFileInput" accept=".txt,.docx,.csv,.json,.srt,.vtt,.pdf">
-            </div>
-            <div class="form-group">
-                <label>Capa do Livro (Imagem opcional)</label>
-                <input type="file" id="coverFileInput" accept="image/*">
-            </div>
-            <button class="btn-primary" onclick="processAndSaveBook()">Processar e Colocar na Estante</button>
-        </div>
-    </div>
-
-    <!-- Modal de Configurações Atualizado com Barras Arco-Íris -->
+    <!-- Modal de Configurações e Adição de Livro -->
     <div class="modal" id="settingsModal">
         <div class="modal-content">
             <div class="modal-header">
-                <span>Configurações de Leitura</span>
+                <span>Configurações e Livros</span>
                 <button class="close-btn" onclick="closeSettingsModal()">✕</button>
             </div>
+
+            <!-- Seção para Adicionar / Baixar Novo Livro -->
+            <div class="settings-import-section">
+                <span style="font-size: 0.9rem; font-weight: bold; color: var(--app-primary);">📥 Baixar e Adicionar Novo Livro</span>
+                <div class="form-group">
+                    <label>Título do Livro</label>
+                    <input type="text" id="bookTitleInput" placeholder="Ex: Alice no País das Maravilhas">
+                </div>
+                <div class="form-group">
+                    <label>Arquivo (.TXT, .DOCX, .CSV, .JSON, .SRT, .VTT, .PDF)</label>
+                    <input type="file" id="bookFileInput" accept=".txt,.docx,.csv,.json,.srt,.vtt,.pdf">
+                </div>
+                <div class="form-group">
+                    <label>Capa do Livro (Opcional)</label>
+                    <input type="file" id="coverFileInput" accept="image/*">
+                </div>
+                <button class="btn-primary" id="processBookBtn" onclick="processAndSaveBook()">Processar e Enviar para Estante</button>
+
+                <!-- Barra de Progresso da Tradução -->
+                <div class="progress-container" id="progressContainer">
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" id="progressBarFill"></div>
+                    </div>
+                    <span class="progress-text" id="progressText">Traduzindo: 0%</span>
+                </div>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid var(--app-accent); margin: 4px 0;">
+
             <div class="form-group">
                 <label>Tipo de Fonte (10 Opções)</label>
                 <select id="fontSelect" onchange="applySettings()">
@@ -503,29 +525,29 @@
                 </select>
             </div>
             
-            <!-- Barra Arco-Íris 1: Cor do Texto Traduzido -->
+            <!-- Barra Arco-Íris 1: Cor do Texto Traduzido (Exclusiva do Leitor) -->
             <div class="rainbow-slider-group">
                 <div class="rainbow-label-row">
                     <span>🎨 Cor do Texto Traduzido</span>
-                    <span class="hex-tag" id="hexTransColor">#4A90E2</span>
+                    <span class="hex-tag" id="hexTransColor">#8B6B4F</span>
                 </div>
                 <input type="range" class="rainbow-input" id="transColorRange" min="0" max="100" value="30" oninput="updateRainbowColor('trans')">
             </div>
 
-            <!-- Barra Arco-Íris 2: Cor de Fundo do Leitor -->
+            <!-- Barra Arco-Íris 2: Cor de Fundo do Leitor (Exclusiva do Leitor) -->
             <div class="rainbow-slider-group">
                 <div class="rainbow-label-row">
                     <span>🎨 Cor de Fundo do Leitor</span>
-                    <span class="hex-tag" id="hexBgColor">#F7F9FC</span>
+                    <span class="hex-tag" id="hexBgColor">#D7D0C7</span>
                 </div>
                 <input type="range" class="rainbow-input" id="bgColorRange" min="0" max="100" value="0" oninput="updateRainbowColor('bg')">
             </div>
 
-            <!-- Barra Arco-Íris 3: Cor dos Cartões / Blocos -->
+            <!-- Barra Arco-Íris 3: Cor dos Cartões / Blocos de Texto (Exclusiva do Leitor) -->
             <div class="rainbow-slider-group">
                 <div class="rainbow-label-row">
-                    <span>🎨 Cor dos Blocos de Texto</span>
-                    <span class="hex-tag" id="hexSurfaceColor">#FFFFFF</span>
+                    <span>🎨 Cor dos Blocos do Leitor</span>
+                    <span class="hex-tag" id="hexSurfaceColor">#EAE5DF</span>
                 </div>
                 <input type="range" class="rainbow-input" id="surfaceColorRange" min="0" max="100" value="100" oninput="updateRainbowColor('surface')">
             </div>
@@ -537,8 +559,8 @@
     <!-- Tela do Leitor Bilíngue -->
     <div id="reader-view">
         <div id="reader-header">
-            <button class="btn-add" onclick="closeReader()">← Voltar</button>
-            <h2 id="readerTitle" style="font-size: 1rem; color: var(--trans-color);">Leitor</h2>
+            <button class="btn-add" onclick="closeReader()" style="background-color: var(--reader-trans); color: #fff; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: bold;">← Voltar</button>
+            <h2 id="readerTitle" style="font-size: 1rem; color: var(--reader-trans);">Leitor</h2>
             <div style="width: 50px;"></div>
         </div>
         <div id="reader-body">
@@ -573,8 +595,6 @@
             setTimeout(() => { toast.style.display = 'none'; }, 3000);
         }
 
-        function openImportModal() { document.getElementById('importModal').classList.add('active'); }
-        function closeImportModal() { document.getElementById('importModal').classList.remove('active'); }
         function openSettingsModal() { document.getElementById('settingsModal').classList.add('active'); }
         function closeSettingsModal() { document.getElementById('settingsModal').classList.remove('active'); }
 
@@ -600,7 +620,6 @@
             applySettings();
         }
 
-        // Converte valor de 0 a 100 da barra arco-íris em uma cor Hex exata
         function getColorFromSliderValue(val) {
             let p = parseInt(val);
             let r, g, b;
@@ -627,8 +646,6 @@
                 let f = (p - 85) / 10;
                 r = Math.floor(255 * f); g = 0; b = 255;
             } else {
-                let f = (p - 95) / 5;
-                r = 255 + Math.floor(0 * f); g = Math.floor(255 * f); b = 255 + Math.floor(0 * f);
                 r = 255; g = 255; b = 255;
             }
             
@@ -641,18 +658,17 @@
                 settings.transVal = document.getElementById('transColorRange').value;
                 let hex = getColorFromSliderValue(settings.transVal);
                 document.getElementById('hexTransColor').innerText = hex;
-                document.documentElement.style.setProperty('--trans-color', hex);
+                document.documentElement.style.setProperty('--reader-trans', hex);
             } else if(type === 'bg') {
                 settings.bgVal = document.getElementById('bgColorRange').value;
                 let hex = getColorFromSliderValue(settings.bgVal);
                 document.getElementById('hexBgColor').innerText = hex;
-                document.documentElement.style.setProperty('--bg-color', hex);
+                document.documentElement.style.setProperty('--reader-bg', hex);
             } else if(type === 'surface') {
                 settings.surfaceVal = document.getElementById('surfaceColorRange').value;
                 let hex = getColorFromSliderValue(settings.surfaceVal);
                 document.getElementById('hexSurfaceColor').innerText = hex;
-                document.documentElement.style.setProperty('--surface-color', hex);
-                document.documentElement.style.setProperty('--card-bg', hex);
+                document.documentElement.style.setProperty('--reader-surface', hex);
             }
             localStorage.setItem('polyglot_settings', JSON.stringify(settings));
         }
@@ -665,16 +681,13 @@
             document.documentElement.style.setProperty('--font-pixel-size', settings.pixelSize + 'px');
             document.documentElement.style.setProperty('--font-weight', settings.weight);
 
-            // Atualiza cores pelas posições atuais dos seletores arco-íris
             updateRainbowColor('trans');
             updateRainbowColor('bg');
             updateRainbowColor('surface');
 
-            document.documentElement.style.setProperty('--accent-color', '#cccccc');
             localStorage.setItem('polyglot_settings', JSON.stringify(settings));
         }
 
-        // Renderiza a Estante: 3 livros por prateleira
         function renderShelf() {
             const container = document.getElementById('shelfContainer');
             container.innerHTML = '';
@@ -722,7 +735,7 @@
                         const empty = document.createElement('div');
                         empty.className = 'empty-slot';
                         empty.innerText = '+';
-                        empty.onclick = openImportModal;
+                        empty.onclick = openSettingsModal;
                         rowEl.appendChild(empty);
                     }
                 }
@@ -740,8 +753,15 @@
                 return;
             }
 
-            showToast("Processando arquivo e traduzindo...");
-            closeImportModal();
+            const processBtn = document.getElementById('processBookBtn');
+            const progressContainer = document.getElementById('progressContainer');
+            const progressBarFill = document.getElementById('progressBarFill');
+            const progressText = document.getElementById('progressText');
+
+            processBtn.disabled = true;
+            progressContainer.style.display = 'flex';
+            progressBarFill.style.width = '0%';
+            progressText.innerText = 'Lendo arquivo... (0%)';
 
             const file = fileInput.files[0];
             let rawText = "";
@@ -767,12 +787,17 @@
                 }
 
                 let sentences = rawText.replace(/\r/g, '').split(/[\.!?\n]+/).map(s => s.trim()).filter(s => s.length > 2);
+                let totalSentences = Math.min(sentences.length, 300);
 
                 let bilingualPairs = [];
-                for (let i = 0; i < Math.min(sentences.length, 300); i++) {
+                for (let i = 0; i < totalSentences; i++) {
                     let orig = sentences[i];
                     let trans = await translateSentence(orig);
                     bilingualPairs.push({ orig, trans });
+
+                    let percent = Math.round(((i + 1) / totalSentences) * 100);
+                    progressBarFill.style.width = percent + '%';
+                    progressText.innerText = `Traduzindo: ${percent}% (${i + 1}/${totalSentences})`;
                 }
 
                 let coverDataUrl = "";
@@ -799,6 +824,10 @@
             } catch (err) {
                 console.error(err);
                 showToast("Erro ao processar o arquivo. Verifique o formato.");
+            } finally {
+                processBtn.disabled = false;
+                progressContainer.style.display = 'none';
+                closeSettingsModal();
             }
         }
 

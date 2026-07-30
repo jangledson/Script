@@ -408,10 +408,17 @@
             display: flex;
             flex-direction: column;
             gap: 4px;
-            padding: 10px;
+            padding: 12px;
             border-radius: 6px;
             background-color: var(--reader-surface);
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: background-color 0.15s, transform 0.1s;
+        }
+
+        .bilingual-pair:active {
+            transform: scale(0.98);
+            opacity: 0.9;
         }
 
         .sentence-orig {
@@ -430,7 +437,7 @@
             padding-top: 4px;
         }
 
-        /* Botão Voltar Posicionado no Inferior Esquerdo (Ocultável por Duplo Toque) */
+        /* Botão Voltar Posicionado no Inferior Esquerdo (Começa Oculto e Aparece com Duplo Toque) */
         .reader-floating-back {
             position: fixed;
             bottom: 24px;
@@ -445,13 +452,16 @@
             font-size: 1rem;
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
             z-index: 300;
-            transition: opacity 0.3s ease, transform 0.3s ease;
-        }
-
-        .reader-floating-back.hidden {
             opacity: 0;
             pointer-events: none;
             transform: translateY(20px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .reader-floating-back.visible {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
         }
 
         /* Toast de Alerta */
@@ -600,7 +610,7 @@
         <div id="reader-body">
             <!-- Conteúdo Bilíngue Intercalado -->
         </div>
-        <!-- Botão Voltar Posicionado no Inferior Esquerdo (Alternável por Duplo Toque) -->
+        <!-- Botão Voltar Posicionado no Inferior Esquerdo (Começa Oculto e Aparece com Duplo Toque) -->
         <button id="readerBackBtn" class="reader-floating-back" onclick="closeReader()">← Voltar</button>
     </div>
 
@@ -928,6 +938,11 @@
                 pairDiv.className = 'bilingual-pair';
                 pairDiv.dataset.index = index;
 
+                // Ao tocar no bloco da frase, reproduz o texto em inglês em voz alta
+                pairDiv.onclick = () => {
+                    playSpeech(pair.orig);
+                };
+
                 const origDiv = document.createElement('div');
                 origDiv.className = 'sentence-orig';
                 origDiv.innerText = pair.orig;
@@ -941,9 +956,9 @@
                 body.appendChild(pairDiv);
             });
 
-            // Exibe a tela do leitor e garante que o botão voltar comece visível
+            // Abre o leitor garantindo que o botão voltar comece oculto
             document.getElementById('reader-view').style.display = 'flex';
-            document.getElementById('readerBackBtn').classList.remove('hidden');
+            document.getElementById('readerBackBtn').classList.remove('visible');
 
             setTimeout(() => {
                 if (book.scrollTop) {
@@ -960,7 +975,24 @@
             };
         }
 
+        // Função que utiliza o sintetizador de voz do dispositivo para falar em inglês
+        function playSpeech(text) {
+            if (!('speechSynthesis' in window)) {
+                showToast("Seu dispositivo não suporta leitura por voz.");
+                return;
+            }
+            
+            // Cancela qualquer áudio anterior para falar imediatamente
+            window.speechSynthesis.cancel();
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US'; // Define o idioma como Inglês (EUA)
+            utterance.rate = 0.9;     // Velocidade levemente ajustada para facilitar o aprendizado
+            window.speechSynthesis.speak(utterance);
+        }
+
         function closeReader() {
+            window.speechSynthesis.cancel(); // Para a voz ao sair do livro
             document.getElementById('reader-view').style.display = 'none';
             currentActiveBookId = null;
         }
@@ -973,9 +1005,9 @@
                 let currentTime = new Date().getTime();
                 let tapLength = currentTime - lastTouchTime;
                 if (tapLength < 300 && tapLength > 0) {
-                    // Duplo toque detectado: alterna a visibilidade do botão voltar inferior esquerdo
+                    // Duplo toque detectado: alterna a visibilidade do botão voltar
                     const backBtn = document.getElementById('readerBackBtn');
-                    backBtn.classList.toggle('hidden');
+                    backBtn.classList.toggle('visible');
                     e.preventDefault();
                 }
                 lastTouchTime = currentTime;
@@ -984,7 +1016,7 @@
             // Suporte a clique duplo para testes no navegador com mouse
             readerView.addEventListener('dblclick', () => {
                 const backBtn = document.getElementById('readerBackBtn');
-                backBtn.classList.toggle('hidden');
+                backBtn.classList.toggle('visible');
             });
         }
     </script>

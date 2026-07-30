@@ -616,7 +616,8 @@
                     <label>Capa do Livro (Opcional)</label>
                     <input type="file" id="coverFileInput" accept="image/*">
                 </div>
-                <button class="btn-primary" onclick="processAndSaveBook()">Adicionar Livro à Estante</button>
+                <!-- Botão com escuta robusta para toque e clique -->
+                <button class="btn-primary" id="addBookBtn">Adicionar Livro à Estante</button>
             </div>
 
             <hr style="border: 0; border-top: 1px solid var(--app-accent); margin: 4px 0;">
@@ -729,6 +730,19 @@
             setupReaderDoubleTap();
             setupBackButton();
             loadLocalVoicesFromApp();
+
+            // Atribuição robusta do evento para o botão de adicionar livro (evita falhas de toque em mobile)
+            const addBookBtn = document.getElementById('addBookBtn');
+            if (addBookBtn) {
+                addBookBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    processAndSaveBook();
+                });
+                addBookBtn.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                    processAndSaveBook();
+                });
+            }
         });
 
         function showToast(msg) {

@@ -677,11 +677,11 @@
                 </div>
             </div>
 
-            <!-- Seção de Backup -->
+            <!-- Seção de Backup (Com escuta robusta para garantir o funcionamento do botão) -->
             <div class="settings-import-section">
                 <span style="font-size: 0.9rem; font-weight: bold; color: var(--app-primary);">💾 Backup e Restauração</span>
                 <div style="display: flex; gap: 8px;">
-                    <button class="btn-primary" style="flex: 1; font-size: 0.8rem; padding: 10px;" onclick="exportBackup()">Baixar Backup</button>
+                    <button class="btn-primary" id="exportBackupBtn" style="flex: 1; font-size: 0.8rem; padding: 10px;">Baixar Backup</button>
                     <label class="btn-primary" style="flex: 1; font-size: 0.8rem; padding: 10px; text-align: center; cursor: pointer; display: inline-block; line-height: normal;">
                         Restaurar
                         <input type="file" id="restoreBackupInput" accept=".json" style="display: none;" onchange="importBackup(event)">
@@ -689,7 +689,7 @@
                 </div>
             </div>
 
-            <!-- Seção para Excluir Livros Existentes (Movida para ser a última opção do menu) -->
+            <!-- Seção para Excluir Livros Existentes (Última opção do menu) -->
             <div class="settings-import-section" id="deleteSection" style="display: none;">
                 <span style="font-size: 0.9rem; font-weight: bold; color: #a94442;">🗑️ Gerenciar / Excluir Livro</span>
                 <div class="form-group">
@@ -740,6 +740,18 @@
                 addBookBtn.addEventListener('touchend', (e) => {
                     e.preventDefault();
                     processAndSaveBook();
+                });
+            }
+
+            const exportBackupBtn = document.getElementById('exportBackupBtn');
+            if (exportBackupBtn) {
+                exportBackupBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    exportBackup();
+                });
+                exportBackupBtn.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                    exportBackup();
                 });
             }
         });
@@ -1184,13 +1196,13 @@
             const jsonString = JSON.stringify(backupData, null, 2);
             const fileName = `lendo_scripts_backup_${new Date().toISOString().slice(0,10)}.json`;
 
-            // Se estiver rodando dentro do aplicativo Android e houver integração nativa para salvar em pasta customizada:
+            // Se estiver rodando dentro do aplicativo Android nativo:
             if (window.AndroidBridge && typeof window.AndroidBridge.saveBackupFile === 'function') {
                 window.AndroidBridge.saveBackupFile(fileName, jsonString);
                 return;
             }
 
-            // Suporte moderno via File System Access API (permite escolher onde salvar no navegador/alguns WebViews)
+            // Garante prioridade máxima para a API nativa de escolha de diretório/local de salvamento no dispositivo
             if (window.showSaveFilePicker) {
                 try {
                     const handle = await window.showSaveFilePicker({
@@ -1206,22 +1218,25 @@
                     showToast("Backup salvo com sucesso!");
                     return;
                 } catch (err) {
-                    if (err.name !== 'AbortError') {
-                        console.error("Erro ao usar seletor de arquivos, usando método alternativo:", err);
-                    } else {
-                        return; // Usuário cancelou a janela de escolha
+                    if (err.name === 'AbortError') {
+                        return; // Usuário cancelou intencionalmente a janela de escolha
                     }
+                    console.warn("showSaveFilePicker falhou, alternando para o método padrão.", err);
                 }
             }
 
-            // Método padrão de download web (fallback)
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(jsonString);
+            // Fallback robusto garantido caso o ambiente não suporte a escolha direta de diretório
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
             const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", fileName);
+            downloadAnchor.href = url;
+            downloadAnchor.download = fileName;
             document.body.appendChild(downloadAnchor);
             downloadAnchor.click();
-            downloadAnchor.remove();
+            setTimeout(() => {
+                document.body.removeChild(downloadAnchor);
+                URL.revokeObjectURL(url);
+            }, 100);
             showToast("Backup gerado com sucesso!");
         }
 

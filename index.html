@@ -1016,20 +1016,21 @@
             };
         }
 
+        /* COMANDO PARA FORÇAR A LEITURA COM A VOZ SELECIONADA NO MENU */
         function playSpeech(text) {
             let voiceSelect = document.getElementById('localVoiceSelect');
             let chosenVoice = voiceSelect ? voiceSelect.value : "";
 
-            if (!chosenVoice && voiceSelect && voiceSelect.options.length > 1) {
-                voiceSelect.selectedIndex = 1;
-                chosenVoice = voiceSelect.value;
-            }
-
-            if (window.AndroidBridge && chosenVoice) {
-                window.AndroidBridge.synthesizeOffline(text, chosenVoice);
-            } else if (window.AndroidBridge && !chosenVoice) {
-                showToast("Baixe ou selecione uma voz offline nas configurações.");
+            // Se o usuário tem o app nativo e escolheu uma voz válida no menu:
+            if (window.AndroidBridge && typeof window.AndroidBridge.synthesizeOffline === 'function') {
+                if (chosenVoice && chosenVoice !== "") {
+                    // Executa a leitura passando rigorosamente a voz selecionada
+                    window.AndroidBridge.synthesizeOffline(text, chosenVoice);
+                } else {
+                    showToast("Por favor, selecione uma voz baixada no menu de configurações.");
+                }
             } else if ('speechSynthesis' in window) {
+                // Fallback para navegador web comum se não estiver no app nativo
                 window.speechSynthesis.cancel();
                 const utterance = new SpeechSynthesisUtterance(text);
                 utterance.lang = 'en-US';
@@ -1066,7 +1067,7 @@
                         clearInterval(interval);
                         downloadStatusText.textContent = 'Download concluído!';
                         
-                        // Força a inserção da voz simulada no seletor para testes no navegador
+                        // Adiciona a voz baixada diretamente na lista de vozes offline para testes
                         updateLocalVoices(JSON.stringify([{ id: selectedVoice, name: selectedText }]));
                         showToast("Pacote de voz baixado com sucesso.");
                     }
@@ -1093,13 +1094,13 @@
             }
         }
 
+        /* FUNÇÃO QUE POPULA O MENU "Vozes Baixadas no Aparelho" */
         function updateLocalVoices(voicesJson) {
             try {
                 let voices = typeof voicesJson === 'string' ? JSON.parse(voicesJson) : voicesJson;
                 let select = document.getElementById('localVoiceSelect');
                 if (!select) return;
                 
-                // Salva a seleção atual se houver
                 let currentVal = select.value;
                 select.innerHTML = '';
                 
@@ -1109,6 +1110,7 @@
                     return;
                 }
 
+                // Cria a opção padrão vazia de instrução se necessário, ou insere direto as vozes
                 voices.forEach(v => {
                     let opt = document.createElement('option');
                     opt.value = v.id;
@@ -1116,13 +1118,14 @@
                     select.appendChild(opt);
                 });
                 
+                // Mantém selecionada a voz que o usuário estava usando antes, se ainda existir
                 if (currentVal && Array.from(select.options).some(o => o.value === currentVal)) {
                     select.value = currentVal;
                 } else if (select.options.length > 0) {
                     select.selectedIndex = 0;
                 }
 
-                document.getElementById('voiceStatus').textContent = `${voices.length} voz(es) offline pronta(s).`;
+                document.getElementById('voiceStatus').textContent = `${voices.length} voz(es) offline pronta(s) para uso.`;
             } catch(e) {
                 console.error("Erro ao atualizar lista de vozes", e);
             }

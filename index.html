@@ -422,6 +422,144 @@
             border-left: 3px solid var(--app-primary);
         }
 
+        /* Estilo da Pasta de Backups Interna */
+        .backup-folder-box {
+            background-color: var(--app-bg);
+            border: 1px solid var(--app-accent);
+            border-radius: 8px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .backup-folder-box:active {
+            background-color: rgba(0,0,0,0.05);
+        }
+
+        .backup-folder-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .backup-folder-icon {
+            font-size: 1.5rem;
+        }
+
+        .backup-folder-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .backup-folder-title {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: var(--app-text);
+        }
+
+        .backup-folder-subtitle {
+            font-size: 0.75rem;
+            color: #666;
+        }
+
+        /* Modal Interno da Pasta de Backups */
+        .backup-list-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1100;
+            padding: 16px;
+        }
+
+        .backup-list-modal.active {
+            display: flex;
+        }
+
+        .backup-list-content {
+            background-color: var(--app-surface);
+            color: var(--app-text);
+            padding: 20px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 420px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .backup-item-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: var(--app-bg);
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid var(--app-accent);
+            gap: 8px;
+        }
+
+        .backup-item-details {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            flex: 1;
+        }
+
+        .backup-item-name {
+            font-size: 0.85rem;
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .backup-item-date {
+            font-size: 0.7rem;
+            color: #666;
+        }
+
+        .backup-item-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn-sm-share {
+            background-color: #2e7d32;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-sm-danger {
+            background-color: #a94442;
+            color: white;
+            border: none;
+            padding: 6px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
         /* Leitor Bilíngue */
         #reader-view {
             position: fixed;
@@ -677,15 +815,28 @@
                 </div>
             </div>
 
-            <!-- Seção de Backup (Com escuta robusta para garantir o funcionamento do botão) -->
+            <!-- Seção de Backup (Com botões de ação e Pasta de Backups logo abaixo) -->
             <div class="settings-import-section">
                 <span style="font-size: 0.9rem; font-weight: bold; color: var(--app-primary);">💾 Backup e Restauração</span>
+                
                 <div style="display: flex; gap: 8px;">
-                    <button class="btn-primary" id="exportBackupBtn" style="flex: 1; font-size: 0.8rem; padding: 10px;">Baixar Backup</button>
+                    <button class="btn-primary" id="exportBackupBtn" style="flex: 1; font-size: 0.8rem; padding: 10px;">Gerar Backup</button>
                     <label class="btn-primary" style="flex: 1; font-size: 0.8rem; padding: 10px; text-align: center; cursor: pointer; display: inline-block; line-height: normal;">
                         Restaurar
                         <input type="file" id="restoreBackupInput" accept=".json" style="display: none;" onchange="importBackup(event)">
                     </label>
+                </div>
+
+                <!-- Abazinha / Pasta de Armazenamento Interno dos Backups -->
+                <div class="backup-folder-box" onclick="openBackupFolderModal()">
+                    <div class="backup-folder-info">
+                        <span class="backup-folder-icon">📁</span>
+                        <div class="backup-folder-text">
+                            <span class="backup-folder-title">Pasta de Backups Salvos</span>
+                            <span class="backup-folder-subtitle" id="backupCountSubtitle">Nenhum backup gerado</span>
+                        </div>
+                    </div>
+                    <span style="font-size: 1rem; color: var(--app-primary);">➔</span>
                 </div>
             </div>
 
@@ -700,6 +851,23 @@
             </div>
 
             <button class="btn-primary" onclick="closeSettingsModal()">Salvar Configurações</button>
+        </div>
+    </div>
+
+    <!-- Modal Interno para Visualizar os Backups Armazenados na Pasta -->
+    <div class="backup-list-modal" id="backupListModal">
+        <div class="backup-list-content">
+            <div class="modal-header">
+                <span>📁 Backups Armazenados</span>
+                <button class="close-btn" onclick="closeBackupFolderModal()">✕</button>
+            </div>
+            <div class="status-box" style="margin-top: 0;">Toque na seta de compartilhamento para transferir o backup para o WhatsApp, E-mail ou onde desejar.</div>
+            
+            <div id="backupItemsContainer" style="display: flex; flex-direction: column; gap: 8px; max-height: 300px; overflow-y: auto;">
+                <!-- Itens injetados via JS -->
+            </div>
+
+            <button class="btn-primary" onclick="closeBackupFolderModal()">Fechar</button>
         </div>
     </div>
 
@@ -723,6 +891,7 @@
             transVal: 30,
             bgVal: 100
         }));
+        let savedBackupsList = JSON.parse(localStorage.getItem('polyglot_saved_backups') || '[]');
 
         document.addEventListener('DOMContentLoaded', () => {
             loadSettingsToUI();
@@ -730,6 +899,7 @@
             setupReaderDoubleTap();
             setupBackButton();
             loadLocalVoicesFromApp();
+            updateBackupFolderSubtitle();
 
             const addBookBtn = document.getElementById('addBookBtn');
             if (addBookBtn) {
@@ -766,9 +936,138 @@
         function openSettingsModal() { 
             updateDeleteSelectOptions();
             loadLocalVoicesFromApp();
+            updateBackupFolderSubtitle();
             document.getElementById('settingsModal').classList.add('active'); 
         }
         function closeSettingsModal() { document.getElementById('settingsModal').classList.remove('active'); }
+
+        function openBackupFolderModal() {
+            renderBackupListItems();
+            document.getElementById('backupListModal').classList.add('active');
+        }
+
+        function closeBackupFolderModal() {
+            document.getElementById('backupListModal').classList.remove('active');
+        }
+
+        function updateBackupFolderSubtitle() {
+            const sub = document.getElementById('backupCountSubtitle');
+            if (savedBackupsList.length === 0) {
+                sub.innerText = "Nenhum backup gerado";
+            } else if (savedBackupsList.length === 1) {
+                sub.innerText = "1 backup armazenado";
+            } else {
+                sub.innerText = `${savedBackupsList.length} backups armazenados`;
+            }
+        }
+
+        function renderBackupListItems() {
+            const container = document.getElementById('backupItemsContainer');
+            container.innerHTML = '';
+
+            if (savedBackupsList.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: #666; padding: 20px;">A pasta está vazia. Gere um backup para começar.</div>';
+                return;
+            }
+
+            savedBackupsList.forEach((item, index) => {
+                const row = document.createElement('div');
+                row.className = 'backup-item-row';
+
+                const details = document.createElement('div');
+                details.className = 'backup-item-details';
+
+                const nameEl = document.createElement('span');
+                nameEl.className = 'backup-item-name';
+                nameEl.innerText = item.name;
+
+                const dateEl = document.createElement('span');
+                dateEl.className = 'backup-item-date';
+                dateEl.innerText = item.formattedDate;
+
+                details.appendChild(nameEl);
+                details.appendChild(dateEl);
+
+                const actions = document.createElement('div');
+                actions.className = 'backup-item-actions';
+
+                const shareBtn = document.createElement('button');
+                shareBtn.className = 'btn-sm-share';
+                shareBtn.innerHTML = '📤 Compartilhar';
+                shareBtn.title = 'Transferir / Compartilhar Backup';
+                shareBtn.onclick = () => shareSpecificBackup(index);
+
+                const delBtn = document.createElement('button');
+                delBtn.className = 'btn-sm-danger';
+                delBtn.innerText = '✕';
+                delBtn.title = 'Excluir da pasta';
+                delBtn.onclick = () => deleteSpecificBackup(index);
+
+                actions.appendChild(shareBtn);
+                actions.appendChild(delBtn);
+
+                row.appendChild(details);
+                row.appendChild(actions);
+                container.appendChild(row);
+            });
+        }
+
+        async function shareSpecificBackup(index) {
+            const item = savedBackupsList[index];
+            if (!item) return;
+
+            try {
+                const file = new File([item.data], item.name, { type: 'application/json' });
+
+                // Verifica se o navegador/WebView suporta compartilhamento de arquivos nativos
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    await navigator.share({
+                        title: 'Backup - Lendo Scripts',
+                        text: `Arquivo de backup gerado em ${item.formattedDate}`,
+                        files: [file]
+                    });
+                    return;
+                }
+
+                // Fallback para compartilhamento de texto/dados ou link se files não for suportado diretamente
+                if (navigator.share) {
+                    await navigator.share({
+                        title: 'Backup - Lendo Scripts',
+                        text: item.data
+                    });
+                    return;
+                }
+
+                // Fallback final: Download direto se o share nativo não estiver disponível
+                const blob = new Blob([item.data], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const downloadAnchor = document.createElement('a');
+                downloadAnchor.href = url;
+                downloadAnchor.download = item.name;
+                document.body.appendChild(downloadAnchor);
+                downloadAnchor.click();
+                setTimeout(() => {
+                    document.body.removeChild(downloadAnchor);
+                    URL.revokeObjectURL(url);
+                }, 100);
+                showToast("Arquivo pronto para transferência!");
+            } catch (e) {
+                if (e.name !== 'AbortError') {
+                    console.error("Erro ao compartilhar arquivo:", e);
+                    showToast("Erro ao acionar o compartilhamento.");
+                }
+            }
+        }
+
+        function deleteSpecificBackup(index) {
+            if (confirm("Deseja remover este backup da pasta interna?")) {
+                savedBackupsList.splice(index, 1);
+                localStorage.setItem('polyglot_saved_backups', JSON.stringify(savedBackupsList));
+                renderBackupListItems();
+                updateBackupFolderSubtitle();
+                showToast("Backup removido da pasta.");
+            }
+        }
 
         function loadLocalVoicesFromApp() {
             if (window.AndroidBridge && typeof window.AndroidBridge.getLocalVoices === 'function') {
@@ -1192,17 +1491,40 @@
         }
 
         async function exportBackup() {
-            const backupData = { books, settings, version: "1.0", date: new Date().toISOString() };
-            const jsonString = JSON.stringify(backupData, null, 2);
-            const fileName = `lendo_scripts_backup_${new Date().toISOString().slice(0,10)}.json`;
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
 
-            // Se estiver rodando dentro do aplicativo Android nativo:
+            const dateSlug = `${year}-${month}-${day}_${hours}-${minutes}-${seconds}`;
+            const formattedDateStr = `${day}/${month}/${year} às ${hours}:${minutes}:${seconds}`;
+            const fileName = `lendo_scripts_backup_${dateSlug}.json`;
+
+            const backupData = { 
+                books: books, 
+                settings: settings, 
+                version: "1.0", 
+                date: now.toISOString() 
+            };
+            const jsonString = JSON.stringify(backupData, null, 2);
+
+            savedBackupsList.unshift({
+                name: fileName,
+                formattedDate: formattedDateStr,
+                data: jsonString
+            });
+            localStorage.setItem('polyglot_saved_backups', JSON.stringify(savedBackupsList));
+            updateBackupFolderSubtitle();
+
             if (window.AndroidBridge && typeof window.AndroidBridge.saveBackupFile === 'function') {
                 window.AndroidBridge.saveBackupFile(fileName, jsonString);
+                showToast("Backup gerado e armazenado na pasta interna.");
                 return;
             }
 
-            // Garante prioridade máxima para a API nativa de escolha de diretório/local de salvamento no dispositivo
             if (window.showSaveFilePicker) {
                 try {
                     const handle = await window.showSaveFilePicker({
@@ -1215,29 +1537,34 @@
                     const writable = await handle.createWritable();
                     await writable.write(jsonString);
                     await writable.close();
-                    showToast("Backup salvo com sucesso!");
+                    showToast("Backup gerado, salvo e guardado na pasta!");
                     return;
                 } catch (err) {
                     if (err.name === 'AbortError') {
-                        return; // Usuário cancelou intencionalmente a janela de escolha
+                        showToast("Backup guardado na pasta interna.");
+                        return;
                     }
-                    console.warn("showSaveFilePicker falhou, alternando para o método padrão.", err);
+                    console.warn("showSaveFilePicker indisponível, usando método de download padrão.", err);
                 }
             }
 
-            // Fallback robusto garantido caso o ambiente não suporte a escolha direta de diretório
-            const blob = new Blob([jsonString], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.href = url;
-            downloadAnchor.download = fileName;
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            setTimeout(() => {
-                document.body.removeChild(downloadAnchor);
-                URL.revokeObjectURL(url);
-            }, 100);
-            showToast("Backup gerado com sucesso!");
+            try {
+                const blob = new Blob([jsonString], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const downloadAnchor = document.createElement('a');
+                downloadAnchor.href = url;
+                downloadAnchor.download = fileName;
+                document.body.appendChild(downloadAnchor);
+                downloadAnchor.click();
+                setTimeout(() => {
+                    document.body.removeChild(downloadAnchor);
+                    URL.revokeObjectURL(url);
+                }, 100);
+                showToast("Backup gerado e guardado na pasta!");
+            } catch (e) {
+                console.error("Erro ao gerar backup:", e);
+                showToast("Backup salvo na pasta interna.");
+            }
         }
 
         function importBackup(event) {

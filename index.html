@@ -626,7 +626,7 @@
                 </div>
             </div>
 
-            <!-- Seção de Backup e Restauração (Movida para o final) -->
+            <!-- Seção de Backup e Restauração (No final) -->
             <div class="settings-import-section">
                 <span style="font-size: 0.9rem; font-weight: bold; color: var(--app-primary);">💾 Backup e Restauração</span>
                 <p style="font-size: 0.75rem; color: #666;">Salve todos os seus livros e configurações para usar em outro aparelho.</p>
@@ -670,6 +670,7 @@
             loadSettingsToUI();
             renderShelf();
             setupReaderDoubleTap();
+            setupBackButton();
         });
 
         function showToast(msg) {
@@ -1031,11 +1032,27 @@
             currentActiveBookId = null;
         }
 
+        function setupBackButton() {
+            const backBtn = document.getElementById('readerBackBtn');
+            backBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                closeReader();
+            });
+            backBtn.addEventListener('touchend', (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                closeReader();
+            });
+        }
+
         function setupReaderDoubleTap() {
             let lastTouchTime = 0;
             const readerView = document.getElementById('reader-view');
 
             readerView.addEventListener('touchend', (e) => {
+                // Evita conflito se tocar diretamente no botão de voltar
+                if (e.target.id === 'readerBackBtn' || e.target.closest('#readerBackBtn')) return;
+
                 let currentTime = new Date().getTime();
                 let tapLength = currentTime - lastTouchTime;
                 if (tapLength < 300 && tapLength > 0) {
@@ -1046,7 +1063,8 @@
                 lastTouchTime = currentTime;
             });
 
-            readerView.addEventListener('dblclick', () => {
+            readerView.addEventListener('dblclick', (e) => {
+                if (e.target.id === 'readerBackBtn' || e.target.closest('#readerBackBtn')) return;
                 const backBtn = document.getElementById('readerBackBtn');
                 backBtn.classList.toggle('visible');
             });

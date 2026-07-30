@@ -551,7 +551,7 @@
                 <div class="form-group" style="margin-top: 8px;">
                     <label>Vozes Baixadas no Aparelho (Clique para Abrir e Selecionar)</label>
                     <select id="localVoiceSelect" size="1" style="height: auto; max-height: 120px;" onclick="if(this.size===1) this.size=4; else this.size=1;" onchange="this.size=1;">
-                        <option value="">Nenhuma voz baixada</option>
+                        <option value="">Nenhuma voz baixada (Fallback para Web Speech)</option>
                     </select>
                     <div class="status-box" id="voiceStatus">Toque na caixa acima para abrir a lista e escolher a sua voz.</div>
                 </div>
@@ -589,16 +589,6 @@
                     <div class="progress-bar" id="progressBar"></div>
                 </div>
                 <div class="status-box" id="downloadStatusText" style="display: none; text-align: center; font-weight: bold;">Iniciando download...</div>
-            </div>
-
-            <!-- Seção para Excluir Livros Existentes -->
-            <div class="settings-import-section" id="deleteSection" style="display: none;">
-                <span style="font-size: 0.9rem; font-weight: bold; color: #a94442;">🗑️ Gerenciar / Excluir Livro</span>
-                <div class="form-group">
-                    <label>Selecione o livro para excluir</label>
-                    <select id="bookSelectToDelete"></select>
-                </div>
-                <button class="btn-danger" onclick="deleteSelectedBook()">Excluir Livro Selecionado</button>
             </div>
 
             <!-- Seção para Adicionar Livro Bilíngue -->
@@ -699,6 +689,16 @@
                 </div>
             </div>
 
+            <!-- Seção para Excluir Livros Existentes (Movida para ser a última opção do menu) -->
+            <div class="settings-import-section" id="deleteSection" style="display: none;">
+                <span style="font-size: 0.9rem; font-weight: bold; color: #a94442;">🗑️ Gerenciar / Excluir Livro</span>
+                <div class="form-group">
+                    <label>Selecione o livro para excluir</label>
+                    <select id="bookSelectToDelete"></select>
+                </div>
+                <button class="btn-danger" onclick="deleteSelectedBook()">Excluir Livro Selecionado</button>
+            </div>
+
             <button class="btn-primary" onclick="closeSettingsModal()">Salvar Configurações</button>
         </div>
     </div>
@@ -731,7 +731,6 @@
             setupBackButton();
             loadLocalVoicesFromApp();
 
-            // Atribuição robusta do evento para o botão de adicionar livro (evita falhas de toque em mobile)
             const addBookBtn = document.getElementById('addBookBtn');
             if (addBookBtn) {
                 addBookBtn.addEventListener('click', (e) => {
@@ -1044,12 +1043,8 @@
             let voiceSelect = document.getElementById('localVoiceSelect');
             let chosenVoice = voiceSelect ? voiceSelect.value : "";
 
-            if (window.AndroidBridge && typeof window.AndroidBridge.synthesizeOffline === 'function') {
-                if (chosenVoice && chosenVoice !== "") {
-                    window.AndroidBridge.synthesizeOffline(text, chosenVoice);
-                } else {
-                    showToast("Por favor, selecione uma voz baixada no menu de configurações.");
-                }
+            if (window.AndroidBridge && typeof window.AndroidBridge.synthesizeOffline === 'function' && chosenVoice && chosenVoice !== "") {
+                window.AndroidBridge.synthesizeOffline(text, chosenVoice);
             } else if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
                 const utterance = new SpeechSynthesisUtterance(text);
@@ -1081,7 +1076,7 @@
             progressBar.style.width = '10%';
             downloadStatusText.textContent = 'Conectando para baixar pacote...';
 
-            if (window.AndroidBridge) {
+            if (window.AndroidBridge && typeof window.AndroidBridge.startVoiceDownload === 'function') {
                 window.AndroidBridge.startVoiceDownload(selectedVoice, selectedText);
             } else {
                 let progress = 10;
@@ -1128,8 +1123,8 @@
                 select.innerHTML = '';
                 
                 if (!voices || voices.length === 0) {
-                    select.innerHTML = '<option value="">Nenhuma voz baixada</option>';
-                    document.getElementById('voiceStatus').textContent = 'Nenhum pacote encontrado. Baixe abaixo.';
+                    select.innerHTML = '<option value="">Nenhuma voz baixada (Fallback para Web Speech)</option>';
+                    document.getElementById('voiceStatus').textContent = 'Nenhum pacote nativo encontrado. Usando navegador.';
                     return;
                 }
 
@@ -1146,7 +1141,7 @@
                     select.selectedIndex = 0;
                 }
 
-                document.getElementById('voiceStatus').textContent = `${voices.length} voz(es) offline pronta(s) para uso. Toque para alternar.`;
+                document.getElementById('voiceStatus').textContent = `${voices.length} voz(es) offline pronta(s) para uso.`;
             } catch(e) {
                 console.error("Erro ao atualizar lista de vozes", e);
             }
@@ -1184,12 +1179,46 @@
             });
         }
 
-        function exportBackup() {
+        async function exportBackup() {
             const backupData = { books, settings, version: "1.0", date: new Date().toISOString() };
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
+            const jsonString = JSON.stringify(backupData, null, 2);
+            const fileName = `lendo_scripts_backup_${new Date().toISOString().slice(0,10)}.json`;
+
+            // Se estiver rodando dentro do aplicativo Android e houver integração nativa para salvar em pasta customizada:
+            if (window.AndroidBridge && typeof window.AndroidBridge.saveBackupFile === 'function') {
+                window.AndroidBridge.saveBackupFile(fileName, jsonString);
+                return;
+            }
+
+            // Suporte moderno via File System Access API (permite escolher onde salvar no navegador/alguns WebViews)
+            if (window.showSaveFilePicker) {
+                try {
+                    const handle = await window.showSaveFilePicker({
+                        suggestedName: fileName,
+                        types: [{
+                            description: 'Arquivo JSON de Backup',
+                            accept: { 'application/json': ['.json'] }
+                        }]
+                    });
+                    const writable = await handle.createWritable();
+                    await writable.write(jsonString);
+                    await writable.close();
+                    showToast("Backup salvo com sucesso!");
+                    return;
+                } catch (err) {
+                    if (err.name !== 'AbortError') {
+                        console.error("Erro ao usar seletor de arquivos, usando método alternativo:", err);
+                    } else {
+                        return; // Usuário cancelou a janela de escolha
+                    }
+                }
+            }
+
+            // Método padrão de download web (fallback)
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(jsonString);
             const downloadAnchor = document.createElement('a');
             downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `lendo_scripts_backup_${new Date().toISOString().slice(0,10)}.json`);
+            downloadAnchor.setAttribute("download", fileName);
             document.body.appendChild(downloadAnchor);
             downloadAnchor.click();
             downloadAnchor.remove();

@@ -19,8 +19,7 @@
             --shelf-shadow: rgba(0,0,0,0.3);
 
             /* Cores Dinâmicas Exclusivas do Leitor (Personalizáveis) */
-            --reader-bg: #f7f9fc;
-            --reader-surface: #ffffff;
+            --reader-bg: #ffffff;
             --reader-trans: #8b6b4f;
             --reader-orig: #3e332a;
             --font-pixel-size: 16px;
@@ -42,7 +41,7 @@
             overflow-x: hidden;
         }
 
-        /* Estante de Livros - Interface Fixa */
+        /* Estante de Livros - Interface Fixa & Responsiva para Tablet/Celular */
         .shelf-container {
             flex: 1;
             padding: 16px;
@@ -50,28 +49,47 @@
             display: flex;
             flex-direction: column;
             gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
         }
 
         .shelf-row {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            padding-bottom: 12px;
-            border-bottom: 14px solid var(--shelf-color);
+            gap: 16px;
+            padding-bottom: 16px;
+            border-bottom: 16px solid var(--shelf-color);
             box-shadow: 0 8px 6px -6px var(--shelf-shadow);
-            min-height: 160px;
+            min-height: 180px;
             align-items: end;
+        }
+
+        /* Ajuste responsivo para tablets: aumenta o espaço e altura dos cards de livros */
+        @media (min-width: 768px) {
+            .shelf-container {
+                padding: 32px;
+                gap: 32px;
+            }
+            .shelf-row {
+                min-height: 260px;
+                border-bottom-width: 20px;
+                gap: 24px;
+            }
+            .book-card, .empty-slot {
+                height: 220px !important;
+            }
         }
 
         .book-card {
             background-color: var(--app-surface);
-            border-radius: 6px;
+            border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
             cursor: pointer;
             display: flex;
             flex-direction: column;
-            height: 140px;
+            height: 150px;
             transition: transform 0.2s;
             position: relative;
         }
@@ -93,19 +111,20 @@
         .book-cover img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain; /* Garante que a capa inteira apareça sem cortes na estante */
+            background-color: #00000010;
         }
 
         .book-cover span {
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             padding: 4px;
             text-align: center;
             color: var(--app-text);
         }
 
         .book-title-label {
-            font-size: 0.7rem;
-            padding: 4px;
+            font-size: 0.75rem;
+            padding: 6px;
             text-align: center;
             background-color: var(--app-surface);
             white-space: nowrap;
@@ -116,15 +135,16 @@
 
         .empty-slot {
             border: 2px dashed var(--app-accent);
-            border-radius: 6px;
-            height: 140px;
+            border-radius: 8px;
+            height: 150px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: var(--app-text);
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             cursor: pointer;
             opacity: 0.7;
+            background-color: rgba(255,255,255,0.2);
         }
 
         /* Botão de Configurações Flutuante (Interface Fixa) */
@@ -177,7 +197,7 @@
             padding: 20px;
             border-radius: 12px;
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
             max-height: 90vh;
             overflow-y: auto;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
@@ -382,14 +402,14 @@
             gap: 10px;
         }
 
-        /* Leitor Bilíngue (Usa as cores dinâmicas variáveis) */
+        /* Leitor Bilíngue */
         #reader-view {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: var(--reader-bg);
+            background-color: #222;
             z-index: 200;
             display: none;
             flex-direction: column;
@@ -402,16 +422,33 @@
             display: flex;
             flex-direction: column;
             gap: 16px;
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        @media (min-width: 768px) {
+            #reader-body {
+                padding: 32px;
+                gap: 20px;
+            }
         }
 
         .bilingual-pair {
             display: flex;
             flex-direction: column;
-            gap: 4px;
-            padding: 10px;
-            border-radius: 6px;
-            background-color: var(--reader-surface);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            gap: 6px;
+            padding: 16px;
+            border-radius: 8px;
+            background-color: var(--reader-bg);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            cursor: pointer;
+            transition: opacity 0.15s, transform 0.1s;
+        }
+
+        .bilingual-pair:active {
+            transform: scale(0.98);
+            opacity: 0.9;
         }
 
         .sentence-orig {
@@ -427,15 +464,14 @@
             font-weight: var(--font-weight, normal);
             font-family: var(--selected-font, 'Arial', sans-serif);
             border-top: 1px dashed rgba(128,128,128,0.3);
-            padding-top: 4px;
+            padding-top: 8px;
         }
 
-        /* Botão Voltar Posicionado no Inferior Esquerdo (Ocultável por Duplo Toque) */
         .reader-floating-back {
             position: fixed;
             bottom: 24px;
             left: 24px;
-            background-color: var(--reader-trans);
+            background-color: var(--app-primary);
             color: #fff;
             border: none;
             padding: 12px 24px;
@@ -445,16 +481,18 @@
             font-size: 1rem;
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
             z-index: 300;
-            transition: opacity 0.3s ease, transform 0.3s ease;
-        }
-
-        .reader-floating-back.hidden {
             opacity: 0;
             pointer-events: none;
             transform: translateY(20px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
         }
 
-        /* Toast de Alerta */
+        .reader-floating-back.visible {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+
         #toast {
             position: fixed;
             bottom: 90px;
@@ -472,7 +510,7 @@
 </head>
 <body>
 
-    <!-- Estante de Prateleiras (Interface Fixa) -->
+    <!-- Estante de Prateleiras -->
     <div class="shelf-container" id="shelfContainer">
         <!-- Gerado Dinamicamente -->
     </div>
@@ -480,30 +518,27 @@
     <!-- Botão de Configurações no Canto Inferior Direito -->
     <button class="fab-settings" onclick="openSettingsModal()" title="Configurações e Adicionar Livro">⚙️</button>
 
-    <!-- Modal de Configurações e Adição de Livro -->
+    <!-- Modal de Configurações, Livros e Backup -->
     <div class="modal" id="settingsModal">
         <div class="modal-content">
             <div class="modal-header">
-                <span>Configurações e Livros</span>
+                <span>Configurações e Estante</span>
                 <button class="close-btn" onclick="closeSettingsModal()">✕</button>
             </div>
 
-            <!-- Seção para Gerenciar / Excluir Livros Existentes -->
+            <!-- Seção para Excluir Livros Existentes -->
             <div class="settings-import-section" id="deleteSection" style="display: none;">
                 <span style="font-size: 0.9rem; font-weight: bold; color: #a94442;">🗑️ Gerenciar / Excluir Livro</span>
                 <div class="form-group">
                     <label>Selecione o livro para excluir</label>
-                    <select id="bookSelectToDelete">
-                        <!-- Preenchido dinamicamente -->
-                    </select>
+                    <select id="bookSelectToDelete"></select>
                 </div>
                 <button class="btn-danger" onclick="deleteSelectedBook()">Excluir Livro Selecionado</button>
             </div>
 
-            <!-- Seção para Adicionar Livro Bilíngue Pronto -->
+            <!-- Seção para Adicionar Livro Bilíngue -->
             <div class="settings-import-section">
                 <span style="font-size: 0.9rem; font-weight: bold; color: var(--app-primary);">📥 Adicionar Livro Bilíngue</span>
-                <p style="font-size: 0.75rem; color: #666;">O arquivo deve conter as linhas intercaladas (Inglês em cima, Português embaixo).</p>
                 <div class="form-group">
                     <label>Título do Livro</label>
                     <input type="text" id="bookTitleInput" placeholder="Ex: Livro Bilíngue - Capítulo 1">
@@ -516,13 +551,13 @@
                     <label>Capa do Livro (Opcional)</label>
                     <input type="file" id="coverFileInput" accept="image/*">
                 </div>
-                <button class="btn-primary" id="processBookBtn" onclick="processAndSaveBook()">Adicionar Livro à Estante</button>
+                <button class="btn-primary" onclick="processAndSaveBook()">Adicionar Livro à Estante</button>
             </div>
 
             <hr style="border: 0; border-top: 1px solid var(--app-accent); margin: 4px 0;">
 
             <div class="form-group">
-                <label>Tipo de Fonte (10 Opções)</label>
+                <label>Tipo de Fonte</label>
                 <select id="fontSelect" onchange="applySettings()">
                     <option value="Arial">Arial</option>
                     <option value="'Courier New', monospace">Courier New</option>
@@ -552,7 +587,7 @@
                 </select>
             </div>
             
-            <!-- Barra Arco-Íris 1: Cor do Texto em Inglês (Superior) com Botões + e - -->
+            <!-- Barra Arco-Íris 1 -->
             <div class="rainbow-slider-group">
                 <div class="rainbow-label-row">
                     <span>🎨 Cor do Texto em Inglês (Superior)</span>
@@ -565,7 +600,7 @@
                 </div>
             </div>
 
-            <!-- Barra Arco-Íris 2: Cor do Texto em Português (Inferior) com Botões + e - -->
+            <!-- Barra Arco-Íris 2 -->
             <div class="rainbow-slider-group">
                 <div class="rainbow-label-row">
                     <span>🎨 Cor do Texto em Português (Inferior)</span>
@@ -578,16 +613,29 @@
                 </div>
             </div>
 
-            <!-- Barra Arco-Íris 3: Cor de Fundo do Leitor com Botões + e - -->
+            <!-- Barra Arco-Íris 3 -->
             <div class="rainbow-slider-group">
                 <div class="rainbow-label-row">
-                    <span>🎨 Cor de Fundo do Leitor</span>
-                    <span class="hex-tag" id="hexBgColor">#F7F9FC</span>
+                    <span>🎨 Cor de Fundo dos Blocos de Frases</span>
+                    <span class="hex-tag" id="hexBgColor">#FFFFFF</span>
                 </div>
                 <div class="slider-control-row">
                     <button class="step-btn" onclick="stepColor('bg', -2)">-</button>
-                    <input type="range" class="rainbow-input" id="bgColorRange" min="0" max="100" value="70" oninput="updateRainbowColor('bg')">
+                    <input type="range" class="rainbow-input" id="bgColorRange" min="0" max="100" value="100" oninput="updateRainbowColor('bg')">
                     <button class="step-btn" onclick="stepColor('bg', 2)">+</button>
+                </div>
+            </div>
+
+            <!-- Seção de Backup e Restauração (Movida para o final) -->
+            <div class="settings-import-section">
+                <span style="font-size: 0.9rem; font-weight: bold; color: var(--app-primary);">💾 Backup e Restauração</span>
+                <p style="font-size: 0.75rem; color: #666;">Salve todos os seus livros e configurações para usar em outro aparelho.</p>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn-primary" style="flex: 1; font-size: 0.8rem; padding: 10px;" onclick="exportBackup()">Baixar Backup</button>
+                    <label class="btn-primary" style="flex: 1; font-size: 0.8rem; padding: 10px; text-align: center; cursor: pointer; display: inline-block; line-height: normal;">
+                        Restaurar Backup
+                        <input type="file" id="restoreBackupInput" accept=".json" style="display: none;" onchange="importBackup(event)">
+                    </label>
                 </div>
             </div>
 
@@ -600,7 +648,6 @@
         <div id="reader-body">
             <!-- Conteúdo Bilíngue Intercalado -->
         </div>
-        <!-- Botão Voltar Posicionado no Inferior Esquerdo (Alternável por Duplo Toque) -->
         <button id="readerBackBtn" class="reader-floating-back" onclick="closeReader()">← Voltar</button>
     </div>
 
@@ -616,7 +663,7 @@
             weight: 'normal',
             origVal: 0,
             transVal: 30,
-            bgVal: 70
+            bgVal: 100
         }));
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -683,7 +730,7 @@
 
             document.getElementById('origColorRange').value = settings.origVal !== undefined ? settings.origVal : 0;
             document.getElementById('transColorRange').value = settings.transVal !== undefined ? settings.transVal : 30;
-            document.getElementById('bgColorRange').value = settings.bgVal !== undefined ? settings.bgVal : 70;
+            document.getElementById('bgColorRange').value = settings.bgVal !== undefined ? settings.bgVal : 100;
 
             applySettings();
         }
@@ -888,7 +935,8 @@
                     id: Date.now(),
                     title: titleInput,
                     cover: coverDataUrl,
-                    content: bilingualPairs
+                    content: bilingualPairs,
+                    scrollTop: 0
                 };
 
                 books.push(newBook);
@@ -928,6 +976,10 @@
                 pairDiv.className = 'bilingual-pair';
                 pairDiv.dataset.index = index;
 
+                pairDiv.onclick = () => {
+                    playSpeech(pair.orig);
+                };
+
                 const origDiv = document.createElement('div');
                 origDiv.className = 'sentence-orig';
                 origDiv.innerText = pair.orig;
@@ -941,16 +993,15 @@
                 body.appendChild(pairDiv);
             });
 
-            // Exibe a tela do leitor e garante que o botão voltar comece visível
             document.getElementById('reader-view').style.display = 'flex';
-            document.getElementById('readerBackBtn').classList.remove('hidden');
+            document.getElementById('readerBackBtn').classList.remove('visible');
 
+            // Restaura a última posição salva do livro
             setTimeout(() => {
-                if (book.scrollTop) {
-                    body.scrollTop = book.scrollTop;
-                }
+                body.scrollTop = book.scrollTop || 0;
             }, 50);
 
+            // Salva a posição em tempo real conforme rola a tela
             body.onscroll = () => {
                 let currentBook = books.find(b => b.id === currentActiveBookId);
                 if (currentBook) {
@@ -960,7 +1011,22 @@
             };
         }
 
+        function playSpeech(text) {
+            if (!('speechSynthesis' in window)) {
+                showToast("Seu dispositivo não suporta leitura por voz.");
+                return;
+            }
+            
+            window.speechSynthesis.cancel();
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.9;
+            window.speechSynthesis.speak(utterance);
+        }
+
         function closeReader() {
+            window.speechSynthesis.cancel();
             document.getElementById('reader-view').style.display = 'none';
             currentActiveBookId = null;
         }
@@ -973,19 +1039,68 @@
                 let currentTime = new Date().getTime();
                 let tapLength = currentTime - lastTouchTime;
                 if (tapLength < 300 && tapLength > 0) {
-                    // Duplo toque detectado: alterna a visibilidade do botão voltar inferior esquerdo
                     const backBtn = document.getElementById('readerBackBtn');
-                    backBtn.classList.toggle('hidden');
+                    backBtn.classList.toggle('visible');
                     e.preventDefault();
                 }
                 lastTouchTime = currentTime;
             });
 
-            // Suporte a clique duplo para testes no navegador com mouse
             readerView.addEventListener('dblclick', () => {
                 const backBtn = document.getElementById('readerBackBtn');
-                backBtn.classList.toggle('hidden');
+                backBtn.classList.toggle('visible');
             });
+        }
+
+        // Funções de Backup e Restauração
+        function exportBackup() {
+            const backupData = {
+                books: books,
+                settings: settings,
+                version: "1.0",
+                date: new Date().toISOString()
+            };
+
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `polyglot_backup_${new Date().toISOString().slice(0,10)}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            showToast("Backup gerado e baixado com sucesso!");
+        }
+
+        function importBackup(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const backupData = JSON.parse(e.target.result);
+                    if (backupData.books && backupData.settings) {
+                        if (confirm("Restaurar este backup substituirá os livros e configurações atuais. Deseja continuar?")) {
+                            books = backupData.books;
+                            settings = backupData.settings;
+                            
+                            localStorage.setItem('polyglot_books', JSON.stringify(books));
+                            localStorage.setItem('polyglot_settings', JSON.stringify(settings));
+
+                            loadSettingsToUI();
+                            renderShelf();
+                            closeSettingsModal();
+                            showToast("Backup restaurado com sucesso!");
+                        }
+                    } else {
+                        showToast("Arquivo de backup inválido.");
+                    }
+                } catch (err) {
+                    console.error(err);
+                    showToast("Erro ao ler o arquivo de backup.");
+                }
+            };
+            reader.readAsText(file);
         }
     </script>
 </body>

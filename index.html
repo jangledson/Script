@@ -9,7 +9,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
     <style>
         :root {
-            /* Cores Fixas da Interface Principal (Extraídas da Imagem Enviada) */
+            /* Cores Fixas da Interface Principal */
             --app-bg: #d7d0c7;
             --app-surface: #eae5df;
             --app-text: #3e332a;
@@ -22,6 +22,7 @@
             --reader-bg: #f7f9fc;
             --reader-surface: #ffffff;
             --reader-trans: #8b6b4f;
+            --reader-orig: #3e332a;
             --font-pixel-size: 16px;
         }
 
@@ -335,45 +336,23 @@
             text-align: center;
         }
 
+        .btn-danger {
+            background-color: #a94442;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+        }
+
         .settings-import-section {
             border-top: 1px solid var(--app-accent);
             padding-top: 14px;
             display: flex;
             flex-direction: column;
             gap: 10px;
-        }
-
-        /* Barra de Progresso de Tradução */
-        .progress-container {
-            display: none;
-            flex-direction: column;
-            gap: 6px;
-            background: var(--app-bg);
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid var(--app-accent);
-        }
-
-        .progress-bar-bg {
-            width: 100%;
-            height: 12px;
-            background-color: var(--app-accent);
-            border-radius: 6px;
-            overflow: hidden;
-        }
-
-        .progress-bar-fill {
-            width: 0%;
-            height: 100%;
-            background-color: var(--app-primary);
-            transition: width 0.2s ease;
-        }
-
-        .progress-text {
-            font-size: 0.8rem;
-            text-align: center;
-            font-weight: bold;
-            color: var(--app-text);
         }
 
         /* Leitor Bilíngue (Usa as cores dinâmicas variáveis) */
@@ -387,15 +366,6 @@
             z-index: 200;
             display: none;
             flex-direction: column;
-        }
-
-        #reader-header {
-            background-color: var(--reader-surface);
-            padding: 12px 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         #reader-body {
@@ -421,6 +391,7 @@
             font-size: var(--font-pixel-size);
             font-weight: var(--font-weight, normal);
             font-family: var(--selected-font, 'Arial', sans-serif);
+            color: var(--reader-orig);
         }
 
         .sentence-trans {
@@ -430,6 +401,31 @@
             font-family: var(--selected-font, 'Arial', sans-serif);
             border-top: 1px dashed rgba(128,128,128,0.3);
             padding-top: 4px;
+        }
+
+        /* Botão Flutuante Inferior de Voltar (Ocultável por Duplo Toque) */
+        .reader-floating-back {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--reader-trans);
+            color: #fff;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 300;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .reader-floating-back.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(-50%) translateY(20px);
         }
 
         /* Toast de Alerta */
@@ -466,12 +462,25 @@
                 <button class="close-btn" onclick="closeSettingsModal()">✕</button>
             </div>
 
-            <!-- Seção para Adicionar / Baixar Novo Livro -->
+            <!-- Seção para Gerenciar / Excluir Livros Existentes -->
+            <div class="settings-import-section" id="deleteSection" style="display: none;">
+                <span style="font-size: 0.9rem; font-weight: bold; color: #a94442;">🗑️ Gerenciar / Excluir Livro</span>
+                <div class="form-group">
+                    <label>Selecione o livro para excluir</label>
+                    <select id="bookSelectToDelete">
+                        <!-- Preenchido dinamicamente -->
+                    </select>
+                </div>
+                <button class="btn-danger" onclick="deleteSelectedBook()">Excluir Livro Selecionado</button>
+            </div>
+
+            <!-- Seção para Adicionar Livro Bilíngue Pronto -->
             <div class="settings-import-section">
-                <span style="font-size: 0.9rem; font-weight: bold; color: var(--app-primary);">📥 Baixar e Adicionar Novo Livro</span>
+                <span style="font-size: 0.9rem; font-weight: bold; color: var(--app-primary);">📥 Adicionar Livro Bilíngue</span>
+                <p style="font-size: 0.75rem; color: #666;">O arquivo deve conter as linhas intercaladas (Inglês em cima, Português embaixo).</p>
                 <div class="form-group">
                     <label>Título do Livro</label>
-                    <input type="text" id="bookTitleInput" placeholder="Ex: Alice no País das Maravilhas">
+                    <input type="text" id="bookTitleInput" placeholder="Ex: Livro Bilíngue - Capítulo 1">
                 </div>
                 <div class="form-group">
                     <label>Arquivo (.TXT, .DOCX, .CSV, .JSON, .SRT, .VTT, .PDF)</label>
@@ -481,15 +490,7 @@
                     <label>Capa do Livro (Opcional)</label>
                     <input type="file" id="coverFileInput" accept="image/*">
                 </div>
-                <button class="btn-primary" id="processBookBtn" onclick="processAndSaveBook()">Processar e Enviar para Estante</button>
-
-                <!-- Barra de Progresso da Tradução -->
-                <div class="progress-container" id="progressContainer">
-                    <div class="progress-bar-bg">
-                        <div class="progress-bar-fill" id="progressBarFill"></div>
-                    </div>
-                    <span class="progress-text" id="progressText">Traduzindo: 0%</span>
-                </div>
+                <button class="btn-primary" id="processBookBtn" onclick="processAndSaveBook()">Adicionar Livro à Estante</button>
             </div>
 
             <hr style="border: 0; border-top: 1px solid var(--app-accent); margin: 4px 0;">
@@ -525,31 +526,31 @@
                 </select>
             </div>
             
-            <!-- Barra Arco-Íris 1: Cor do Texto Traduzido (Exclusiva do Leitor) -->
+            <!-- Barra Arco-Íris 1: Cor do Texto em Inglês (Superior) -->
             <div class="rainbow-slider-group">
                 <div class="rainbow-label-row">
-                    <span>🎨 Cor do Texto Traduzido</span>
+                    <span>🎨 Cor do Texto em Inglês (Superior)</span>
+                    <span class="hex-tag" id="hexOrigColor">#3E332A</span>
+                </div>
+                <input type="range" class="rainbow-input" id="origColorRange" min="0" max="100" value="0" oninput="updateRainbowColor('orig')">
+            </div>
+
+            <!-- Barra Arco-Íris 2: Cor do Texto em Português (Inferior) -->
+            <div class="rainbow-slider-group">
+                <div class="rainbow-label-row">
+                    <span>🎨 Cor do Texto em Português (Inferior)</span>
                     <span class="hex-tag" id="hexTransColor">#8B6B4F</span>
                 </div>
                 <input type="range" class="rainbow-input" id="transColorRange" min="0" max="100" value="30" oninput="updateRainbowColor('trans')">
             </div>
 
-            <!-- Barra Arco-Íris 2: Cor de Fundo do Leitor (Exclusiva do Leitor) -->
+            <!-- Barra Arco-Íris 3: Cor de Fundo do Leitor -->
             <div class="rainbow-slider-group">
                 <div class="rainbow-label-row">
                     <span>🎨 Cor de Fundo do Leitor</span>
-                    <span class="hex-tag" id="hexBgColor">#D7D0C7</span>
+                    <span class="hex-tag" id="hexBgColor">#F7F9FC</span>
                 </div>
-                <input type="range" class="rainbow-input" id="bgColorRange" min="0" max="100" value="0" oninput="updateRainbowColor('bg')">
-            </div>
-
-            <!-- Barra Arco-Íris 3: Cor dos Cartões / Blocos de Texto (Exclusiva do Leitor) -->
-            <div class="rainbow-slider-group">
-                <div class="rainbow-label-row">
-                    <span>🎨 Cor dos Blocos do Leitor</span>
-                    <span class="hex-tag" id="hexSurfaceColor">#EAE5DF</span>
-                </div>
-                <input type="range" class="rainbow-input" id="surfaceColorRange" min="0" max="100" value="100" oninput="updateRainbowColor('surface')">
+                <input type="range" class="rainbow-input" id="bgColorRange" min="0" max="100" value="70" oninput="updateRainbowColor('bg')">
             </div>
 
             <button class="btn-primary" onclick="closeSettingsModal()">Salvar Configurações</button>
@@ -558,14 +559,11 @@
 
     <!-- Tela do Leitor Bilíngue -->
     <div id="reader-view">
-        <div id="reader-header">
-            <button class="btn-add" onclick="closeReader()" style="background-color: var(--reader-trans); color: #fff; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: bold;">← Voltar</button>
-            <h2 id="readerTitle" style="font-size: 1rem; color: var(--reader-trans);">Leitor</h2>
-            <div style="width: 50px;"></div>
-        </div>
         <div id="reader-body">
             <!-- Conteúdo Bilíngue Intercalado -->
         </div>
+        <!-- Botão Voltar Posicionado na Parte Inferior (Alternável por Duplo Toque) -->
+        <button id="readerBackBtn" class="reader-floating-back" onclick="closeReader()">← Voltar</button>
     </div>
 
     <div id="toast"></div>
@@ -578,14 +576,15 @@
             font: 'Arial',
             pixelSize: 16,
             weight: 'normal',
+            origVal: 0,
             transVal: 30,
-            bgVal: 0,
-            surfaceVal: 100
+            bgVal: 70
         }));
 
         document.addEventListener('DOMContentLoaded', () => {
             loadSettingsToUI();
             renderShelf();
+            setupReaderDoubleTap();
         });
 
         function showToast(msg) {
@@ -595,8 +594,48 @@
             setTimeout(() => { toast.style.display = 'none'; }, 3000);
         }
 
-        function openSettingsModal() { document.getElementById('settingsModal').classList.add('active'); }
+        function openSettingsModal() { 
+            updateDeleteSelectOptions();
+            document.getElementById('settingsModal').classList.add('active'); 
+        }
         function closeSettingsModal() { document.getElementById('settingsModal').classList.remove('active'); }
+
+        function updateDeleteSelectOptions() {
+            const deleteSection = document.getElementById('deleteSection');
+            const select = document.getElementById('bookSelectToDelete');
+            select.innerHTML = '';
+
+            if (books.length === 0) {
+                deleteSection.style.display = 'none';
+                return;
+            }
+
+            deleteSection.style.display = 'flex';
+            books.forEach(book => {
+                const opt = document.createElement('option');
+                opt.value = book.id;
+                opt.innerText = book.title;
+                select.appendChild(opt);
+            });
+        }
+
+        function deleteSelectedBook() {
+            const select = document.getElementById('bookSelectToDelete');
+            const bookId = parseInt(select.value);
+
+            if (!bookId) {
+                showToast("Nenhum livro selecionado para exclusão.");
+                return;
+            }
+
+            if (confirm("Tem certeza de que deseja excluir este livro da estante?")) {
+                books = books.filter(b => b.id !== bookId);
+                localStorage.setItem('polyglot_books', JSON.stringify(books));
+                renderShelf();
+                updateDeleteSelectOptions();
+                showToast("Livro excluído com sucesso.");
+            }
+        }
 
         function loadSettingsToUI() {
             document.getElementById('fontSelect').value = settings.font;
@@ -604,9 +643,9 @@
             if (!settings.pixelSize) settings.pixelSize = 16;
             document.getElementById('fontSizeDisplay').innerText = settings.pixelSize + 'px';
 
+            document.getElementById('origColorRange').value = settings.origVal !== undefined ? settings.origVal : 0;
             document.getElementById('transColorRange').value = settings.transVal !== undefined ? settings.transVal : 30;
-            document.getElementById('bgColorRange').value = settings.bgVal !== undefined ? settings.bgVal : 0;
-            document.getElementById('surfaceColorRange').value = settings.surfaceVal !== undefined ? settings.surfaceVal : 100;
+            document.getElementById('bgColorRange').value = settings.bgVal !== undefined ? settings.bgVal : 70;
 
             applySettings();
         }
@@ -654,7 +693,12 @@
         }
 
         function updateRainbowColor(type) {
-            if(type === 'trans') {
+            if(type === 'orig') {
+                settings.origVal = document.getElementById('origColorRange').value;
+                let hex = getColorFromSliderValue(settings.origVal);
+                document.getElementById('hexOrigColor').innerText = hex;
+                document.documentElement.style.setProperty('--reader-orig', hex);
+            } else if(type === 'trans') {
                 settings.transVal = document.getElementById('transColorRange').value;
                 let hex = getColorFromSliderValue(settings.transVal);
                 document.getElementById('hexTransColor').innerText = hex;
@@ -664,11 +708,6 @@
                 let hex = getColorFromSliderValue(settings.bgVal);
                 document.getElementById('hexBgColor').innerText = hex;
                 document.documentElement.style.setProperty('--reader-bg', hex);
-            } else if(type === 'surface') {
-                settings.surfaceVal = document.getElementById('surfaceColorRange').value;
-                let hex = getColorFromSliderValue(settings.surfaceVal);
-                document.getElementById('hexSurfaceColor').innerText = hex;
-                document.documentElement.style.setProperty('--reader-surface', hex);
             }
             localStorage.setItem('polyglot_settings', JSON.stringify(settings));
         }
@@ -681,9 +720,9 @@
             document.documentElement.style.setProperty('--font-pixel-size', settings.pixelSize + 'px');
             document.documentElement.style.setProperty('--font-weight', settings.weight);
 
+            updateRainbowColor('orig');
             updateRainbowColor('trans');
             updateRainbowColor('bg');
-            updateRainbowColor('surface');
 
             localStorage.setItem('polyglot_settings', JSON.stringify(settings));
         }
@@ -753,16 +792,6 @@
                 return;
             }
 
-            const processBtn = document.getElementById('processBookBtn');
-            const progressContainer = document.getElementById('progressContainer');
-            const progressBarFill = document.getElementById('progressBarFill');
-            const progressText = document.getElementById('progressText');
-
-            processBtn.disabled = true;
-            progressContainer.style.display = 'flex';
-            progressBarFill.style.width = '0%';
-            progressText.innerText = 'Lendo arquivo... (0%)';
-
             const file = fileInput.files[0];
             let rawText = "";
 
@@ -786,34 +815,20 @@
                     rawText = fullText;
                 }
 
-                // Remove o limite de 300 frases para carregar o livro INTEIRO
-                let sentences = rawText.replace(/\r/g, '').split(/[\.!?\n]+/).map(s => s.trim()).filter(s => s.length > 2);
-                let totalSentences = sentences.length;
-
-                if (totalSentences === 0) {
-                    showToast("O arquivo parece vazio ou não pôde ser lido.");
-                    processBtn.disabled = false;
-                    progressContainer.style.display = 'none';
+                let lines = rawText.replace(/\r/g, '').split('\n').map(l => l.trim()).filter(l => l.length > 0);
+                
+                if (lines.length === 0) {
+                    showToast("O arquivo parece vazio.");
                     return;
                 }
 
                 let bilingualPairs = [];
-                
-                // Traduz em blocos simultâneos para ser mais rápido, garantindo 100% do livro sem cortes e sem mistura de idiomas
-                const batchSize = 5;
-                for (let i = 0; i < totalSentences; i += batchSize) {
-                    let batch = sentences.slice(i, i + batchSize);
-                    let transPromises = batch.map(orig => translateSentence(orig));
-                    let translations = await Promise.all(transPromises);
-
-                    for (let j = 0; j < batch.length; j++) {
-                        bilingualPairs.push({ orig: batch[j], trans: translations[j] });
+                for (let i = 0; i < lines.length; i += 2) {
+                    let origText = lines[i];
+                    let transText = (i + 1 < lines.length) ? lines[i + 1] : "";
+                    if (origText) {
+                        bilingualPairs.push({ orig: origText, trans: transText });
                     }
-
-                    let processedCount = Math.min(i + batchSize, totalSentences);
-                    let percent = Math.round((processedCount / totalSentences) * 100);
-                    progressBarFill.style.width = percent + '%';
-                    progressText.innerText = `Traduzindo: ${percent}% (${processedCount}/${totalSentences})`;
                 }
 
                 let coverDataUrl = "";
@@ -831,7 +846,7 @@
                 books.push(newBook);
                 localStorage.setItem('polyglot_books', JSON.stringify(books));
                 renderShelf();
-                showToast("Livro completo adicionado com sucesso!");
+                showToast("Livro adicionado com sucesso!");
 
                 document.getElementById('bookTitleInput').value = "";
                 document.getElementById('bookFileInput').value = "";
@@ -839,10 +854,8 @@
 
             } catch (err) {
                 console.error(err);
-                showToast("Erro ao processar o arquivo. Verifique o formato.");
+                showToast("Erro ao processar o arquivo.");
             } finally {
-                processBtn.disabled = false;
-                progressContainer.style.display = 'none';
                 closeSettingsModal();
             }
         }
@@ -855,29 +868,10 @@
             });
         }
 
-        async function translateSentence(text) {
-            try {
-                // Detecção precisa baseada em palavras para evitar misturar inglês e português na mesma frase ou falhar
-                let langPair = /[a-zA-Z]{5,}/.test(text) ? "en|pt" : "pt|en";
-                let url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${langPair}`;
-                let res = await fetch(url);
-                let data = await res.json();
-                if (data && data.responseData && data.responseData.translatedText) {
-                    let translated = data.responseData.translatedText;
-                    // Evita retornar o texto original caso a API falhe silenciosamente
-                    if (translated && translated.trim() !== "") {
-                        return translated;
-                    }
-                }
-            } catch (e) {}
-            return text; // Fallback seguro para não quebrar
-        }
-
         let currentActiveBookId = null;
 
         function openReader(book) {
             currentActiveBookId = book.id;
-            document.getElementById('readerTitle').innerText = book.title;
             const body = document.getElementById('reader-body');
             body.innerHTML = '';
 
@@ -899,7 +893,9 @@
                 body.appendChild(pairDiv);
             });
 
+            // Exibe a tela do leitor e garante que o botão voltar comece visível
             document.getElementById('reader-view').style.display = 'flex';
+            document.getElementById('readerBackBtn').classList.remove('hidden');
 
             setTimeout(() => {
                 if (book.scrollTop) {
@@ -919,6 +915,29 @@
         function closeReader() {
             document.getElementById('reader-view').style.display = 'none';
             currentActiveBookId = null;
+        }
+
+        function setupReaderDoubleTap() {
+            let lastTouchTime = 0;
+            const readerView = document.getElementById('reader-view');
+
+            readerView.addEventListener('touchend', (e) => {
+                let currentTime = new Date().getTime();
+                let tapLength = currentTime - lastTouchTime;
+                if (tapLength < 300 && tapLength > 0) {
+                    // Duplo toque detectado: alterna a visibilidade do botão voltar inferior
+                    const backBtn = document.getElementById('readerBackBtn');
+                    backBtn.classList.toggle('hidden');
+                    e.preventDefault();
+                }
+                lastTouchTime = currentTime;
+            });
+
+            // Suporte a clique duplo para testes no navegador com mouse
+            readerView.addEventListener('dblclick', () => {
+                const backBtn = document.getElementById('readerBackBtn');
+                backBtn.classList.toggle('hidden');
+            });
         }
     </script>
 </body>

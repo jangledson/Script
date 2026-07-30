@@ -242,6 +242,25 @@
             font-size: 0.9rem;
         }
 
+        /* Estilo da Barra de Progresso do Download */
+        .progress-container {
+            width: 100%;
+            background-color: var(--app-bg);
+            border-radius: 6px;
+            border: 1px solid var(--app-accent);
+            overflow: hidden;
+            height: 16px;
+            margin-top: 6px;
+            display: none;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: #03dac6;
+            transition: width 0.2s ease;
+        }
+
         .font-size-control {
             display: flex;
             align-items: center;
@@ -525,7 +544,7 @@
                 <button class="close-btn" onclick="closeSettingsModal()">✕</button>
             </div>
 
-            <!-- Seção de Gerenciamento de Vozes Offline (TTS) -->
+            <!-- Seção de Gerenciamento de Vozes Offline (TTS) com Barra de Progresso -->
             <div class="settings-import-section">
                 <span style="font-size: 0.9rem; font-weight: bold; color: var(--app-primary);">🗣️ Configuração de Voz Offline</span>
                 <div class="form-group" style="margin-top: 8px;">
@@ -535,15 +554,31 @@
                     </select>
                     <div class="status-box" id="voiceStatus">Pronto para carregar pacotes locais offline.</div>
                 </div>
+                
                 <div class="form-group" style="margin-top: 8px;">
                     <label>Baixar Novos Pacotes de Voz (Inglês)</label>
                     <select id="availableVoices">
-                        <option value="en_US-lessac">English (US) - Feminina (Lessac)</option>
-                        <option value="en_US-ryan">English (US) - Masculina (Ryan)</option>
-                        <option value="en_GB-alan">English (UK) - Masculina (Alan)</option>
+                        <optgroup label="Vozes Femininas">
+                            <option value="en_US-lessac">English (US) - Lessac (Feminina - Alta Qualidade)</option>
+                            <option value="en_US-amy">English (US) - Amy (Feminina - Suave)</option>
+                            <option value="en_US-karen">English (US) - Karen (Feminina - Natural)</option>
+                            <option value="en_US-libritts">English (US) - LibriTTS (Feminina - Profissional)</option>
+                            <option value="en_GB-jenny_dioco">English (UK) - Jenny (Britânica - Feminina)</option>
+                        </optgroup>
+                        <optgroup label="Vozes Masculinas">
+                            <option value="en_US-ryan">English (US) - Ryan (Masculina - Natural)</option>
+                            <option value="en_US-joe">English (US) - Joe (Masculina)</option>
+                            <option value="en_GB-alan">English (UK) - Alan (Britânica - Masculina)</option>
+                        </optgroup>
                     </select>
                 </div>
+
+                <!-- Elementos visuais da Barra de Progresso -->
                 <button class="btn-accent" onclick="requestDownload()">⬇️ Baixar Pacote Selecionado</button>
+                <div class="progress-container" id="progressContainer">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                <div class="status-box" id="downloadStatusText" style="display: none; text-align: center; font-weight: bold;">Iniciando download...</div>
             </div>
 
             <!-- Seção para Excluir Livros Existentes -->
@@ -973,7 +1008,6 @@
             };
         }
 
-        // Função de Reprodução Integrada com o TTS Offline e fallback para Web Speech API
         function playSpeech(text) {
             let voiceSelect = document.getElementById('localVoiceSelect');
             let chosenVoice = voiceSelect ? voiceSelect.value : "";
@@ -991,18 +1025,56 @@
             }
         }
 
-        // Funções de Gerenciamento do TTS Offline recebidas do app nativo
+        // Funções de Gerenciamento do TTS Offline com suporte à barra de progresso
         function requestDownload() {
             let select = document.getElementById('availableVoices');
             let selectedVoice = select.value;
             let selectedText = select.options[select.selectedIndex].text;
             
+            // Exibe a barra de progresso na interface para evitar tela branca / travada
+            const progressContainer = document.getElementById('progressContainer');
+            const progressBar = document.getElementById('progressBar');
+            const downloadStatusText = document.getElementById('downloadStatusText');
+
+            progressContainer.style.display = 'block';
+            downloadStatusText.style.display = 'block';
+            progressBar.style.width = '10%';
+            downloadStatusText.textContent = 'Conectando para baixar pacote...';
+
             if (window.AndroidBridge) {
                 window.AndroidBridge.startVoiceDownload(selectedVoice, selectedText);
             } else {
-                let directUrl = "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/" + selectedVoice + "/medium/" + selectedVoice + "-medium.onnx";
-                alert("Modo Navegador: Iniciando download do pacote de voz.");
-                window.location.href = directUrl;
+                // Simulação visual no navegador comum
+                let progress = 10;
+                let interval = setInterval(() => {
+                    progress += 20;
+                    progressBar.style.width = progress + '%';
+                    downloadStatusText.textContent = `Baixando pacote... ${progress}%`;
+                    if(progress >= 100) {
+                        clearInterval(interval);
+                        downloadStatusText.textContent = 'Download simulado concluído!';
+                        showToast("Pacote de voz simulado com sucesso.");
+                    }
+                }, 400);
+            }
+        }
+
+        // Função chamada pelo código nativo do Android para atualizar o progresso em tempo real
+        function updateDownloadProgress(percent, statusMsg) {
+            const progressContainer = document.getElementById('progressContainer');
+            const progressBar = document.getElementById('progressBar');
+            const downloadStatusText = document.getElementById('downloadStatusText');
+
+            progressContainer.style.display = 'block';
+            downloadStatusText.style.display = 'block';
+            progressBar.style.width = percent + '%';
+            downloadStatusText.textContent = statusMsg || `Baixando... ${percent}%`;
+
+            if (percent >= 100) {
+                setTimeout(() => {
+                    progressContainer.style.display = 'none';
+                    downloadStatusText.style.display = 'none';
+                }, 3000);
             }
         }
 

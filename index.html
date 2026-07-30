@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PolyglotShelf - Leitor Bilíngue</title>
+    <title>Lendo Scripts</title>
     <!-- Bibliotecas auxiliares para leitura de arquivos -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
@@ -65,7 +65,6 @@
             align-items: end;
         }
 
-        /* Ajuste responsivo para tablets: aumenta o espaço e altura dos cards de livros */
         @media (min-width: 768px) {
             .shelf-container {
                 padding: 32px;
@@ -111,7 +110,7 @@
         .book-cover img {
             width: 100%;
             height: 100%;
-            object-fit: contain; /* Garante que a capa inteira apareça sem cortes na estante */
+            object-fit: contain;
             background-color: #00000010;
         }
 
@@ -147,7 +146,7 @@
             background-color: rgba(255,255,255,0.2);
         }
 
-        /* Botão de Configurações Flutuante (Interface Fixa) */
+        /* Botão de Configurações Flutuante */
         .fab-settings {
             position: fixed;
             bottom: 20px;
@@ -172,7 +171,7 @@
             transform: scale(0.9);
         }
 
-        /* Modal de Configurações (Interface Fixa) */
+        /* Modal de Configurações */
         .modal {
             position: fixed;
             top: 0;
@@ -243,7 +242,6 @@
             font-size: 0.9rem;
         }
 
-        /* Controles de Tamanho de Fonte */
         .font-size-control {
             display: flex;
             align-items: center;
@@ -275,7 +273,6 @@
             color: var(--app-text);
         }
 
-        /* Barras Arco-Íris com Botões + e - */
         .rainbow-slider-group {
             display: flex;
             flex-direction: column;
@@ -338,15 +335,8 @@
             outline: none;
             border: 1px solid #ccc;
             background: linear-gradient(to right, 
-                #000000 0%, 
-                #990000 15%, 
-                #ff0000 25%, 
-                #ffff00 40%, 
-                #00ff00 55%, 
-                #00ffff 70%, 
-                #0000ff 85%, 
-                #ff00ff 95%, 
-                #ffffff 100%);
+                #000000 0%, #990000 15%, #ff0000 25%, #ffff00 40%, 
+                #00ff00 55%, #00ffff 70%, #0000ff 85%, #ff00ff 95%, #ffffff 100%);
             cursor: pointer;
         }
 
@@ -362,19 +352,20 @@
             cursor: pointer;
         }
 
-        .rainbow-input::-moz-range-thumb {
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            background: #ffffff;
-            border: 2px solid #555;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.4);
-            cursor: pointer;
-        }
-
         .btn-primary {
             background-color: var(--app-primary);
             color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .btn-accent {
+            background-color: #03dac6;
+            color: #121212;
             border: none;
             padding: 12px;
             border-radius: 6px;
@@ -400,6 +391,16 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
+        }
+
+        .status-box {
+            font-size: 13px;
+            color: #666;
+            margin-top: 4px;
+            padding: 6px;
+            background: rgba(0,0,0,0.03);
+            border-radius: 4px;
+            border-left: 3px solid var(--app-primary);
         }
 
         /* Leitor Bilíngue */
@@ -511,19 +512,38 @@
 <body>
 
     <!-- Estante de Prateleiras -->
-    <div class="shelf-container" id="shelfContainer">
-        <!-- Gerado Dinamicamente -->
-    </div>
+    <div class="shelf-container" id="shelfContainer"></div>
 
     <!-- Botão de Configurações no Canto Inferior Direito -->
     <button class="fab-settings" onclick="openSettingsModal()" title="Configurações e Adicionar Livro">⚙️</button>
 
-    <!-- Modal de Configurações, Livros e Backup -->
+    <!-- Modal de Configurações, Livros, TTS e Backup -->
     <div class="modal" id="settingsModal">
         <div class="modal-content">
             <div class="modal-header">
-                <span>Configurações e Estante</span>
+                <span>Configurações, Livros e Voz</span>
                 <button class="close-btn" onclick="closeSettingsModal()">✕</button>
+            </div>
+
+            <!-- Seção de Gerenciamento de Vozes Offline (TTS) -->
+            <div class="settings-import-section">
+                <span style="font-size: 0.9rem; font-weight: bold; color: var(--app-primary);">🗣️ Configuração de Voz Offline</span>
+                <div class="form-group" style="margin-top: 8px;">
+                    <label>Vozes Baixadas no Aparelho</label>
+                    <select id="localVoiceSelect">
+                        <option value="">Nenhuma voz baixada</option>
+                    </select>
+                    <div class="status-box" id="voiceStatus">Pronto para carregar pacotes locais offline.</div>
+                </div>
+                <div class="form-group" style="margin-top: 8px;">
+                    <label>Baixar Novos Pacotes de Voz (Inglês)</label>
+                    <select id="availableVoices">
+                        <option value="en_US-lessac">English (US) - Feminina (Lessac)</option>
+                        <option value="en_US-ryan">English (US) - Masculina (Ryan)</option>
+                        <option value="en_GB-alan">English (UK) - Masculina (Alan)</option>
+                    </select>
+                </div>
+                <button class="btn-accent" onclick="requestDownload()">⬇️ Baixar Pacote Selecionado</button>
             </div>
 
             <!-- Seção para Excluir Livros Existentes -->
@@ -541,10 +561,10 @@
                 <span style="font-size: 0.9rem; font-weight: bold; color: var(--app-primary);">📥 Adicionar Livro Bilíngue</span>
                 <div class="form-group">
                     <label>Título do Livro</label>
-                    <input type="text" id="bookTitleInput" placeholder="Ex: Livro Bilíngue - Capítulo 1">
+                    <input type="text" id="bookTitleInput" placeholder="Ex: Capítulo 1">
                 </div>
                 <div class="form-group">
-                    <label>Arquivo (.TXT, .DOCX, .CSV, .JSON, .SRT, .VTT, .PDF)</label>
+                    <label>Arquivo (.TXT, .DOCX, .PDF, etc.)</label>
                     <input type="file" id="bookFileInput" accept=".txt,.docx,.csv,.json,.srt,.vtt,.pdf">
                 </div>
                 <div class="form-group">
@@ -564,11 +584,6 @@
                     <option value="Georgia">Georgia</option>
                     <option value="'Times New Roman', serif">Times New Roman</option>
                     <option value="Verdana">Verdana</option>
-                    <option value="Trebuchet MS">Trebuchet MS</option>
-                    <option value="Impact">Impact</option>
-                    <option value="Comic Sans MS">Comic Sans MS</option>
-                    <option value="'Lucida Console', monospace">Lucida Console</option>
-                    <option value="Tahoma">Tahoma</option>
                 </select>
             </div>
             <div class="form-group">
@@ -626,14 +641,13 @@
                 </div>
             </div>
 
-            <!-- Seção de Backup e Restauração (No final) -->
+            <!-- Seção de Backup -->
             <div class="settings-import-section">
                 <span style="font-size: 0.9rem; font-weight: bold; color: var(--app-primary);">💾 Backup e Restauração</span>
-                <p style="font-size: 0.75rem; color: #666;">Salve todos os seus livros e configurações para usar em outro aparelho.</p>
                 <div style="display: flex; gap: 8px;">
                     <button class="btn-primary" style="flex: 1; font-size: 0.8rem; padding: 10px;" onclick="exportBackup()">Baixar Backup</button>
                     <label class="btn-primary" style="flex: 1; font-size: 0.8rem; padding: 10px; text-align: center; cursor: pointer; display: inline-block; line-height: normal;">
-                        Restaurar Backup
+                        Restaurar
                         <input type="file" id="restoreBackupInput" accept=".json" style="display: none;" onchange="importBackup(event)">
                     </label>
                 </div>
@@ -645,9 +659,7 @@
 
     <!-- Tela do Leitor Bilíngue -->
     <div id="reader-view">
-        <div id="reader-body">
-            <!-- Conteúdo Bilíngue Intercalado -->
-        </div>
+        <div id="reader-body"></div>
         <button id="readerBackBtn" class="reader-floating-back" onclick="closeReader()">← Voltar</button>
     </div>
 
@@ -690,12 +702,10 @@
             const deleteSection = document.getElementById('deleteSection');
             const select = document.getElementById('bookSelectToDelete');
             select.innerHTML = '';
-
             if (books.length === 0) {
                 deleteSection.style.display = 'none';
                 return;
             }
-
             deleteSection.style.display = 'flex';
             books.forEach(book => {
                 const opt = document.createElement('option');
@@ -708,13 +718,8 @@
         function deleteSelectedBook() {
             const select = document.getElementById('bookSelectToDelete');
             const bookId = parseInt(select.value);
-
-            if (!bookId) {
-                showToast("Nenhum livro selecionado para exclusão.");
-                return;
-            }
-
-            if (confirm("Tem certeza de que deseja excluir este livro da estante?")) {
+            if (!bookId) return;
+            if (confirm("Tem certeza de que deseja excluir este livro?")) {
                 books = books.filter(b => b.id !== bookId);
                 localStorage.setItem('polyglot_books', JSON.stringify(books));
                 renderShelf();
@@ -729,9 +734,9 @@
             if (!settings.pixelSize) settings.pixelSize = 16;
             document.getElementById('fontSizeDisplay').innerText = settings.pixelSize + 'px';
 
-            document.getElementById('origColorRange').value = settings.origVal !== undefined ? settings.origVal : 0;
-            document.getElementById('transColorRange').value = settings.transVal !== undefined ? settings.transVal : 30;
-            document.getElementById('bgColorRange').value = settings.bgVal !== undefined ? settings.bgVal : 100;
+            document.getElementById('origColorRange').value = settings.origVal ?? 0;
+            document.getElementById('transColorRange').value = settings.transVal ?? 30;
+            document.getElementById('bgColorRange').value = settings.bgVal ?? 100;
 
             applySettings();
         }
@@ -740,7 +745,6 @@
             settings.pixelSize += delta;
             if (settings.pixelSize < 10) settings.pixelSize = 10;
             if (settings.pixelSize > 40) settings.pixelSize = 40;
-            
             document.getElementById('fontSizeDisplay').innerText = settings.pixelSize + 'px';
             applySettings();
         }
@@ -758,34 +762,15 @@
         function getColorFromSliderValue(val) {
             let p = parseInt(val);
             let r, g, b;
-
-            if (p <= 15) {
-                let f = p / 15;
-                r = Math.floor(153 * f); g = 0; b = 0;
-            } else if (p <= 25) {
-                let f = (p - 15) / 10;
-                r = 153 + Math.floor(102 * f); g = 0; b = 0;
-            } else if (p <= 40) {
-                let f = (p - 25) / 15;
-                r = 255; g = Math.floor(255 * f); b = 0;
-            } else if (p <= 55) {
-                let f = (p - 40) / 15;
-                r = 255 - Math.floor(255 * f); g = 255; b = 0;
-            } else if (p <= 70) {
-                let f = (p - 55) / 15;
-                r = 0; g = 255; b = Math.floor(255 * f);
-            } else if (p <= 85) {
-                let f = (p - 70) / 15;
-                r = 0; g = 255 - Math.floor(255 * f); b = 255;
-            } else if (p <= 95) {
-                let f = (p - 85) / 10;
-                r = Math.floor(255 * f); g = 0; b = 255;
-            } else {
-                r = 255; g = 255; b = 255;
-            }
-            
-            let hex = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
-            return hex;
+            if (p <= 15) { let f = p / 15; r = Math.floor(153 * f); g = 0; b = 0; }
+            else if (p <= 25) { let f = (p - 15) / 10; r = 153 + Math.floor(102 * f); g = 0; b = 0; }
+            else if (p <= 40) { let f = (p - 25) / 15; r = 255; g = Math.floor(255 * f); b = 0; }
+            else if (p <= 55) { let f = (p - 40) / 15; r = 255 - Math.floor(255 * f); g = 255; b = 0; }
+            else if (p <= 70) { let f = (p - 55) / 15; r = 0; g = 255; b = Math.floor(255 * f); }
+            else if (p <= 85) { let f = (p - 70) / 15; r = 0; g = 255 - Math.floor(255 * f); b = 255; }
+            else if (p <= 95) { let f = (p - 85) / 10; r = Math.floor(255 * f); g = 0; b = 255; }
+            else { r = 255; g = 255; b = 255; }
+            return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
         }
 
         function updateRainbowColor(type) {
@@ -811,35 +796,27 @@
         function applySettings() {
             settings.font = document.getElementById('fontSelect').value;
             settings.weight = document.getElementById('fontWeightSelect').value;
-
             document.documentElement.style.setProperty('--selected-font', settings.font);
             document.documentElement.style.setProperty('--font-pixel-size', settings.pixelSize + 'px');
             document.documentElement.style.setProperty('--font-weight', settings.weight);
-
             updateRainbowColor('orig');
             updateRainbowColor('trans');
             updateRainbowColor('bg');
-
             localStorage.setItem('polyglot_settings', JSON.stringify(settings));
         }
 
         function renderShelf() {
             const container = document.getElementById('shelfContainer');
             container.innerHTML = '';
-
             let rows = [];
             for (let i = 0; i < books.length; i += 3) {
                 rows.push(books.slice(i, i + 3));
             }
-
-            if (rows.length === 0) {
-                rows.push([]);
-            }
+            if (rows.length === 0) rows.push([]);
 
             rows.forEach((rowBooks) => {
                 const rowEl = document.createElement('div');
                 rowEl.className = 'shelf-row';
-
                 for (let i = 0; i < 3; i++) {
                     if (rowBooks[i]) {
                         const book = rowBooks[i];
@@ -884,16 +861,15 @@
             const coverInput = document.getElementById('coverFileInput');
 
             if (!titleInput || fileInput.files.length === 0) {
-                showToast("Por favor, informe o título e selecione o arquivo do livro.");
+                showToast("Informe o título e selecione o arquivo do livro.");
                 return;
             }
 
             const file = fileInput.files[0];
             let rawText = "";
-
             try {
                 const ext = file.name.split('.').pop().toLowerCase();
-                if (ext === 'txt' || ext === 'csv' || ext === 'json' || ext === 'srt' || ext === 'vtt') {
+                if (['txt', 'csv', 'json', 'srt', 'vtt'].includes(ext)) {
                     rawText = await file.text();
                 } else if (ext === 'docx') {
                     const arrayBuffer = await file.arrayBuffer();
@@ -912,19 +888,11 @@
                 }
 
                 let lines = rawText.replace(/\r/g, '').split('\n').map(l => l.trim()).filter(l => l.length > 0);
-                
-                if (lines.length === 0) {
-                    showToast("O arquivo parece vazio.");
-                    return;
-                }
-
                 let bilingualPairs = [];
                 for (let i = 0; i < lines.length; i += 2) {
                     let origText = lines[i];
                     let transText = (i + 1 < lines.length) ? lines[i + 1] : "";
-                    if (origText) {
-                        bilingualPairs.push({ orig: origText, trans: transText });
-                    }
+                    if (origText) bilingualPairs.push({ orig: origText, trans: transText });
                 }
 
                 let coverDataUrl = "";
@@ -932,15 +900,13 @@
                     coverDataUrl = await fileToDataUrl(coverInput.files[0]);
                 }
 
-                const newBook = {
+                books.push({
                     id: Date.now(),
                     title: titleInput,
                     cover: coverDataUrl,
                     content: bilingualPairs,
                     scrollTop: 0
-                };
-
-                books.push(newBook);
+                });
                 localStorage.setItem('polyglot_books', JSON.stringify(books));
                 renderShelf();
                 showToast("Livro adicionado com sucesso!");
@@ -948,7 +914,6 @@
                 document.getElementById('bookTitleInput').value = "";
                 document.getElementById('bookFileInput').value = "";
                 document.getElementById('coverFileInput').value = "";
-
             } catch (err) {
                 console.error(err);
                 showToast("Erro ao processar o arquivo.");
@@ -997,12 +962,8 @@
             document.getElementById('reader-view').style.display = 'flex';
             document.getElementById('readerBackBtn').classList.remove('visible');
 
-            // Restaura a última posição salva do livro
-            setTimeout(() => {
-                body.scrollTop = book.scrollTop || 0;
-            }, 50);
+            setTimeout(() => { body.scrollTop = book.scrollTop || 0; }, 50);
 
-            // Salva a posição em tempo real conforme rola a tela
             body.onscroll = () => {
                 let currentBook = books.find(b => b.id === currentActiveBookId);
                 if (currentBook) {
@@ -1012,37 +973,74 @@
             };
         }
 
+        // Função de Reprodução Integrada com o TTS Offline e fallback para Web Speech API
         function playSpeech(text) {
-            if (!('speechSynthesis' in window)) {
-                showToast("Seu dispositivo não suporta leitura por voz.");
-                return;
-            }
-            
-            window.speechSynthesis.cancel();
+            let voiceSelect = document.getElementById('localVoiceSelect');
+            let chosenVoice = voiceSelect ? voiceSelect.value : "";
 
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'en-US';
-            utterance.rate = 0.9;
-            window.speechSynthesis.speak(utterance);
+            if (window.AndroidBridge && chosenVoice) {
+                window.AndroidBridge.synthesizeOffline(text, chosenVoice);
+            } else if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.9;
+                window.speechSynthesis.speak(utterance);
+            } else {
+                showToast("Nenhum motor de voz disponível.");
+            }
+        }
+
+        // Funções de Gerenciamento do TTS Offline recebidas do app nativo
+        function requestDownload() {
+            let select = document.getElementById('availableVoices');
+            let selectedVoice = select.value;
+            let selectedText = select.options[select.selectedIndex].text;
+            
+            if (window.AndroidBridge) {
+                window.AndroidBridge.startVoiceDownload(selectedVoice, selectedText);
+            } else {
+                let directUrl = "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/" + selectedVoice + "/medium/" + selectedVoice + "-medium.onnx";
+                alert("Modo Navegador: Iniciando download do pacote de voz.");
+                window.location.href = directUrl;
+            }
+        }
+
+        function updateLocalVoices(voicesJson) {
+            try {
+                let voices = JSON.parse(voicesJson);
+                let select = document.getElementById('localVoiceSelect');
+                if (!select) return;
+                select.innerHTML = '';
+                
+                if (voices.length === 0) {
+                    select.innerHTML = '<option value="">Nenhuma voz baixada</option>';
+                    document.getElementById('voiceStatus').textContent = 'Nenhum pacote encontrado. Baixe abaixo.';
+                    return;
+                }
+
+                voices.forEach(v => {
+                    let opt = document.createElement('option');
+                    opt.value = v.id;
+                    opt.textContent = v.name;
+                    select.appendChild(opt);
+                });
+                document.getElementById('voiceStatus').textContent = `${voices.length} voz(es) offline pronta(s).`;
+            } catch(e) {
+                console.error("Erro ao atualizar lista de vozes", e);
+            }
         }
 
         function closeReader() {
-            window.speechSynthesis.cancel();
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
             document.getElementById('reader-view').style.display = 'none';
             currentActiveBookId = null;
         }
 
         function setupBackButton() {
             const backBtn = document.getElementById('readerBackBtn');
-            backBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                closeReader();
-            });
-            backBtn.addEventListener('touchend', (e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                closeReader();
-            });
+            backBtn.addEventListener('click', (e) => { e.stopPropagation(); closeReader(); });
+            backBtn.addEventListener('touchend', (e) => { e.stopPropagation(); e.preventDefault(); closeReader(); });
         }
 
         function setupReaderDoubleTap() {
@@ -1050,14 +1048,10 @@
             const readerView = document.getElementById('reader-view');
 
             readerView.addEventListener('touchend', (e) => {
-                // Evita conflito se tocar diretamente no botão de voltar
                 if (e.target.id === 'readerBackBtn' || e.target.closest('#readerBackBtn')) return;
-
                 let currentTime = new Date().getTime();
-                let tapLength = currentTime - lastTouchTime;
-                if (tapLength < 300 && tapLength > 0) {
-                    const backBtn = document.getElementById('readerBackBtn');
-                    backBtn.classList.toggle('visible');
+                if ((currentTime - lastTouchTime) < 300 && (currentTime - lastTouchTime) > 0) {
+                    document.getElementById('readerBackBtn').classList.toggle('visible');
                     e.preventDefault();
                 }
                 lastTouchTime = currentTime;
@@ -1065,46 +1059,35 @@
 
             readerView.addEventListener('dblclick', (e) => {
                 if (e.target.id === 'readerBackBtn' || e.target.closest('#readerBackBtn')) return;
-                const backBtn = document.getElementById('readerBackBtn');
-                backBtn.classList.toggle('visible');
+                document.getElementById('readerBackBtn').classList.toggle('visible');
             });
         }
 
-        // Funções de Backup e Restauração
         function exportBackup() {
-            const backupData = {
-                books: books,
-                settings: settings,
-                version: "1.0",
-                date: new Date().toISOString()
-            };
-
+            const backupData = { books, settings, version: "1.0", date: new Date().toISOString() };
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
             const downloadAnchor = document.createElement('a');
             downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `polyglot_backup_${new Date().toISOString().slice(0,10)}.json`);
+            downloadAnchor.setAttribute("download", `lendo_scripts_backup_${new Date().toISOString().slice(0,10)}.json`);
             document.body.appendChild(downloadAnchor);
             downloadAnchor.click();
             downloadAnchor.remove();
-            showToast("Backup gerado e baixado com sucesso!");
+            showToast("Backup gerado com sucesso!");
         }
 
         function importBackup(event) {
             const file = event.target.files[0];
             if (!file) return;
-
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
                     const backupData = JSON.parse(e.target.result);
                     if (backupData.books && backupData.settings) {
-                        if (confirm("Restaurar este backup substituirá os livros e configurações atuais. Deseja continuar?")) {
+                        if (confirm("Restaurar este backup substituirá os dados atuais. Continuar?")) {
                             books = backupData.books;
                             settings = backupData.settings;
-                            
                             localStorage.setItem('polyglot_books', JSON.stringify(books));
                             localStorage.setItem('polyglot_settings', JSON.stringify(settings));
-
                             loadSettingsToUI();
                             renderShelf();
                             closeSettingsModal();
@@ -1114,7 +1097,6 @@
                         showToast("Arquivo de backup inválido.");
                     }
                 } catch (err) {
-                    console.error(err);
                     showToast("Erro ao ler o arquivo de backup.");
                 }
             };

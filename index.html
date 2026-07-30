@@ -718,6 +718,7 @@
             renderShelf();
             setupReaderDoubleTap();
             setupBackButton();
+            loadLocalVoicesFromApp();
         });
 
         function showToast(msg) {
@@ -729,9 +730,17 @@
 
         function openSettingsModal() { 
             updateDeleteSelectOptions();
+            loadLocalVoicesFromApp();
             document.getElementById('settingsModal').classList.add('active'); 
         }
         function closeSettingsModal() { document.getElementById('settingsModal').classList.remove('active'); }
+
+        // Pede ao aplicativo nativo para carregar as vozes já instaladas no aparelho
+        function loadLocalVoicesFromApp() {
+            if (window.AndroidBridge && typeof window.AndroidBridge.getLocalVoices === 'function') {
+                window.AndroidBridge.getLocalVoices();
+            }
+        }
 
         function updateDeleteSelectOptions() {
             const deleteSection = document.getElementById('deleteSection');
@@ -1012,8 +1021,16 @@
             let voiceSelect = document.getElementById('localVoiceSelect');
             let chosenVoice = voiceSelect ? voiceSelect.value : "";
 
+            // Se nenhuma voz estiver selecionada mas houver opções, seleciona a primeira automaticamente
+            if (!chosenVoice && voiceSelect && voiceSelect.options.length > 1) {
+                voiceSelect.selectedIndex = 1;
+                chosenVoice = voiceSelect.value;
+            }
+
             if (window.AndroidBridge && chosenVoice) {
                 window.AndroidBridge.synthesizeOffline(text, chosenVoice);
+            } else if (window.AndroidBridge && !chosenVoice) {
+                showToast("Baixe ou selecione uma voz offline nas configurações.");
             } else if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
                 const utterance = new SpeechSynthesisUtterance(text);
@@ -1025,13 +1042,11 @@
             }
         }
 
-        // Funções de Gerenciamento do TTS Offline com suporte à barra de progresso
         function requestDownload() {
             let select = document.getElementById('availableVoices');
             let selectedVoice = select.value;
             let selectedText = select.options[select.selectedIndex].text;
             
-            // Exibe a barra de progresso na interface para evitar tela branca / travada
             const progressContainer = document.getElementById('progressContainer');
             const progressBar = document.getElementById('progressBar');
             const downloadStatusText = document.getElementById('downloadStatusText');
@@ -1044,7 +1059,6 @@
             if (window.AndroidBridge) {
                 window.AndroidBridge.startVoiceDownload(selectedVoice, selectedText);
             } else {
-                // Simulação visual no navegador comum
                 let progress = 10;
                 let interval = setInterval(() => {
                     progress += 20;
@@ -1059,7 +1073,6 @@
             }
         }
 
-        // Função chamada pelo código nativo do Android para atualizar o progresso em tempo real
         function updateDownloadProgress(percent, statusMsg) {
             const progressContainer = document.getElementById('progressContainer');
             const progressBar = document.getElementById('progressBar');
@@ -1074,18 +1087,20 @@
                 setTimeout(() => {
                     progressContainer.style.display = 'none';
                     downloadStatusText.style.display = 'none';
-                }, 3000);
+                    // Atualiza a lista de vozes locais automaticamente ao terminar
+                    loadLocalVoicesFromApp();
+                }, 2000);
             }
         }
 
         function updateLocalVoices(voicesJson) {
             try {
-                let voices = JSON.parse(voicesJson);
+                let voices = typeof voicesJson === 'string' ? JSON.parse(voicesJson) : voicesJson;
                 let select = document.getElementById('localVoiceSelect');
                 if (!select) return;
                 select.innerHTML = '';
                 
-                if (voices.length === 0) {
+                if (!voices || voices.length === 0) {
                     select.innerHTML = '<option value="">Nenhuma voz baixada</option>';
                     document.getElementById('voiceStatus').textContent = 'Nenhum pacote encontrado. Baixe abaixo.';
                     return;
@@ -1097,6 +1112,12 @@
                     opt.textContent = v.name;
                     select.appendChild(opt);
                 });
+                
+                // Seleciona automaticamente a primeira voz se nada estiver marcado
+                if (select.options.length > 0) {
+                    select.selectedIndex = 0;
+                }
+
                 document.getElementById('voiceStatus').textContent = `${voices.length} voz(es) offline pronta(s).`;
             } catch(e) {
                 console.error("Erro ao atualizar lista de vozes", e);

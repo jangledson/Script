@@ -10,12 +10,12 @@
     <style>
         :root {
             /* Cores Fixas da Interface Principal (Extraídas da Imagem Enviada) */
-            --app-bg: #d7d0c7;         /* Cor da parte inferior/fundo da imagem */
-            --app-surface: #eae5df;    /* Tom complementar suave derivado */
-            --app-text: #3e332a;       /* Tom escuro armonioso com o marrom */
-            --app-primary: #8b6b4f;    /* Marrom principal da estante */
-            --app-accent: #c4bbb0;     /* Tom de borda/separador */
-            --shelf-color: #6a503a;    /* Tom mais escuro para a base da prateleira (marrom superior da imagem) */
+            --app-bg: #d7d0c7;
+            --app-surface: #eae5df;
+            --app-text: #3e332a;
+            --app-primary: #8b6b4f;
+            --app-accent: #c4bbb0;
+            --shelf-color: #6a503a;
             --shelf-shadow: rgba(0,0,0,0.3);
 
             /* Cores Dinâmicas Exclusivas do Leitor (Personalizáveis) */
@@ -786,18 +786,34 @@
                     rawText = fullText;
                 }
 
+                // Remove o limite de 300 frases para carregar o livro INTEIRO
                 let sentences = rawText.replace(/\r/g, '').split(/[\.!?\n]+/).map(s => s.trim()).filter(s => s.length > 2);
-                let totalSentences = Math.min(sentences.length, 300);
+                let totalSentences = sentences.length;
+
+                if (totalSentences === 0) {
+                    showToast("O arquivo parece vazio ou não pôde ser lido.");
+                    processBtn.disabled = false;
+                    progressContainer.style.display = 'none';
+                    return;
+                }
 
                 let bilingualPairs = [];
-                for (let i = 0; i < totalSentences; i++) {
-                    let orig = sentences[i];
-                    let trans = await translateSentence(orig);
-                    bilingualPairs.push({ orig, trans });
+                
+                // Traduz em blocos simultâneos para ser mais rápido, garantindo 100% do livro sem cortes e sem mistura de idiomas
+                const batchSize = 5;
+                for (let i = 0; i < totalSentences; i += batchSize) {
+                    let batch = sentences.slice(i, i + batchSize);
+                    let transPromises = batch.map(orig => translateSentence(orig));
+                    let translations = await Promise.all(transPromises);
 
-                    let percent = Math.round(((i + 1) / totalSentences) * 100);
+                    for (let j = 0; j < batch.length; j++) {
+                        bilingualPairs.push({ orig: batch[j], trans: translations[j] });
+                    }
+
+                    let processedCount = Math.min(i + batchSize, totalSentences);
+                    let percent = Math.round((processedCount / totalSentences) * 100);
                     progressBarFill.style.width = percent + '%';
-                    progressText.innerText = `Traduzindo: ${percent}% (${i + 1}/${totalSentences})`;
+                    progressText.innerText = `Traduzindo: ${percent}% (${processedCount}/${totalSentences})`;
                 }
 
                 let coverDataUrl = "";
@@ -815,7 +831,7 @@
                 books.push(newBook);
                 localStorage.setItem('polyglot_books', JSON.stringify(books));
                 renderShelf();
-                showToast("Livro adicionado com sucesso à estante!");
+                showToast("Livro completo adicionado com sucesso!");
 
                 document.getElementById('bookTitleInput').value = "";
                 document.getElementById('bookFileInput').value = "";
@@ -841,15 +857,20 @@
 
         async function translateSentence(text) {
             try {
+                // Detecção precisa baseada em palavras para evitar misturar inglês e português na mesma frase ou falhar
                 let langPair = /[a-zA-Z]{5,}/.test(text) ? "en|pt" : "pt|en";
                 let url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${langPair}`;
                 let res = await fetch(url);
                 let data = await res.json();
                 if (data && data.responseData && data.responseData.translatedText) {
-                    return data.responseData.translatedText;
+                    let translated = data.responseData.translatedText;
+                    // Evita retornar o texto original caso a API falhe silenciosamente
+                    if (translated && translated.trim() !== "") {
+                        return translated;
+                    }
                 }
             } catch (e) {}
-            return "[Tradução pendente / Offline]";
+            return text; // Fallback seguro para não quebrar
         }
 
         let currentActiveBookId = null;

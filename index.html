@@ -255,7 +255,7 @@
             color: var(--app-text);
         }
 
-        /* Barras Arco-Íris */
+        /* Barras Arco-Íris com Botões + e - */
         .rainbow-slider-group {
             display: flex;
             flex-direction: column;
@@ -283,9 +283,36 @@
             color: var(--app-text);
         }
 
+        .slider-control-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .step-btn {
+            background-color: var(--app-primary);
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        }
+
+        .step-btn:active {
+            transform: scale(0.92);
+        }
+
         .rainbow-input {
             -webkit-appearance: none;
-            width: 100%;
+            flex: 1;
             height: 28px;
             border-radius: 14px;
             outline: none;
@@ -403,16 +430,15 @@
             padding-top: 4px;
         }
 
-        /* Botão Flutuante Inferior de Voltar (Ocultável por Duplo Toque) */
+        /* Botão Voltar Posicionado no Inferior Esquerdo (Ocultável por Duplo Toque) */
         .reader-floating-back {
             position: fixed;
             bottom: 24px;
-            left: 50%;
-            transform: translateX(-50%);
+            left: 24px;
             background-color: var(--reader-trans);
             color: #fff;
             border: none;
-            padding: 12px 28px;
+            padding: 12px 24px;
             border-radius: 30px;
             cursor: pointer;
             font-weight: bold;
@@ -425,7 +451,7 @@
         .reader-floating-back.hidden {
             opacity: 0;
             pointer-events: none;
-            transform: translateX(-50%) translateY(20px);
+            transform: translateY(20px);
         }
 
         /* Toast de Alerta */
@@ -526,31 +552,43 @@
                 </select>
             </div>
             
-            <!-- Barra Arco-Íris 1: Cor do Texto em Inglês (Superior) -->
+            <!-- Barra Arco-Íris 1: Cor do Texto em Inglês (Superior) com Botões + e - -->
             <div class="rainbow-slider-group">
                 <div class="rainbow-label-row">
                     <span>🎨 Cor do Texto em Inglês (Superior)</span>
                     <span class="hex-tag" id="hexOrigColor">#3E332A</span>
                 </div>
-                <input type="range" class="rainbow-input" id="origColorRange" min="0" max="100" value="0" oninput="updateRainbowColor('orig')">
+                <div class="slider-control-row">
+                    <button class="step-btn" onclick="stepColor('orig', -2)">-</button>
+                    <input type="range" class="rainbow-input" id="origColorRange" min="0" max="100" value="0" oninput="updateRainbowColor('orig')">
+                    <button class="step-btn" onclick="stepColor('orig', 2)">+</button>
+                </div>
             </div>
 
-            <!-- Barra Arco-Íris 2: Cor do Texto em Português (Inferior) -->
+            <!-- Barra Arco-Íris 2: Cor do Texto em Português (Inferior) com Botões + e - -->
             <div class="rainbow-slider-group">
                 <div class="rainbow-label-row">
                     <span>🎨 Cor do Texto em Português (Inferior)</span>
                     <span class="hex-tag" id="hexTransColor">#8B6B4F</span>
                 </div>
-                <input type="range" class="rainbow-input" id="transColorRange" min="0" max="100" value="30" oninput="updateRainbowColor('trans')">
+                <div class="slider-control-row">
+                    <button class="step-btn" onclick="stepColor('trans', -2)">-</button>
+                    <input type="range" class="rainbow-input" id="transColorRange" min="0" max="100" value="30" oninput="updateRainbowColor('trans')">
+                    <button class="step-btn" onclick="stepColor('trans', 2)">+</button>
+                </div>
             </div>
 
-            <!-- Barra Arco-Íris 3: Cor de Fundo do Leitor -->
+            <!-- Barra Arco-Íris 3: Cor de Fundo do Leitor com Botões + e - -->
             <div class="rainbow-slider-group">
                 <div class="rainbow-label-row">
                     <span>🎨 Cor de Fundo do Leitor</span>
                     <span class="hex-tag" id="hexBgColor">#F7F9FC</span>
                 </div>
-                <input type="range" class="rainbow-input" id="bgColorRange" min="0" max="100" value="70" oninput="updateRainbowColor('bg')">
+                <div class="slider-control-row">
+                    <button class="step-btn" onclick="stepColor('bg', -2)">-</button>
+                    <input type="range" class="rainbow-input" id="bgColorRange" min="0" max="100" value="70" oninput="updateRainbowColor('bg')">
+                    <button class="step-btn" onclick="stepColor('bg', 2)">+</button>
+                </div>
             </div>
 
             <button class="btn-primary" onclick="closeSettingsModal()">Salvar Configurações</button>
@@ -562,7 +600,7 @@
         <div id="reader-body">
             <!-- Conteúdo Bilíngue Intercalado -->
         </div>
-        <!-- Botão Voltar Posicionado na Parte Inferior (Alternável por Duplo Toque) -->
+        <!-- Botão Voltar Posicionado no Inferior Esquerdo (Alternável por Duplo Toque) -->
         <button id="readerBackBtn" class="reader-floating-back" onclick="closeReader()">← Voltar</button>
     </div>
 
@@ -657,6 +695,16 @@
             
             document.getElementById('fontSizeDisplay').innerText = settings.pixelSize + 'px';
             applySettings();
+        }
+
+        function stepColor(type, delta) {
+            let inputId = type === 'orig' ? 'origColorRange' : (type === 'trans' ? 'transColorRange' : 'bgColorRange');
+            let input = document.getElementById(inputId);
+            let newVal = parseInt(input.value) + delta;
+            if (newVal < 0) newVal = 0;
+            if (newVal > 100) newVal = 100;
+            input.value = newVal;
+            updateRainbowColor(type);
         }
 
         function getColorFromSliderValue(val) {
@@ -925,7 +973,7 @@
                 let currentTime = new Date().getTime();
                 let tapLength = currentTime - lastTouchTime;
                 if (tapLength < 300 && tapLength > 0) {
-                    // Duplo toque detectado: alterna a visibilidade do botão voltar inferior
+                    // Duplo toque detectado: alterna a visibilidade do botão voltar inferior esquerdo
                     const backBtn = document.getElementById('readerBackBtn');
                     backBtn.classList.toggle('hidden');
                     e.preventDefault();

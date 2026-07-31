@@ -1230,7 +1230,6 @@
             container.innerHTML = '';
             
             const LIMITE_POR_ESTANTE = 12;
-            // Garante ao menos 1 estante inicial (com 2 prateleiras vazias, totalizando 6 slots mínimos se houver poucos livros)
             let totalLivrosEspacos = Math.max(6, Math.ceil((books.length) / 3) * 3);
             let totalEstantes = Math.max(1, Math.ceil(totalLivrosEspacos / LIMITE_POR_ESTANTE));
 
@@ -1243,7 +1242,6 @@
                 tituloEstante.innerText = `Estante ${e + 1}`;
                 estanteBloco.appendChild(tituloEstante);
 
-                // Cada estante possui 4 prateleiras de 3 slots (4 x 3 = 12 livros por estante)
                 for (let r = 0; r < 4; r++) {
                     const rowEl = document.createElement('div');
                     rowEl.className = 'shelf-row';
@@ -1301,7 +1299,6 @@
             }
         }
 
-        // Configuração de Arrastar Livros (Mouse e Toque)
         let draggedIndex = null;
 
         function setupBookDragEvents(card, index) {
@@ -1687,6 +1684,7 @@
             };
             const jsonString = JSON.stringify(backupData, null, 2);
 
+            // Mantém sempre uma cópia na pasta interna por segurança
             savedBackupsList.unshift({
                 name: fileName,
                 formattedDate: formattedDateStr,
@@ -1695,12 +1693,14 @@
             localStorage.setItem('polyglot_saved_backups', JSON.stringify(savedBackupsList));
             updateBackupFolderSubtitle();
 
-            if (window.AndroidBridge && typeof window.AndroidBridge.saveBackupFile === 'function') {
-                window.AndroidBridge.saveBackupFile(fileName, jsonString);
-                showToast("Backup gerado e armazenado na pasta interna.");
+            // 1. Comando nativo para abrir o seletor de pastas/cartão SD do Android (via APK)
+            if (window.AndroidBridge && typeof window.AndroidBridge.saveBackupFilePicker === 'function') {
+                window.AndroidBridge.saveBackupFilePicker(fileName, jsonString);
+                showToast("Selecione onde deseja salvar o backup.");
                 return;
             }
 
+            // 2. Tenta abrir a caixa de diálogo nativa do sistema via API do navegador (caso aplicável)
             if (window.showSaveFilePicker) {
                 try {
                     const handle = await window.showSaveFilePicker({
@@ -1713,17 +1713,17 @@
                     const writable = await handle.createWritable();
                     await writable.write(jsonString);
                     await writable.close();
-                    showToast("Backup gerado, salvo e guardado na pasta!");
+                    showToast("Backup salvo na pasta escolhida com sucesso!");
                     return;
                 } catch (err) {
                     if (err.name === 'AbortError') {
-                        showToast("Backup guardado na pasta interna.");
+                        showToast("Salvamento cancelado. O arquivo continua na pasta interna.");
                         return;
                     }
-                    console.warn("showSaveFilePicker indisponível, usando método de download padrão.", err);
                 }
             }
 
+            // 3. Fallback padrão de download direto
             try {
                 const blob = new Blob([jsonString], { type: 'application/json' });
                 const url = URL.createObjectURL(blob);
@@ -1736,10 +1736,9 @@
                     document.body.removeChild(downloadAnchor);
                     URL.revokeObjectURL(url);
                 }, 100);
-                showToast("Backup gerado e guardado na pasta!");
+                showToast("Backup gerado e baixado!");
             } catch (e) {
-                console.error("Erro ao gerar backup:", e);
-                showToast("Backup salvo na pasta interna.");
+                showToast("Backup salvo na pasta interna de segurança.");
             }
         }
 

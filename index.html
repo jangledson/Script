@@ -906,7 +906,7 @@
                 <span>📁 Backups Armazenados</span>
                 <button class="close-btn" onclick="closeBackupFolderModal()">✕</button>
             </div>
-            <div class="status-box" style="margin-top: 0;">Toque na seta de compartilhamento para transferir o backup para o WhatsApp, E-mail ou onde desejar.</div>
+            <div class="status-box" style="margin-top: 0;">Toque em "Compartilhar / Baixar" para abrir as opções de salvamento ou transferência do arquivo.</div>
             
             <div id="backupItemsContainer" style="display: flex; flex-direction: column; gap: 8px; max-height: 300px; overflow-y: auto;">
                 <!-- Itens injetados via JS -->
@@ -1038,8 +1038,8 @@
 
                 const shareBtn = document.createElement('button');
                 shareBtn.className = 'btn-sm-share';
-                shareBtn.innerHTML = '📤 Compartilhar';
-                shareBtn.title = 'Transferir / Compartilhar Backup';
+                shareBtn.innerHTML = '📤 Compartilhar / Baixar';
+                shareBtn.title = 'Salvar ou Compartilhar Backup';
                 shareBtn.onclick = () => shareSpecificBackup(index);
 
                 const delBtn = document.createElement('button');
@@ -1061,27 +1061,25 @@
             const item = savedBackupsList[index];
             if (!item) return;
 
-            try {
-                const file = new File([item.data], item.name, { type: 'application/json' });
+            const blob = new Blob([item.data], { type: 'application/json' });
+            const file = new File([blob], item.name, { type: 'application/json' });
 
-                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            // 1. Tenta abrir a gaveta de compartilhamento nativa do Android (WhatsApp, E-mail, etc.)
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                try {
                     await navigator.share({
                         title: 'Backup - Lendo Scripts',
                         text: `Arquivo de backup gerado em ${item.formattedDate}`,
                         files: [file]
                     });
                     return;
+                } catch (e) {
+                    if (e.name === 'AbortError') return; // Usuário cancelou conscientemente
                 }
+            }
 
-                if (navigator.share) {
-                    await navigator.share({
-                        title: 'Backup - Lendo Scripts',
-                        text: item.data
-                    });
-                    return;
-                }
-
-                const blob = new Blob([item.data], { type: 'application/json' });
+            // 2. Se o share nativo não estiver disponível ou falhar, força o download direto abrindo o gerenciador/pasta de Downloads
+            try {
                 const url = URL.createObjectURL(blob);
                 const downloadAnchor = document.createElement('a');
                 downloadAnchor.href = url;
@@ -1092,12 +1090,10 @@
                     document.body.removeChild(downloadAnchor);
                     URL.revokeObjectURL(url);
                 }, 100);
-                showToast("Arquivo pronto para transferência!");
-            } catch (e) {
-                if (e.name !== 'AbortError') {
-                    console.error("Erro ao compartilhar arquivo:", e);
-                    showToast("Erro ao acionar o compartilhamento.");
-                }
+                showToast("Gerenciador de arquivos aberto para salvamento!");
+            } catch (err) {
+                console.error("Erro ao salvar arquivo:", err);
+                showToast("Erro ao abrir o gerenciador de arquivos.");
             }
         }
 

@@ -30,6 +30,7 @@
             margin: 0;
             padding: 0;
             font-family: 'Arial', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -54,6 +55,24 @@
             width: 100%;
         }
 
+        /* Container de cada Estante Individual (Agrupa prateleiras de até 12 livros) */
+        .estante-bloco {
+            background: rgba(255, 255, 255, 0.35);
+            border: 2px solid var(--shelf-color);
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .estante-titulo {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--shelf-color);
+            margin-bottom: 12px;
+            border-bottom: 1px dashed var(--shelf-color);
+            padding-bottom: 4px;
+        }
+
         .shelf-row {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -63,6 +82,11 @@
             box-shadow: 0 8px 6px -6px var(--shelf-shadow);
             min-height: 180px;
             align-items: end;
+            margin-bottom: 16px;
+        }
+
+        .shelf-row:last-child {
+            margin-bottom: 0;
         }
 
         @media (min-width: 768px) {
@@ -85,16 +109,29 @@
             border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-            cursor: pointer;
+            cursor: grab;
             display: flex;
             flex-direction: column;
             height: 150px;
-            transition: transform 0.2s;
             position: relative;
+            user-select: none;
+            touch-action: none;
+            transition: box-shadow 0.2s, transform 0.2s;
         }
 
         .book-card:active {
-            transform: scale(0.95);
+            cursor: grabbing;
+        }
+
+        .book-card.dragging {
+            opacity: 0.5;
+            transform: scale(1.05);
+            z-index: 50;
+        }
+
+        .book-card.drag-over {
+            border: 2px dashed var(--app-primary);
+            background-color: rgba(139, 107, 79, 0.1);
         }
 
         .book-cover {
@@ -105,6 +142,7 @@
             justify-content: center;
             overflow: hidden;
             position: relative;
+            pointer-events: none;
         }
 
         .book-cover img {
@@ -130,6 +168,7 @@
             overflow: hidden;
             text-overflow: ellipsis;
             font-weight: bold;
+            pointer-events: none;
         }
 
         .empty-slot {
@@ -144,6 +183,12 @@
             cursor: pointer;
             opacity: 0.7;
             background-color: rgba(255,255,255,0.2);
+            transition: background-color 0.2s;
+        }
+
+        .empty-slot.drag-over {
+            border-color: var(--app-primary);
+            background-color: rgba(139, 107, 79, 0.15);
         }
 
         /* Botão de Configurações Flutuante */
@@ -1019,7 +1064,6 @@
             try {
                 const file = new File([item.data], item.name, { type: 'application/json' });
 
-                // Verifica se o navegador/WebView suporta compartilhamento de arquivos nativos
                 if (navigator.canShare && navigator.canShare({ files: [file] })) {
                     await navigator.share({
                         title: 'Backup - Lendo Scripts',
@@ -1029,7 +1073,6 @@
                     return;
                 }
 
-                // Fallback para compartilhamento de texto/dados ou link se files não for suportado diretamente
                 if (navigator.share) {
                     await navigator.share({
                         title: 'Backup - Lendo Scripts',
@@ -1038,7 +1081,6 @@
                     return;
                 }
 
-                // Fallback final: Download direto se o share nativo não estiver disponível
                 const blob = new Blob([item.data], { type: 'application/json' });
                 const url = URL.createObjectURL(blob);
                 const downloadAnchor = document.createElement('a');
@@ -1182,54 +1224,188 @@
             localStorage.setItem('polyglot_settings', JSON.stringify(settings));
         }
 
+        // Renderização Dinâmica de Múltiplas Estantes (Capacidade máxima de 12 livros por Estante)
         function renderShelf() {
             const container = document.getElementById('shelfContainer');
             container.innerHTML = '';
-            let rows = [];
-            for (let i = 0; i < books.length; i += 3) {
-                rows.push(books.slice(i, i + 3));
-            }
-            if (rows.length === 0) rows.push([]);
+            
+            const LIMITE_POR_ESTANTE = 12;
+            // Garante ao menos 1 estante inicial (com 2 prateleiras vazias, totalizando 6 slots mínimos se houver poucos livros)
+            let totalLivrosEspacos = Math.max(6, Math.ceil((books.length) / 3) * 3);
+            let totalEstantes = Math.max(1, Math.ceil(totalLivrosEspacos / LIMITE_POR_ESTANTE));
 
-            rows.forEach((rowBooks) => {
-                const rowEl = document.createElement('div');
-                rowEl.className = 'shelf-row';
-                for (let i = 0; i < 3; i++) {
-                    if (rowBooks[i]) {
-                        const book = rowBooks[i];
-                        const card = document.createElement('div');
-                        card.className = 'book-card';
-                        card.onclick = () => openReader(book);
+            for (let e = 0; e < totalEstantes; e++) {
+                const estanteBloco = document.createElement('div');
+                estanteBloco.className = 'estante-bloco';
 
-                        const coverDiv = document.createElement('div');
-                        coverDiv.className = 'book-cover';
-                        if (book.cover) {
-                            const img = document.createElement('img');
-                            img.src = book.cover;
-                            coverDiv.appendChild(img);
+                const tituloEstante = document.createElement('div');
+                tituloEstante.className = 'estante-titulo';
+                tituloEstante.innerText = `Estante ${e + 1}`;
+                estanteBloco.appendChild(tituloEstante);
+
+                // Cada estante possui 4 prateleiras de 3 slots (4 x 3 = 12 livros por estante)
+                for (let r = 0; r < 4; r++) {
+                    const rowEl = document.createElement('div');
+                    rowEl.className = 'shelf-row';
+
+                    for (let c = 0; c < 3; c++) {
+                        let slotIndex = (e * LIMITE_POR_ESTANTE) + (r * 3) + c;
+                        let book = books[slotIndex];
+
+                        if (book) {
+                            const card = document.createElement('div');
+                            card.className = 'book-card';
+                            card.draggable = true;
+                            card.dataset.index = slotIndex;
+
+                            card.onclick = (e) => {
+                                if (!card.dataset.moved) openReader(book);
+                                delete card.dataset.moved;
+                            };
+
+                            const coverDiv = document.createElement('div');
+                            coverDiv.className = 'book-cover';
+                            if (book.cover) {
+                                const img = document.createElement('img');
+                                img.src = book.cover;
+                                coverDiv.appendChild(img);
+                            } else {
+                                const span = document.createElement('span');
+                                span.innerText = "📖 Livro";
+                                coverDiv.appendChild(span);
+                            }
+
+                            const titleLabel = document.createElement('div');
+                            titleLabel.className = 'book-title-label';
+                            titleLabel.innerText = book.title;
+
+                            card.appendChild(coverDiv);
+                            card.appendChild(titleLabel);
+
+                            setupBookDragEvents(card, slotIndex);
+                            rowEl.appendChild(card);
                         } else {
-                            const span = document.createElement('span');
-                            span.innerText = "📖 Livro";
-                            coverDiv.appendChild(span);
+                            const empty = document.createElement('div');
+                            empty.className = 'empty-slot';
+                            empty.innerText = '+';
+                            empty.dataset.index = slotIndex;
+                            empty.onclick = openSettingsModal;
+
+                            setupEmptySlotDropEvents(empty, slotIndex);
+                            rowEl.appendChild(empty);
                         }
+                    }
+                    estanteBloco.appendChild(rowEl);
+                }
+                container.appendChild(estanteBloco);
+            }
+        }
 
-                        const titleLabel = document.createElement('div');
-                        titleLabel.className = 'book-title-label';
-                        titleLabel.innerText = book.title;
+        // Configuração de Arrastar Livros (Mouse e Toque)
+        let draggedIndex = null;
 
-                        card.appendChild(coverDiv);
-                        card.appendChild(titleLabel);
-                        rowEl.appendChild(card);
-                    } else {
-                        const empty = document.createElement('div');
-                        empty.className = 'empty-slot';
-                        empty.innerText = '+';
-                        empty.onclick = openSettingsModal;
-                        rowEl.appendChild(empty);
+        function setupBookDragEvents(card, index) {
+            card.addEventListener('dragstart', (e) => {
+                draggedIndex = index;
+                card.classList.add('dragging');
+                e.dataTransfer.setData('text/plain', index);
+            });
+
+            card.addEventListener('dragend', () => {
+                card.classList.remove('dragging');
+                draggedIndex = null;
+                document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+            });
+
+            card.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                card.classList.add('drag-over');
+            });
+
+            card.addEventListener('dragleave', () => {
+                card.classList.remove('drag-over');
+            });
+
+            card.addEventListener('drop', (e) => {
+                e.preventDefault();
+                card.classList.remove('drag-over');
+                if (draggedIndex !== null && draggedIndex !== index) {
+                    reorderBooks(draggedIndex, index);
+                }
+            });
+
+            let touchStartX = 0, touchStartY = 0;
+            card.addEventListener('touchstart', (e) => {
+                draggedIndex = index;
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+                card.dataset.moved = "";
+            }, {passive: true});
+
+            card.addEventListener('touchmove', (e) => {
+                if (draggedIndex === null) return;
+                let moveX = e.touches[0].clientX - touchStartX;
+                let moveY = e.touches[0].clientY - touchStartY;
+                if (Math.abs(moveX) > 10 || Math.abs(moveY) > 10) {
+                    card.dataset.moved = "true";
+                    card.classList.add('dragging');
+                }
+            }, {passive: true});
+
+            card.addEventListener('touchend', (e) => {
+                card.classList.remove('dragging');
+                let touch = e.changedTouches[0];
+                let targetEl = document.elementFromPoint(touch.clientX, touch.clientY);
+                let dropTarget = targetEl ? targetEl.closest('.book-card, .empty-slot') : null;
+
+                if (dropTarget && dropTarget.dataset.index !== undefined) {
+                    let targetIndex = parseInt(dropTarget.dataset.index);
+                    if (draggedIndex !== null && draggedIndex !== targetIndex) {
+                        reorderBooks(draggedIndex, targetIndex);
                     }
                 }
-                container.appendChild(rowEl);
+                draggedIndex = null;
             });
+        }
+
+        function setupEmptySlotDropEvents(emptyEl, index) {
+            emptyEl.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                emptyEl.classList.add('drag-over');
+            });
+
+            emptyEl.addEventListener('dragleave', () => {
+                emptyEl.classList.remove('drag-over');
+            });
+
+            emptyEl.addEventListener('drop', (e) => {
+                e.preventDefault();
+                emptyEl.classList.remove('drag-over');
+                if (draggedIndex !== null) {
+                    reorderBooks(draggedIndex, index);
+                }
+            });
+        }
+
+        function reorderBooks(fromIndex, toIndex) {
+            if (fromIndex === toIndex) return;
+
+            while (books.length <= Math.max(fromIndex, toIndex)) {
+                books.push(null);
+            }
+
+            let movedBook = books[fromIndex];
+            
+            books.splice(fromIndex, 1);
+            books.splice(toIndex, 0, movedBook);
+
+            while (books.length > 0 && books[books.length - 1] === null) {
+                books.pop();
+            }
+
+            localStorage.setItem('polyglot_books', JSON.stringify(books));
+            renderShelf();
+            showToast("Livro reorganizado com sucesso!");
         }
 
         async function processAndSaveBook() {

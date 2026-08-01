@@ -9,7 +9,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
     <style>
         :root {
-            /* Cores Fixas da Interface Principal */
             --app-bg: #d7d0c7;
             --app-surface: #eae5df;
             --app-text: #3e332a;
@@ -18,7 +17,6 @@
             --shelf-color: #6a503a;
             --shelf-shadow: rgba(0,0,0,0.3);
 
-            /* Cores Dinâmicas Exclusivas do Leitor (Personalizáveis) */
             --reader-bg: #ffffff;
             --reader-trans: #8b6b4f;
             --reader-orig: #3e332a;
@@ -42,7 +40,6 @@
             overflow-x: hidden;
         }
 
-        /* Estante de Livros - Interface Fixa & Responsiva para Tablet/Celular */
         .shelf-container {
             flex: 1;
             padding: 16px;
@@ -55,7 +52,6 @@
             width: 100%;
         }
 
-        /* Container de cada Estante Individual (Agrupa prateleiras de até 12 livros) */
         .estante-bloco {
             background: rgba(255, 255, 255, 0.35);
             border: 2px solid var(--shelf-color);
@@ -129,9 +125,28 @@
             z-index: 50;
         }
 
-        .book-card.drag-over {
-            border: 2px dashed var(--app-primary);
-            background-color: rgba(139, 107, 79, 0.1);
+        /* Ícone de Troca de Capa (Aparece ao segurar o livro no canto superior direito)[span_3](start_span)[span_3](end_span) */
+        .book-change-cover-badge {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            background-color: var(--app-primary);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            z-index: 60;
+            cursor: pointer;
+            border: 2px solid white;
+        }
+
+        .book-card.show-cover-badge .book-change-cover-badge {
+            display: flex;
         }
 
         .book-cover {
@@ -186,12 +201,6 @@
             transition: background-color 0.2s;
         }
 
-        .empty-slot.drag-over {
-            border-color: var(--app-primary);
-            background-color: rgba(139, 107, 79, 0.15);
-        }
-
-        /* Botão de Configurações Flutuante */
         .fab-settings {
             position: fixed;
             bottom: 20px;
@@ -216,7 +225,6 @@
             transform: scale(0.9);
         }
 
-        /* Modal de Configurações */
         .modal {
             position: fixed;
             top: 0;
@@ -287,7 +295,6 @@
             font-size: 0.9rem;
         }
 
-        /* Estilo da Barra de Progresso do Download */
         .progress-container {
             width: 100%;
             background-color: var(--app-bg);
@@ -387,10 +394,6 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.15);
         }
 
-        .step-btn:active {
-            transform: scale(0.92);
-        }
-
         .rainbow-input {
             -webkit-appearance: none;
             flex: 1;
@@ -467,7 +470,6 @@
             border-left: 3px solid var(--app-primary);
         }
 
-        /* Estilo da Pasta de Backups Interna */
         .backup-folder-box {
             background-color: var(--app-bg);
             border: 1px solid var(--app-accent);
@@ -510,7 +512,6 @@
             color: #666;
         }
 
-        /* Modal Interno da Pasta de Backups */
         .backup-list-modal {
             position: fixed;
             top: 0;
@@ -605,7 +606,6 @@
             cursor: pointer;
         }
 
-        /* Leitor Bilíngue */
         #reader-view {
             position: fixed;
             top: 0;
@@ -713,13 +713,11 @@
 </head>
 <body>
 
-    <!-- Estante de Prateleiras -->
     <div class="shelf-container" id="shelfContainer"></div>
 
-    <!-- Botão de Configurações no Canto Inferior Direito -->
-    <button class="fab-settings" onclick="openSettingsModal()" title="Configurações e Adicionar Livro">⚙️</button>
+    <!-- Botão de Configurações com ouvintes robustos de clique e toque -->
+    <button class="fab-settings" id="fabSettingsBtn" title="Configurações e Adicionar Livro">⚙️</button>
 
-    <!-- Modal de Configurações, Livros, TTS e Backup -->
     <div class="modal" id="settingsModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -727,7 +725,6 @@
                 <button class="close-btn" onclick="closeSettingsModal()">✕</button>
             </div>
 
-            <!-- Seção de Gerenciamento de Vozes Offline (TTS) com Barra de Progresso e Teste de Exemplo -->
             <div class="settings-import-section">
                 <span style="font-size: 0.9rem; font-weight: bold; color: var(--app-primary);">🗣️ Configuração de Voz Offline</span>
                 
@@ -739,7 +736,6 @@
                     <div class="status-box" id="voiceStatus">Toque na caixa acima para abrir a lista e escolher a sua voz.</div>
                 </div>
 
-                <!-- Botão e Campo de Teste de Exemplo -->
                 <div class="form-group" style="margin-top: 4px;">
                     <label>Exemplo de Teste para Ouvir a Voz</label>
                     <div style="display: flex; gap: 8px;">
@@ -766,7 +762,6 @@
                     </select>
                 </div>
 
-                <!-- Elementos visuais da Barra de Progresso -->
                 <button class="btn-accent" onclick="requestDownload()">⬇️ Baixar Pacote Selecionado</button>
                 <div class="progress-container" id="progressContainer">
                     <div class="progress-bar" id="progressBar"></div>
@@ -774,7 +769,6 @@
                 <div class="status-box" id="downloadStatusText" style="display: none; text-align: center; font-weight: bold;">Iniciando download...</div>
             </div>
 
-            <!-- Seção para Adicionar Livro Bilíngue -->
             <div class="settings-import-section">
                 <span style="font-size: 0.9rem; font-weight: bold; color: var(--app-primary);">📥 Adicionar Livro Bilíngue</span>
                 <div class="form-group">
@@ -789,7 +783,6 @@
                     <label>Capa do Livro (Opcional)</label>
                     <input type="file" id="coverFileInput" accept="image/*">
                 </div>
-                <!-- Botão com escuta robusta para toque e clique -->
                 <button class="btn-primary" id="addBookBtn">Adicionar Livro à Estante</button>
             </div>
 
@@ -821,7 +814,6 @@
                 </select>
             </div>
             
-            <!-- Barra Arco-Íris 1 -->
             <div class="rainbow-slider-group">
                 <div class="rainbow-label-row">
                     <span>🎨 Cor do Texto em Inglês (Superior)</span>
@@ -834,7 +826,6 @@
                 </div>
             </div>
 
-            <!-- Barra Arco-Íris 2 -->
             <div class="rainbow-slider-group">
                 <div class="rainbow-label-row">
                     <span>🎨 Cor do Texto em Português (Inferior)</span>
@@ -847,7 +838,6 @@
                 </div>
             </div>
 
-            <!-- Barra Arco-Íris 3 -->
             <div class="rainbow-slider-group">
                 <div class="rainbow-label-row">
                     <span>🎨 Cor de Fundo dos Blocos de Frases</span>
@@ -860,7 +850,6 @@
                 </div>
             </div>
 
-            <!-- Seção de Backup (Com botões de ação e Pasta de Backups logo abaixo) -->
             <div class="settings-import-section">
                 <span style="font-size: 0.9rem; font-weight: bold; color: var(--app-primary);">💾 Backup e Restauração</span>
                 
@@ -872,7 +861,6 @@
                     </label>
                 </div>
 
-                <!-- Abazinha / Pasta de Armazenamento Interno dos Backups -->
                 <div class="backup-folder-box" onclick="openBackupFolderModal()">
                     <div class="backup-folder-info">
                         <span class="backup-folder-icon">📁</span>
@@ -885,7 +873,6 @@
                 </div>
             </div>
 
-            <!-- Seção para Excluir Livros Existentes (Última opção do menu) -->
             <div class="settings-import-section" id="deleteSection" style="display: none;">
                 <span style="font-size: 0.9rem; font-weight: bold; color: #a94442;">🗑️ Gerenciar / Excluir Livro</span>
                 <div class="form-group">
@@ -899,7 +886,7 @@
         </div>
     </div>
 
-    <!-- Modal Interno para Visualizar os Backups Armazenados na Pasta -->
+    <!-- Modal Interno para Visualizar os Backups Armazenados -->
     <div class="backup-list-modal" id="backupListModal">
         <div class="backup-list-content">
             <div class="modal-header">
@@ -908,11 +895,24 @@
             </div>
             <div class="status-box" style="margin-top: 0;">Toque em "Compartilhar / Baixar" para abrir as opções de salvamento ou transferência do arquivo.</div>
             
-            <div id="backupItemsContainer" style="display: flex; flex-direction: column; gap: 8px; max-height: 300px; overflow-y: auto;">
-                <!-- Itens injetados via JS -->
-            </div>
+            <div id="backupItemsContainer" style="display: flex; flex-direction: column; gap: 8px; max-height: 300px; overflow-y: auto;"></div>
 
             <button class="btn-primary" onclick="closeBackupFolderModal()">Fechar</button>
+        </div>
+    </div>
+
+    <!-- Modal para Substituir a Capa do Livro Especificamente -->
+    <div class="modal" id="changeCoverModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span>🖼️ Trocar Capa do Livro</span>
+                <button class="close-btn" onclick="closeChangeCoverModal()">✕</button>
+            </div>
+            <div class="form-group">
+                <label>Selecione a nova imagem de capa</label>
+                <input type="file" id="newCoverFileInput" accept="image/*">
+            </div>
+            <button class="btn-primary" id="confirmChangeCoverBtn">Salvar Nova Capa</button>
         </div>
     </div>
 
@@ -937,6 +937,7 @@
             bgVal: 100
         }));
         let savedBackupsList = JSON.parse(localStorage.getItem('polyglot_saved_backups') || '[]');
+        let bookIdToChangeCover = null;
 
         document.addEventListener('DOMContentLoaded', () => {
             loadSettingsToUI();
@@ -945,31 +946,40 @@
             setupBackButton();
             loadLocalVoicesFromApp();
             updateBackupFolderSubtitle();
+            setupFabSettingsButton();
 
             const addBookBtn = document.getElementById('addBookBtn');
             if (addBookBtn) {
-                addBookBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    processAndSaveBook();
-                });
-                addBookBtn.addEventListener('touchend', (e) => {
-                    e.preventDefault();
-                    processAndSaveBook();
-                });
+                addBookBtn.addEventListener('click', (e) => { e.preventDefault(); processAndSaveBook(); });
+                addBookBtn.addEventListener('touchend', (e) => { e.preventDefault(); processAndSaveBook(); });
             }
 
             const exportBackupBtn = document.getElementById('exportBackupBtn');
             if (exportBackupBtn) {
-                exportBackupBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    exportBackup();
-                });
-                exportBackupBtn.addEventListener('touchend', (e) => {
-                    e.preventDefault();
-                    exportBackup();
-                });
+                exportBackupBtn.addEventListener('click', (e) => { e.preventDefault(); exportBackup(); });
+                exportBackupBtn.addEventListener('touchend', (e) => { e.preventDefault(); exportBackup(); });
+            }
+
+            const confirmCoverBtn = document.getElementById('confirmChangeCoverBtn');
+            if (confirmCoverBtn) {
+                confirmCoverBtn.addEventListener('click', (e) => { e.preventDefault(); processUpdateBookCover(); });
+                confirmCoverBtn.addEventListener('touchend', (e) => { e.preventDefault(); processUpdateBookCover(); });
             }
         });
+
+        // Configuração robusta para o botão flutuante de configurações responder sempre ao toque/clique
+        function setupFabSettingsButton() {
+            const fab = document.getElementById('fabSettingsBtn');
+            if (!fab) return;
+            fab.addEventListener('click', (e) => {
+                e.preventDefault();
+                openSettingsModal();
+            });
+            fab.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                openSettingsModal();
+            });
+        }
 
         function showToast(msg) {
             const toast = document.getElementById('toast');
@@ -990,9 +1000,40 @@
             renderBackupListItems();
             document.getElementById('backupListModal').classList.add('active');
         }
-
         function closeBackupFolderModal() {
             document.getElementById('backupListModal').classList.remove('active');
+        }
+
+        function openChangeCoverModal(bookId) {
+            bookIdToChangeCover = bookId;
+            document.getElementById('newCoverFileInput').value = '';
+            document.getElementById('changeCoverModal').classList.add('active');
+        }
+        function closeChangeCoverModal() {
+            document.getElementById('changeCoverModal').classList.remove('active');
+            bookIdToChangeCover = null;
+        }
+
+        async function processUpdateBookCover() {
+            if (!bookIdToChangeCover) return;
+            const fileInput = document.getElementById('newCoverFileInput');
+            if (fileInput.files.length === 0) {
+                showToast("Selecione uma imagem para a capa.");
+                return;
+            }
+            try {
+                let newCoverUrl = await fileToDataUrl(fileInput.files[0]);
+                let book = books.find(b => b.id === bookIdToChangeCover);
+                if (book) {
+                    book.cover = newCoverUrl;
+                    localStorage.setItem('polyglot_books', JSON.stringify(books));
+                    renderShelf();
+                    showToast("Capa atualizada com sucesso!");
+                }
+                closeChangeCoverModal();
+            } catch (err) {
+                showToast("Erro ao carregar a imagem da capa.");
+            }
         }
 
         function updateBackupFolderSubtitle() {
@@ -1009,12 +1050,10 @@
         function renderBackupListItems() {
             const container = document.getElementById('backupItemsContainer');
             container.innerHTML = '';
-
             if (savedBackupsList.length === 0) {
                 container.innerHTML = '<div style="text-align: center; color: #666; padding: 20px;">A pasta está vazia. Gere um backup para começar.</div>';
                 return;
             }
-
             savedBackupsList.forEach((item, index) => {
                 const row = document.createElement('div');
                 row.className = 'backup-item-row';
@@ -1039,13 +1078,11 @@
                 const shareBtn = document.createElement('button');
                 shareBtn.className = 'btn-sm-share';
                 shareBtn.innerHTML = '📤 Compartilhar / Baixar';
-                shareBtn.title = 'Salvar ou Compartilhar Backup';
                 shareBtn.onclick = () => shareSpecificBackup(index);
 
                 const delBtn = document.createElement('button');
                 delBtn.className = 'btn-sm-danger';
                 delBtn.innerText = '✕';
-                delBtn.title = 'Excluir da pasta';
                 delBtn.onclick = () => deleteSpecificBackup(index);
 
                 actions.appendChild(shareBtn);
@@ -1060,25 +1097,22 @@
         async function shareSpecificBackup(index) {
             const item = savedBackupsList[index];
             if (!item) return;
-
             const blob = new Blob([item.data], { type: 'application/json' });
             const file = new File([blob], item.name, { type: 'application/json' });
 
-            // 1. Tenta abrir a gaveta de compartilhamento nativa do Android (WhatsApp, E-mail, etc.)
             if (navigator.canShare && navigator.canShare({ files: [file] })) {
                 try {
                     await navigator.share({
                         title: 'Backup - Lendo Scripts',
-                        text: `Arquivo de backup gerado em ${item.formattedDate}`,
+                        text: `Backup gerado em ${item.formattedDate}`,
                         files: [file]
                     });
                     return;
                 } catch (e) {
-                    if (e.name === 'AbortError') return; // Usuário cancelou conscientemente
+                    if (e.name === 'AbortError') return;
                 }
             }
 
-            // 2. Se o share nativo não estiver disponível ou falhar, força o download direto abrindo o gerenciador/pasta de Downloads
             try {
                 const url = URL.createObjectURL(blob);
                 const downloadAnchor = document.createElement('a');
@@ -1090,10 +1124,9 @@
                     document.body.removeChild(downloadAnchor);
                     URL.revokeObjectURL(url);
                 }, 100);
-                showToast("Gerenciador de arquivos aberto para salvamento!");
+                showToast("Gerenciador de arquivos aberto!");
             } catch (err) {
-                console.error("Erro ao salvar arquivo:", err);
-                showToast("Erro ao abrir o gerenciador de arquivos.");
+                showToast("Erro ao abrir o gerenciador.");
             }
         }
 
@@ -1103,7 +1136,7 @@
                 localStorage.setItem('polyglot_saved_backups', JSON.stringify(savedBackupsList));
                 renderBackupListItems();
                 updateBackupFolderSubtitle();
-                showToast("Backup removido da pasta.");
+                showToast("Backup removido.");
             }
         }
 
@@ -1139,7 +1172,7 @@
                 localStorage.setItem('polyglot_books', JSON.stringify(books));
                 renderShelf();
                 updateDeleteSelectOptions();
-                showToast("Livro excluído com sucesso.");
+                showToast("Livro excluído.");
             }
         }
 
@@ -1220,7 +1253,6 @@
             localStorage.setItem('polyglot_settings', JSON.stringify(settings));
         }
 
-        // Renderização Dinâmica de Múltiplas Estantes (Capacidade máxima de 12 livros por Estante)
         function renderShelf() {
             const container = document.getElementById('shelfContainer');
             container.innerHTML = '';
@@ -1273,8 +1305,24 @@
                             titleLabel.className = 'book-title-label';
                             titleLabel.innerText = book.title;
 
+                            // Ícone no canto superior direito para trocar a capa[span_4](start_span)[span_4](end_span)
+                            const changeCoverBadge = document.createElement('div');
+                            changeCoverBadge.className = 'book-change-cover-badge';
+                            changeCoverBadge.innerHTML = '✏️';
+                            changeCoverBadge.title = 'Trocar capa';
+                            changeCoverBadge.onclick = (ev) => {
+                                ev.stopPropagation();
+                                openChangeCoverModal(book.id);
+                            };
+                            changeCoverBadge.ontouchend = (ev) => {
+                                ev.stopPropagation();
+                                ev.preventDefault();
+                                openChangeCoverModal(book.id);
+                            };
+
                             card.appendChild(coverDiv);
                             card.appendChild(titleLabel);
+                            card.appendChild(changeCoverBadge);
 
                             setupBookDragEvents(card, slotIndex);
                             rowEl.appendChild(card);
@@ -1296,6 +1344,7 @@
         }
 
         let draggedIndex = null;
+        let holdTimeout = null;
 
         function setupBookDragEvents(card, index) {
             card.addEventListener('dragstart', (e) => {
@@ -1305,7 +1354,7 @@
             });
 
             card.addEventListener('dragend', () => {
-                card.classList.remove('dragging');
+                card.classList.remove('dragging', 'show-cover-badge');
                 draggedIndex = null;
                 document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
             });
@@ -1327,12 +1376,19 @@
                 }
             });
 
+            // Gerenciamento de Toque e Seguramento para exibir o ícone de trocar capa[span_5](start_span)[span_5](end_span)
             let touchStartX = 0, touchStartY = 0;
+
             card.addEventListener('touchstart', (e) => {
                 draggedIndex = index;
                 touchStartX = e.touches[0].clientX;
                 touchStartY = e.touches[0].clientY;
                 card.dataset.moved = "";
+
+                // Ao segurar por um breve instante, mostra o ícone de troca de capa
+                holdTimeout = setTimeout(() => {
+                    card.classList.add('show-cover-badge');
+                }, 350);
             }, {passive: true});
 
             card.addEventListener('touchmove', (e) => {
@@ -1340,13 +1396,17 @@
                 let moveX = e.touches[0].clientX - touchStartX;
                 let moveY = e.touches[0].clientY - touchStartY;
                 if (Math.abs(moveX) > 10 || Math.abs(moveY) > 10) {
+                    if (holdTimeout) clearTimeout(holdTimeout);
+                    card.classList.remove('show-cover-badge'); // Se arrastou, remove o ícone e foca no arrastar normal
                     card.dataset.moved = "true";
                     card.classList.add('dragging');
                 }
             }, {passive: true});
 
             card.addEventListener('touchend', (e) => {
+                if (holdTimeout) clearTimeout(holdTimeout);
                 card.classList.remove('dragging');
+                
                 let touch = e.changedTouches[0];
                 let targetEl = document.elementFromPoint(touch.clientX, touch.clientY);
                 let dropTarget = targetEl ? targetEl.closest('.book-card, .empty-slot') : null;
@@ -1355,8 +1415,17 @@
                     let targetIndex = parseInt(dropTarget.dataset.index);
                     if (draggedIndex !== null && draggedIndex !== targetIndex) {
                         reorderBooks(draggedIndex, targetIndex);
+                        card.classList.remove('show-cover-badge');
                     }
                 }
+                
+                // Se soltou sem arrastar muito e sem clicar no ícone, remove o distintivo para sumir caso nenhuma ação seja tomada
+                setTimeout(() => {
+                    if (!card.contains(targetEl) || targetEl.className.indexOf('book-change-cover-badge') === -1) {
+                        card.classList.remove('show-cover-badge');
+                    }
+                }, 100);
+
                 draggedIndex = null;
             });
         }
@@ -1388,7 +1457,6 @@
             }
 
             let movedBook = books[fromIndex];
-            
             books.splice(fromIndex, 1);
             books.splice(toIndex, 0, movedBook);
 
@@ -1398,7 +1466,7 @@
 
             localStorage.setItem('polyglot_books', JSON.stringify(books));
             renderShelf();
-            showToast("Livro reorganizado com sucesso!");
+            showToast("Livro reorganizado!");
         }
 
         async function processAndSaveBook() {
@@ -1460,10 +1528,8 @@
                 document.getElementById('bookTitleInput').value = "";
                 document.getElementById('bookFileInput').value = "";
                 document.getElementById('coverFileInput').value = "";
-                
                 closeSettingsModal();
             } catch (err) {
-                console.error(err);
                 showToast("Erro ao processar o arquivo.");
             }
         }
@@ -1483,14 +1549,10 @@
             const body = document.getElementById('reader-body');
             body.innerHTML = '';
 
-            book.content.forEach((pair, index) => {
+            book.content.forEach((pair) => {
                 const pairDiv = document.createElement('div');
                 pairDiv.className = 'bilingual-pair';
-                pairDiv.dataset.index = index;
-
-                pairDiv.onclick = () => {
-                    playSpeech(pair.orig);
-                };
+                pairDiv.onclick = () => { playSpeech(pair.orig); };
 
                 const origDiv = document.createElement('div');
                 origDiv.className = 'sentence-orig';
@@ -1538,8 +1600,7 @@
 
         function testSelectedVoice() {
             const testInput = document.getElementById('voiceTestInput');
-            const textToTest = testInput ? testInput.value : "Hello! This is a test to check the selected voice quality.";
-            playSpeech(textToTest);
+            playSpeech(testInput ? testInput.value : "Hello! This is a test.");
         }
 
         function requestDownload() {
@@ -1568,7 +1629,7 @@
                         clearInterval(interval);
                         downloadStatusText.textContent = 'Download concluído!';
                         updateLocalVoices(JSON.stringify([{ id: selectedVoice, name: selectedText }]));
-                        showToast("Pacote de voz baixado com sucesso.");
+                        showToast("Pacote de voz baixado.");
                     }
                 }, 300);
             }
@@ -1604,7 +1665,7 @@
                 
                 if (!voices || voices.length === 0) {
                     select.innerHTML = '<option value="">Nenhuma voz baixada (Fallback para Web Speech)</option>';
-                    document.getElementById('voiceStatus').textContent = 'Nenhum pacote nativo encontrado. Usando navegador.';
+                    document.getElementById('voiceStatus').textContent = 'Nenhum pacote nativo encontrado.';
                     return;
                 }
 
@@ -1621,10 +1682,8 @@
                     select.selectedIndex = 0;
                 }
 
-                document.getElementById('voiceStatus').textContent = `${voices.length} voz(es) offline pronta(s) para uso.`;
-            } catch(e) {
-                console.error("Erro ao atualizar lista de vozes", e);
-            }
+                document.getElementById('voiceStatus').textContent = `${voices.length} voz(es) offline pronta(s).`;
+            } catch(e) {}
         }
 
         function closeReader() {
@@ -1672,54 +1731,35 @@
             const formattedDateStr = `${day}/${month}/${year} às ${hours}:${minutes}:${seconds}`;
             const fileName = `lendo_scripts_backup_${dateSlug}.json`;
 
-            const backupData = { 
-                books: books, 
-                settings: settings, 
-                version: "1.0", 
-                date: now.toISOString() 
-            };
+            const backupData = { books: books, settings: settings, version: "1.0", date: now.toISOString() };
             const jsonString = JSON.stringify(backupData, null, 2);
 
-            // Mantém sempre uma cópia na pasta interna por segurança
-            savedBackupsList.unshift({
-                name: fileName,
-                formattedDate: formattedDateStr,
-                data: jsonString
-            });
+            savedBackupsList.unshift({ name: fileName, formattedDate: formattedDateStr, data: jsonString });
             localStorage.setItem('polyglot_saved_backups', JSON.stringify(savedBackupsList));
             updateBackupFolderSubtitle();
 
-            // 1. Comando nativo para abrir o seletor de pastas/cartão SD do Android (via APK)
             if (window.AndroidBridge && typeof window.AndroidBridge.saveBackupFilePicker === 'function') {
                 window.AndroidBridge.saveBackupFilePicker(fileName, jsonString);
                 showToast("Selecione onde deseja salvar o backup.");
                 return;
             }
 
-            // 2. Tenta abrir a caixa de diálogo nativa do sistema via API do navegador (caso aplicável)
             if (window.showSaveFilePicker) {
                 try {
                     const handle = await window.showSaveFilePicker({
                         suggestedName: fileName,
-                        types: [{
-                            description: 'Arquivo JSON de Backup',
-                            accept: { 'application/json': ['.json'] }
-                        }]
+                        types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }]
                     });
                     const writable = await handle.createWritable();
                     await writable.write(jsonString);
                     await writable.close();
-                    showToast("Backup salvo na pasta escolhida com sucesso!");
+                    showToast("Backup salvo com sucesso!");
                     return;
                 } catch (err) {
-                    if (err.name === 'AbortError') {
-                        showToast("Salvamento cancelado. O arquivo continua na pasta interna.");
-                        return;
-                    }
+                    if (err.name === 'AbortError') return;
                 }
             }
 
-            // 3. Fallback padrão de download direto
             try {
                 const blob = new Blob([jsonString], { type: 'application/json' });
                 const url = URL.createObjectURL(blob);
@@ -1734,7 +1774,7 @@
                 }, 100);
                 showToast("Backup gerado e baixado!");
             } catch (e) {
-                showToast("Backup salvo na pasta interna de segurança.");
+                showToast("Backup salvo na pasta interna.");
             }
         }
 
@@ -1754,13 +1794,13 @@
                             loadSettingsToUI();
                             renderShelf();
                             closeSettingsModal();
-                            showToast("Backup restaurado com sucesso!");
+                            showToast("Backup restaurado!");
                         }
                     } else {
                         showToast("Arquivo de backup inválido.");
                     }
                 } catch (err) {
-                    showToast("Erro ao ler o arquivo de backup.");
+                    showToast("Erro ao ler o arquivo.");
                 }
             };
             reader.readAsText(file);

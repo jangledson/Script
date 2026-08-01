@@ -120,33 +120,9 @@
         }
 
         .book-card.dragging {
-            opacity: 0.5;
+            opacity: 0.6;
             transform: scale(1.05);
             z-index: 50;
-        }
-
-        /* Ícone de Troca de Capa (Aparece ao selecionar/segurar sem arrastar) */
-        .book-change-cover-badge {
-            position: absolute;
-            top: 6px;
-            right: 6px;
-            background-color: var(--app-primary);
-            color: white;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.9rem;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-            z-index: 60;
-            cursor: pointer;
-            border: 2px solid white;
-        }
-
-        .book-card.show-cover-badge .book-change-cover-badge {
-            display: flex;
         }
 
         .book-cover {
@@ -201,7 +177,34 @@
             transition: background-color 0.2s;
         }
 
-        /* Botão de Configurações blindado para navegadores (GitHub Pages) */
+        .trash-can-dropzone {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 64px;
+            height: 64px;
+            background-color: rgba(169, 68, 66, 0.9);
+            color: white;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            z-index: 9998;
+            transition: transform 0.2s, background-color 0.2s;
+            pointer-events: auto;
+        }
+
+        .trash-can-dropzone.active-trash {
+            display: flex;
+        }
+
+        .trash-can-dropzone.drag-over-trash {
+            background-color: #d9534f;
+            transform: scale(1.2);
+        }
+
         .fab-settings {
             position: fixed;
             bottom: 20px;
@@ -719,7 +722,8 @@
 
     <div class="shelf-container" id="shelfContainer"></div>
 
-    <!-- Botão Flutuante de Configuração Blindado para Web / GitHub Pages -->
+    <div class="trash-can-dropzone" id="trashCanDropzone" title="Arraste aqui para excluir o livro">🗑️</div>
+
     <button class="fab-settings" id="fabSettingsBtn" title="Configurações e Adicionar Livro">⚙️</button>
 
     <div class="modal" id="settingsModal">
@@ -890,7 +894,6 @@
         </div>
     </div>
 
-    <!-- Modal Interno para Visualizar os Backups Armazenados -->
     <div class="backup-list-modal" id="backupListModal">
         <div class="backup-list-content">
             <div class="modal-header">
@@ -905,22 +908,6 @@
         </div>
     </div>
 
-    <!-- Modal para Substituir a Capa do Livro Especificamente -->
-    <div class="modal" id="changeCoverModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span>🖼️ Trocar Capa do Livro</span>
-                <button class="close-btn" onclick="closeChangeCoverModal()">✕</button>
-            </div>
-            <div class="form-group">
-                <label>Selecione a nova imagem de capa</label>
-                <input type="file" id="newCoverFileInput" accept="image/*">
-            </div>
-            <button class="btn-primary" id="confirmChangeCoverBtn">Salvar Nova Capa</button>
-        </div>
-    </div>
-
-    <!-- Tela do Leitor Bilíngue -->
     <div id="reader-view">
         <div id="reader-body"></div>
         <button id="readerBackBtn" class="reader-floating-back" onclick="closeReader()">← Voltar</button>
@@ -941,7 +928,6 @@
             bgVal: 100
         }));
         let savedBackupsList = JSON.parse(localStorage.getItem('polyglot_saved_backups') || '[]');
-        let bookIdToChangeCover = null;
 
         document.addEventListener('DOMContentLoaded', () => {
             loadSettingsToUI();
@@ -951,6 +937,7 @@
             loadLocalVoicesFromApp();
             updateBackupFolderSubtitle();
             setupFabSettingsButton();
+            setupTrashCanDropEvents();
 
             const addBookBtn = document.getElementById('addBookBtn');
             if (addBookBtn) {
@@ -963,15 +950,8 @@
                 exportBackupBtn.addEventListener('click', (e) => { e.preventDefault(); exportBackup(); });
                 exportBackupBtn.addEventListener('touchend', (e) => { e.preventDefault(); exportBackup(); });
             }
-
-            const confirmCoverBtn = document.getElementById('confirmChangeCoverBtn');
-            if (confirmCoverBtn) {
-                confirmCoverBtn.addEventListener('click', (e) => { e.preventDefault(); processUpdateBookCover(); });
-                confirmCoverBtn.addEventListener('touchend', (e) => { e.preventDefault(); processUpdateBookCover(); });
-            }
         });
 
-        // Configuração blindada do botão flutuante para funcionar perfeitamente em navegadores web e GitHub Pages
         function setupFabSettingsButton() {
             const fab = document.getElementById('fabSettingsBtn');
             if (!fab) return;
@@ -1008,38 +988,6 @@
         }
         function closeBackupFolderModal() {
             document.getElementById('backupListModal').classList.remove('active');
-        }
-
-        function openChangeCoverModal(bookId) {
-            bookIdToChangeCover = bookId;
-            document.getElementById('newCoverFileInput').value = '';
-            document.getElementById('changeCoverModal').classList.add('active');
-        }
-        function closeChangeCoverModal() {
-            document.getElementById('changeCoverModal').classList.remove('active');
-            bookIdToChangeCover = null;
-        }
-
-        async function processUpdateBookCover() {
-            if (!bookIdToChangeCover) return;
-            const fileInput = document.getElementById('newCoverFileInput');
-            if (fileInput.files.length === 0) {
-                showToast("Selecione uma imagem para a capa.");
-                return;
-            }
-            try {
-                let newCoverUrl = await fileToDataUrl(fileInput.files[0]);
-                let book = books.find(b => b.id === bookIdToChangeCover);
-                if (book) {
-                    book.cover = newCoverUrl;
-                    localStorage.setItem('polyglot_books', JSON.stringify(books));
-                    renderShelf();
-                    showToast("Capa atualizada com sucesso!");
-                }
-                closeChangeCoverModal();
-            } catch (err) {
-                showToast("Erro ao carregar a imagem da capa.");
-            }
         }
 
         function updateBackupFolderSubtitle() {
@@ -1291,7 +1239,7 @@
                             card.dataset.index = slotIndex;
 
                             card.onclick = (e) => {
-                                if (!card.dataset.moved && !card.classList.contains('show-cover-badge')) {
+                                if (!card.dataset.moved) {
                                     openReader(book);
                                 }
                                 delete card.dataset.moved;
@@ -1313,24 +1261,8 @@
                             titleLabel.className = 'book-title-label';
                             titleLabel.innerText = book.title;
 
-                            // Ícone de Troca de Capa (Aparece se selecionar/segurar sem arrastar)
-                            const changeCoverBadge = document.createElement('div');
-                            changeCoverBadge.className = 'book-change-cover-badge';
-                            changeCoverBadge.innerHTML = '✏️';
-                            changeCoverBadge.title = 'Trocar capa';
-                            changeCoverBadge.onclick = (ev) => {
-                                ev.stopPropagation();
-                                openChangeCoverModal(book.id);
-                            };
-                            changeCoverBadge.ontouchend = (ev) => {
-                                ev.stopPropagation();
-                                ev.preventDefault();
-                                openChangeCoverModal(book.id);
-                            };
-
                             card.appendChild(coverDiv);
                             card.appendChild(titleLabel);
-                            card.appendChild(changeCoverBadge);
 
                             setupBookDragEvents(card, slotIndex);
                             rowEl.appendChild(card);
@@ -1352,20 +1284,62 @@
         }
 
         let draggedIndex = null;
-        let holdTimeout = null;
+
+        function showTrashCan() {
+            const trash = document.getElementById('trashCanDropzone');
+            if (trash) trash.classList.add('active-trash');
+        }
+
+        function hideTrashCan() {
+            const trash = document.getElementById('trashCanDropzone');
+            if (trash) {
+                trash.classList.remove('active-trash');
+                trash.classList.remove('drag-over-trash');
+            }
+        }
+
+        function setupTrashCanDropEvents() {
+            const trash = document.getElementById('trashCanDropzone');
+            if (!trash) return;
+
+            trash.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                trash.classList.add('drag-over-trash');
+            });
+
+            trash.addEventListener('dragleave', () => {
+                trash.classList.remove('drag-over-trash');
+            });
+
+            trash.addEventListener('drop', (e) => {
+                e.preventDefault();
+                trash.classList.remove('drag-over-trash');
+                if (draggedIndex !== null && books[draggedIndex]) {
+                    if (confirm(`Deseja excluir o livro "${books[draggedIndex].title}"?`)) {
+                        books.splice(draggedIndex, 1);
+                        localStorage.setItem('polyglot_books', JSON.stringify(books));
+                        renderShelf();
+                        showToast("Livro jogado fora!");
+                    }
+                }
+                draggedIndex = null;
+                hideTrashCan();
+            });
+        }
 
         function setupBookDragEvents(card, index) {
             card.addEventListener('dragstart', (e) => {
                 draggedIndex = index;
                 card.classList.add('dragging');
-                card.classList.remove('show-cover-badge');
                 e.dataTransfer.setData('text/plain', index);
+                showTrashCan();
             });
 
             card.addEventListener('dragend', () => {
                 card.classList.remove('dragging');
                 draggedIndex = null;
                 document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+                hideTrashCan();
             });
 
             card.addEventListener('dragover', (e) => {
@@ -1383,9 +1357,9 @@
                 if (draggedIndex !== null && draggedIndex !== index) {
                     reorderBooks(draggedIndex, index);
                 }
+                hideTrashCan();
             });
 
-            // Lógica de segurar/selecionar vs arrastar
             let touchStartX = 0, touchStartY = 0;
             let isDraggingOrMoving = false;
 
@@ -1395,14 +1369,6 @@
                 touchStartY = e.touches[0].clientY;
                 isDraggingOrMoving = false;
                 delete card.dataset.moved;
-
-                // Se segurar por um instante sem mover, ativa o modo "selecionado" exibindo a opção de trocar a capa
-                holdTimeout = setTimeout(() => {
-                    if (!isDraggingOrMoving) {
-                        card.classList.add('show-cover-badge');
-                        card.dataset.moved = "true";
-                    }
-                }, 400);
             }, {passive: true});
 
             card.addEventListener('touchmove', (e) => {
@@ -1410,32 +1376,42 @@
                 let moveX = e.touches[0].clientX - touchStartX;
                 let moveY = e.touches[0].clientY - touchStartY;
                 
-                // Se o usuário deslocou o dedo, considera que quer ARRASTAR o livro
-                if (Math.abs(moveX) > 8 || Math.abs(moveY) > 8) {
+                if (Math.abs(moveX) > 6 || Math.abs(moveY) > 6) {
                     isDraggingOrMoving = true;
-                    if (holdTimeout) clearTimeout(holdTimeout);
-                    card.classList.remove('show-cover-badge'); // Remove o ícone para focar no arrastar normal
                     card.dataset.moved = "true";
                     card.classList.add('dragging');
+                    showTrashCan();
                 }
             }, {passive: true});
 
             card.addEventListener('touchend', (e) => {
-                if (holdTimeout) clearTimeout(holdTimeout);
                 card.classList.remove('dragging');
-
                 let touch = e.changedTouches[0];
                 let targetEl = document.elementFromPoint(touch.clientX, touch.clientY);
-                let dropTarget = targetEl ? targetEl.closest('.book-card, .empty-slot') : null;
+                
+                let trashEl = document.getElementById('trashCanDropzone');
+                let rect = trashEl ? trashEl.getBoundingClientRect() : null;
+                let droppedOnTrash = rect && touch.clientX >= rect.left && touch.clientX <= rect.right && touch.clientY >= rect.top && touch.clientY <= rect.bottom;
 
-                if (isDraggingOrMoving && dropTarget && dropTarget.dataset.index !== undefined) {
-                    let targetIndex = parseInt(dropTarget.dataset.index);
-                    if (draggedIndex !== null && draggedIndex !== targetIndex) {
-                        reorderBooks(draggedIndex, targetIndex);
+                if (droppedOnTrash && draggedIndex !== null && books[draggedIndex]) {
+                    if (confirm(`Deseja excluir o livro "${books[draggedIndex].title}"?`)) {
+                        books.splice(draggedIndex, 1);
+                        localStorage.setItem('polyglot_books', JSON.stringify(books));
+                        renderShelf();
+                        showToast("Livro jogado fora!");
+                    }
+                } else if (isDraggingOrMoving && targetEl) {
+                    let dropTarget = targetEl.closest('.book-card, .empty-slot');
+                    if (dropTarget && dropTarget.dataset.index !== undefined) {
+                        let targetIndex = parseInt(dropTarget.dataset.index);
+                        if (draggedIndex !== null && draggedIndex !== targetIndex) {
+                            reorderBooks(draggedIndex, targetIndex);
+                        }
                     }
                 }
 
                 draggedIndex = null;
+                hideTrashCan();
             });
         }
 
@@ -1455,6 +1431,7 @@
                 if (draggedIndex !== null) {
                     reorderBooks(draggedIndex, index);
                 }
+                hideTrashCan();
             });
         }
 
@@ -1803,13 +1780,13 @@
                             loadSettingsToUI();
                             renderShelf();
                             closeSettingsModal();
-                            showToast("Backup restaurado!");
+                            showToast("Backup restaurado com sucesso!");
                         }
                     } else {
                         showToast("Arquivo de backup inválido.");
                     }
                 } catch (err) {
-                    showToast("Erro ao ler o arquivo.");
+                    showToast("Erro ao ler o arquivo de backup.");
                 }
             };
             reader.readAsText(file);

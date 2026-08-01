@@ -125,7 +125,7 @@
             z-index: 50;
         }
 
-        /* Ícone de Troca de Capa (Aparece ao segurar o livro no canto superior direito)[span_3](start_span)[span_3](end_span) */
+        /* Ícone de Troca de Capa (Aparece ao selecionar/segurar sem arrastar) */
         .book-change-cover-badge {
             position: absolute;
             top: 6px;
@@ -201,6 +201,7 @@
             transition: background-color 0.2s;
         }
 
+        /* Botão de Configurações blindado para navegadores (GitHub Pages) */
         .fab-settings {
             position: fixed;
             bottom: 20px;
@@ -215,9 +216,12 @@
             justify-content: center;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
             cursor: pointer;
-            z-index: 100;
+            z-index: 9999;
             font-size: 1.5rem;
             border: none;
+            outline: none;
+            -webkit-appearance: none;
+            touch-action: manipulation;
             transition: transform 0.2s;
         }
 
@@ -235,7 +239,7 @@
             display: none;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
+            z-index: 10000;
             padding: 16px;
         }
 
@@ -522,7 +526,7 @@
             display: none;
             justify-content: center;
             align-items: center;
-            z-index: 1100;
+            z-index: 11000;
             padding: 16px;
         }
 
@@ -613,7 +617,7 @@
             width: 100%;
             height: 100%;
             background-color: #222;
-            z-index: 200;
+            z-index: 5000;
             display: none;
             flex-direction: column;
         }
@@ -683,7 +687,7 @@
             font-weight: bold;
             font-size: 1rem;
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            z-index: 300;
+            z-index: 6000;
             opacity: 0;
             pointer-events: none;
             transform: translateY(20px);
@@ -707,7 +711,7 @@
             border-radius: 20px;
             font-size: 0.85rem;
             display: none;
-            z-index: 2000;
+            z-index: 20000;
         }
     </style>
 </head>
@@ -715,7 +719,7 @@
 
     <div class="shelf-container" id="shelfContainer"></div>
 
-    <!-- Botão de Configurações com ouvintes robustos de clique e toque -->
+    <!-- Botão Flutuante de Configuração Blindado para Web / GitHub Pages -->
     <button class="fab-settings" id="fabSettingsBtn" title="Configurações e Adicionar Livro">⚙️</button>
 
     <div class="modal" id="settingsModal">
@@ -967,18 +971,20 @@
             }
         });
 
-        // Configuração robusta para o botão flutuante de configurações responder sempre ao toque/clique
+        // Configuração blindada do botão flutuante para funcionar perfeitamente em navegadores web e GitHub Pages
         function setupFabSettingsButton() {
             const fab = document.getElementById('fabSettingsBtn');
             if (!fab) return;
-            fab.addEventListener('click', (e) => {
+
+            const triggerAction = (e) => {
                 e.preventDefault();
+                e.stopPropagation();
                 openSettingsModal();
-            });
-            fab.addEventListener('touchend', (e) => {
-                e.preventDefault();
-                openSettingsModal();
-            });
+            };
+
+            fab.addEventListener('click', triggerAction);
+            fab.addEventListener('pointerdown', triggerAction);
+            fab.addEventListener('touchend', triggerAction);
         }
 
         function showToast(msg) {
@@ -1285,7 +1291,9 @@
                             card.dataset.index = slotIndex;
 
                             card.onclick = (e) => {
-                                if (!card.dataset.moved) openReader(book);
+                                if (!card.dataset.moved && !card.classList.contains('show-cover-badge')) {
+                                    openReader(book);
+                                }
                                 delete card.dataset.moved;
                             };
 
@@ -1305,7 +1313,7 @@
                             titleLabel.className = 'book-title-label';
                             titleLabel.innerText = book.title;
 
-                            // Ícone no canto superior direito para trocar a capa[span_4](start_span)[span_4](end_span)
+                            // Ícone de Troca de Capa (Aparece se selecionar/segurar sem arrastar)
                             const changeCoverBadge = document.createElement('div');
                             changeCoverBadge.className = 'book-change-cover-badge';
                             changeCoverBadge.innerHTML = '✏️';
@@ -1350,11 +1358,12 @@
             card.addEventListener('dragstart', (e) => {
                 draggedIndex = index;
                 card.classList.add('dragging');
+                card.classList.remove('show-cover-badge');
                 e.dataTransfer.setData('text/plain', index);
             });
 
             card.addEventListener('dragend', () => {
-                card.classList.remove('dragging', 'show-cover-badge');
+                card.classList.remove('dragging');
                 draggedIndex = null;
                 document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
             });
@@ -1376,28 +1385,36 @@
                 }
             });
 
-            // Gerenciamento de Toque e Seguramento para exibir o ícone de trocar capa[span_5](start_span)[span_5](end_span)
+            // Lógica de segurar/selecionar vs arrastar
             let touchStartX = 0, touchStartY = 0;
+            let isDraggingOrMoving = false;
 
             card.addEventListener('touchstart', (e) => {
                 draggedIndex = index;
                 touchStartX = e.touches[0].clientX;
                 touchStartY = e.touches[0].clientY;
-                card.dataset.moved = "";
+                isDraggingOrMoving = false;
+                delete card.dataset.moved;
 
-                // Ao segurar por um breve instante, mostra o ícone de troca de capa
+                // Se segurar por um instante sem mover, ativa o modo "selecionado" exibindo a opção de trocar a capa
                 holdTimeout = setTimeout(() => {
-                    card.classList.add('show-cover-badge');
-                }, 350);
+                    if (!isDraggingOrMoving) {
+                        card.classList.add('show-cover-badge');
+                        card.dataset.moved = "true";
+                    }
+                }, 400);
             }, {passive: true});
 
             card.addEventListener('touchmove', (e) => {
                 if (draggedIndex === null) return;
                 let moveX = e.touches[0].clientX - touchStartX;
                 let moveY = e.touches[0].clientY - touchStartY;
-                if (Math.abs(moveX) > 10 || Math.abs(moveY) > 10) {
+                
+                // Se o usuário deslocou o dedo, considera que quer ARRASTAR o livro
+                if (Math.abs(moveX) > 8 || Math.abs(moveY) > 8) {
+                    isDraggingOrMoving = true;
                     if (holdTimeout) clearTimeout(holdTimeout);
-                    card.classList.remove('show-cover-badge'); // Se arrastou, remove o ícone e foca no arrastar normal
+                    card.classList.remove('show-cover-badge'); // Remove o ícone para focar no arrastar normal
                     card.dataset.moved = "true";
                     card.classList.add('dragging');
                 }
@@ -1406,25 +1423,17 @@
             card.addEventListener('touchend', (e) => {
                 if (holdTimeout) clearTimeout(holdTimeout);
                 card.classList.remove('dragging');
-                
+
                 let touch = e.changedTouches[0];
                 let targetEl = document.elementFromPoint(touch.clientX, touch.clientY);
                 let dropTarget = targetEl ? targetEl.closest('.book-card, .empty-slot') : null;
 
-                if (dropTarget && dropTarget.dataset.index !== undefined) {
+                if (isDraggingOrMoving && dropTarget && dropTarget.dataset.index !== undefined) {
                     let targetIndex = parseInt(dropTarget.dataset.index);
                     if (draggedIndex !== null && draggedIndex !== targetIndex) {
                         reorderBooks(draggedIndex, targetIndex);
-                        card.classList.remove('show-cover-badge');
                     }
                 }
-                
-                // Se soltou sem arrastar muito e sem clicar no ícone, remove o distintivo para sumir caso nenhuma ação seja tomada
-                setTimeout(() => {
-                    if (!card.contains(targetEl) || targetEl.className.indexOf('book-change-cover-badge') === -1) {
-                        card.classList.remove('show-cover-badge');
-                    }
-                }, 100);
 
                 draggedIndex = null;
             });

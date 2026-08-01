@@ -40,6 +40,48 @@
             overflow-x: hidden;
         }
 
+        /* Tela de Inicialização / Splash */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--app-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            z-index: 30000;
+            transition: opacity 0.5s ease;
+        }
+
+        .splash-logo {
+            font-size: 3.5rem;
+            animation: pulseLogo 1s infinite alternate;
+        }
+
+        .splash-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--app-primary);
+        }
+
+        .splash-version {
+            font-size: 0.9rem;
+            background-color: var(--app-accent);
+            color: var(--app-text);
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
+        @keyframes pulseLogo {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.08); }
+        }
+
         .shelf-container {
             flex: 1;
             padding: 16px;
@@ -720,6 +762,13 @@
 </head>
 <body>
 
+    <!-- Tela de Inicialização (Splash) que aparece ao abrir e some sozinha -->
+    <div id="splash-screen">
+        <div class="splash-logo">📖</div>
+        <div class="splash-title">Lendo Scripts</div>
+        <div class="splash-version">v1.0</div>
+    </div>
+
     <div class="shelf-container" id="shelfContainer"></div>
 
     <div class="trash-can-dropzone" id="trashCanDropzone" title="Arraste aqui para excluir o livro">🗑️</div>
@@ -916,8 +965,12 @@
     <div id="toast"></div>
 
     <script>
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+        // Configuração para garantir funcionamento offline total do PDF.js se o worker falhar na rede
+        if (window.pdfjsLib) {
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+        }
 
+        // Carregamento local direto do armazenamento do aparelho (Funciona Offline)
         let books = JSON.parse(localStorage.getItem('polyglot_books') || '[]');
         let settings = JSON.parse(localStorage.getItem('polyglot_settings') || JSON.stringify({
             font: 'Arial',
@@ -930,6 +983,15 @@
         let savedBackupsList = JSON.parse(localStorage.getItem('polyglot_saved_backups') || '[]');
 
         document.addEventListener('DOMContentLoaded', () => {
+            // Controla a tela de inicialização (Splash Screen) sumindo após 1.2 segundos
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                if (splash) {
+                    splash.style.opacity = '0';
+                    setTimeout(() => { splash.style.display = 'none'; }, 500);
+                }
+            }, 1200);
+
             loadSettingsToUI();
             renderShelf();
             setupReaderDoubleTap();

@@ -150,6 +150,23 @@
             color: var(--app-text);
         }
 
+        .book-progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background-color: rgba(0, 0, 0, 0.2);
+            z-index: 2;
+        }
+
+        .book-progress-fill {
+            height: 100%;
+            background-color: #03dac6;
+            width: 0%;
+            transition: width 0.2s ease;
+        }
+
         .book-title-label {
             font-size: 0.75rem;
             padding: 6px;
@@ -205,7 +222,7 @@
             transform: scale(1.2);
         }
 
-        /* Aba Lateral Direta Retrátil (Fixada de forma exata no canto inferior direito) */
+        /* Aba Lateral Direita Retrátil */
         .side-tab-container {
             position: fixed;
             bottom: 30px;
@@ -222,7 +239,7 @@
         }
 
         .side-tab-handle {
-            background-color: var(--app-primary);
+            background-color: rgba(139, 107, 79, 0.6);
             color: white;
             width: 28px;
             height: 70px;
@@ -239,6 +256,18 @@
             left: -28px;
             top: 50%;
             transform: translateY(-50%);
+            backdrop-filter: blur(2px);
+            opacity: 0.7;
+            transition: background 0.3s, opacity 0.3s;
+        }
+
+        .side-tab-handle:hover {
+            opacity: 1;
+            background-color: rgba(139, 107, 79, 0.9);
+        }
+
+        .side-tab-container.open .side-tab-handle {
+            display: none;
         }
 
         .side-tab-panel {
@@ -318,13 +347,79 @@
             font-weight: bold;
         }
 
-        .form-group select, .form-group input {
+        .form-group select, .form-group input, .form-group textarea {
             padding: 10px;
             border-radius: 6px;
             border: 1px solid var(--app-accent);
             background-color: var(--app-bg);
             color: var(--app-text);
             font-size: 0.9rem;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* Altura 100dvh flexível para caber na tela com teclado */
+        #pasteModalFullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100dvh;
+            background-color: var(--app-bg);
+            z-index: 20000;
+            display: none;
+            flex-direction: column;
+            padding: 12px;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        #pasteModalFullscreen.active {
+            display: flex;
+        }
+
+        .modal-header-fullscreen {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            flex-shrink: 0;
+        }
+
+        .modal-header-fullscreen h2 {
+            margin: 0;
+            font-size: 1.1rem;
+            color: var(--app-primary);
+        }
+
+        .textarea-fullscreen {
+            flex: 1;
+            width: 100%;
+            border: 2px solid var(--app-accent);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 0.95rem;
+            resize: none;
+            box-sizing: border-box;
+            background-color: var(--app-surface);
+            color: var(--app-text);
+            outline: none;
+            min-height: 0;
+        }
+
+        .textarea-fullscreen:focus {
+            border-color: var(--app-primary);
+        }
+
+        .modal-footer-fullscreen {
+            margin-top: 8px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            flex-shrink: 0;
         }
 
         .progress-container {
@@ -660,6 +755,7 @@
             max-width: 900px;
             margin: 0 auto;
             width: 100%;
+            padding-bottom: 80px;
         }
 
         @media (min-width: 768px) {
@@ -678,7 +774,7 @@
             background-color: var(--reader-bg);
             box-shadow: 0 2px 6px rgba(0,0,0,0.15);
             cursor: pointer;
-            transition: opacity 0.15s, transform 0.1s;
+            transition: opacity 0.15s, transform 0.1s, background-color 0.2s, box-shadow 0.2s;
         }
 
         .bilingual-pair:active {
@@ -708,26 +804,26 @@
 
         .reader-floating-back {
             position: fixed;
-            bottom: 24px;
-            left: 24px;
+            bottom: 16px;
+            left: 12px;
             background-color: var(--app-primary);
             color: #fff;
             border: none;
-            padding: 12px 24px;
-            border-radius: 30px;
+            padding: 6px 12px;
+            border-radius: 16px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 1rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            font-size: 0.8rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
             z-index: 6000;
             opacity: 0;
             pointer-events: none;
-            transform: translateY(20px);
+            transform: translateY(10px);
             transition: opacity 0.3s ease, transform 0.3s ease;
         }
 
         .reader-floating-back.visible {
-            opacity: 1;
+            opacity: 0.85;
             pointer-events: auto;
             transform: translateY(0);
         }
@@ -753,16 +849,16 @@
 
     <div class="trash-can-dropzone" id="trashCanDropzone" title="Arraste aqui para excluir o livro">🗑️</div>
 
-    <!-- Aba Lateral Direta Retrátil (Cantinho inferior direito) -->
+    <!-- Aba Lateral Direita Retrátil (Estante) -->
     <div class="side-tab-container" id="sideTabContainer" style="right: 0;">
-        <div class="side-tab-handle" id="sideTabHandle" title="Abrir Configurações">
-            <span style="font-size: 0.7rem; font-weight: bold;">⚙️</span>
-            <span style="font-size: 0.65rem;">MENU</span>
+        <div class="side-tab-handle" id="sideTabHandle" title="Toque para abrir / Dois toques rápidos para fechar">
+            <span style="font-size: 0.65rem; font-weight: bold;">⚙️</span>
+            <span style="font-size: 0.55rem;">MENU</span>
         </div>
         <div class="side-tab-panel">
             <div style="font-weight: bold; font-size: 1rem; color: var(--app-primary); display: flex; justify-content: space-between; align-items: center;">
                 <span>Painel Rápido</span>
-                <button class="close-btn" onclick="toggleSideTab()">✕</button>
+                <button class="close-btn" onclick="toggleSideTab('sideTabContainer')">✕</button>
             </div>
 
             <div class="form-group" style="background: var(--app-bg); padding: 8px; border-radius: 6px; border: 1px solid var(--app-accent);">
@@ -784,6 +880,8 @@
                 <span>Configurações, Livros e Voz</span>
                 <button class="close-btn" onclick="closeSettingsModal()">✕</button>
             </div>
+
+            <button id="btn-voltar-config" class="btn-primary" style="display: none; background-color: var(--app-accent); color: var(--app-text);" onclick="voltarParaConfiguracoesCapa()">← Voltar para Escolher Capa e Salvar</button>
 
             <div class="settings-import-section">
                 <span style="font-size: 0.9rem; font-weight: bold; color: var(--app-primary);">🗣️ Configuração de Voz Offline</span>
@@ -829,16 +927,34 @@
                 <div class="status-box" id="downloadStatusText" style="display: none; text-align: center; font-weight: bold;">Iniciando download...</div>
             </div>
 
+            <!-- Seção de Adicionar Livro (Arquivo ou Colar Texto) -->
             <div class="settings-import-section">
                 <span style="font-size: 0.9rem; font-weight: bold; color: var(--app-primary);">📥 Adicionar Livro Bilíngue</span>
+                
                 <div class="form-group">
                     <label>Título do Livro</label>
                     <input type="text" id="bookTitleInput" placeholder="Ex: Capítulo 1">
                 </div>
+
                 <div class="form-group">
+                    <label>Como deseja adicionar o conteúdo?</label>
+                    <div style="display: flex; gap: 8px;">
+                        <button type="button" class="btn-primary" id="modeFileBtn" style="flex: 1; font-size: 0.8rem; padding: 8px;" onclick="switchAddMode('file')">📂 Arquivo</button>
+                        <button type="button" class="btn-primary" id="modePasteBtn" style="flex: 1; font-size: 0.8rem; padding: 8px; background-color: var(--app-accent); color: var(--app-text);" onclick="switchAddMode('paste')">📋 Colar Texto</button>
+                    </div>
+                </div>
+
+                <div class="form-group" id="fileInputContainer">
                     <label>Arquivo (.TXT, .DOCX, .PDF, etc.)</label>
                     <input type="file" id="bookFileInput" accept=".txt,.docx,.csv,.json,.srt,.vtt,.pdf">
                 </div>
+
+                <div class="form-group" id="pasteInputContainer" style="display: none;">
+                    <label>Texto Bilíngue para Colagem</label>
+                    <button type="button" class="btn-primary" onclick="openFullscreenPasteModal()" style="width: 100%; text-align: center;">📋 Abrir Tela de Colagem em Tela Cheia</button>
+                    <span id="pasteStatusIndicator" style="font-size: 0.75rem; color: #666; margin-top: 4px;">Nenhum texto colado ainda.</span>
+                </div>
+
                 <div class="form-group">
                     <label>Capa do Livro (Opcional)</label>
                     <input type="file" id="coverFileInput" accept="image/*">
@@ -946,6 +1062,18 @@
         </div>
     </div>
 
+    <!-- Modal de Tela Cheia Dedicado para Colar Texto -->
+    <div id="pasteModalFullscreen">
+        <div class="modal-header-fullscreen">
+            <h2>Cole o seu texto bilíngue abaixo</h2>
+        </div>
+        <textarea id="fullscreenPasteTextarea" class="textarea-fullscreen" placeholder="Linha 1: Frase em inglês&#10;Linha 2: Frase em português&#10;Linha 3: Próxima frase em inglês&#10;Linha 4: Próxima tradução..."></textarea>
+        <div class="modal-footer-fullscreen">
+            <button class="btn-primary" style="background-color: var(--app-accent); color: var(--app-text);" onclick="closeFullscreenPasteModal(false)">Cancelar</button>
+            <button class="btn-primary" onclick="closeFullscreenPasteModal(true)">OK</button>
+        </div>
+    </div>
+
     <div class="backup-list-modal" id="backupListModal">
         <div class="backup-list-content">
             <div class="modal-header">
@@ -962,6 +1090,31 @@
 
     <div id="reader-view">
         <div id="reader-body"></div>
+        
+        <!-- Aba Lateral Direta Retrátil (Leitor) -->
+        <div class="side-tab-container" id="readerSideTabContainer" style="right: 0;">
+            <div class="side-tab-handle" id="readerSideTabHandle" title="Toque para abrir / Dois toques rápidos para fechar">
+                <span style="font-size: 0.65rem; font-weight: bold;">⚙️</span>
+                <span style="font-size: 0.55rem;">MENU</span>
+            </div>
+            <div class="side-tab-panel">
+                <div style="font-weight: bold; font-size: 1rem; color: var(--app-primary); display: flex; justify-content: space-between; align-items: center;">
+                    <span>Painel Rápido</span>
+                    <button class="close-btn" onclick="toggleSideTab('readerSideTabContainer')">✕</button>
+                </div>
+
+                <div class="form-group" style="background: var(--app-bg); padding: 8px; border-radius: 6px; border: 1px solid var(--app-accent);">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" id="toggleTranslationCheckboxReader" onchange="syncAndToggleTranslation()" style="width: 18px; height: 18px; cursor: pointer;">
+                        <span>Desativar Tradução (Português)</span>
+                    </label>
+                    <span style="font-size: 0.7rem; color: #666; margin-top: 2px;">Oculta a legenda em português mantendo o espaço do balão.</span>
+                </div>
+
+                <button class="btn-primary" onclick="openFullSettingsModal()">⚙️ Configurações Completas</button>
+            </div>
+        </div>
+
         <button id="readerBackBtn" class="reader-floating-back" onclick="closeReader()">← Voltar</button>
     </div>
 
@@ -981,6 +1134,8 @@
             hideTranslation: false
         }));
         let savedBackupsList = JSON.parse(localStorage.getItem('polyglot_saved_backups') || '[]');
+        let currentAddMode = 'file';
+        let cachedPastedText = "";
 
         document.addEventListener('DOMContentLoaded', () => {
             loadSettingsToUI();
@@ -989,7 +1144,8 @@
             setupBackButton();
             loadLocalVoicesFromApp();
             updateBackupFolderSubtitle();
-            setupSideTabEvents();
+            setupSideTabEvents('sideTabContainer', 'sideTabHandle');
+            setupSideTabEvents('readerSideTabContainer', 'readerSideTabHandle');
             setupTrashCanDropEvents();
 
             const addBookBtn = document.getElementById('addBookBtn');
@@ -1005,35 +1161,102 @@
             }
         });
 
-        function setupSideTabEvents() {
-            const container = document.getElementById('sideTabContainer');
-            const handle = document.getElementById('sideTabHandle');
-            if (!container || !handle) return;
+        function switchAddMode(mode) {
+            currentAddMode = mode;
+            const fileBtn = document.getElementById('modeFileBtn');
+            const pasteBtn = document.getElementById('modePasteBtn');
+            const fileContainer = document.getElementById('fileInputContainer');
+            const pasteContainer = document.getElementById('pasteInputContainer');
 
-            const toggle = (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                container.classList.toggle('open');
-            };
-
-            handle.addEventListener('click', toggle);
-            handle.addEventListener('pointerdown', toggle);
-            handle.addEventListener('touchend', toggle);
-
-            document.addEventListener('click', (e) => {
-                if (!container.contains(e.target) && container.classList.contains('open')) {
-                    container.classList.remove('open');
-                }
-            });
+            if (mode === 'file') {
+                fileBtn.style.backgroundColor = 'var(--app-primary)';
+                fileBtn.style.color = 'white';
+                pasteBtn.style.backgroundColor = 'var(--app-accent)';
+                pasteBtn.style.color = 'var(--app-text)';
+                fileContainer.style.display = 'flex';
+                pasteContainer.style.display = 'none';
+            } else {
+                pasteBtn.style.backgroundColor = 'var(--app-primary)';
+                pasteBtn.style.color = 'white';
+                fileBtn.style.backgroundColor = 'var(--app-accent)';
+                fileBtn.style.color = 'var(--app-text)';
+                pasteContainer.style.display = 'flex';
+                fileContainer.style.display = 'none';
+            }
         }
 
-        function toggleSideTab() {
-            const container = document.getElementById('sideTabContainer');
+        function openFullscreenPasteModal() {
+            const modal = document.getElementById('pasteModalFullscreen');
+            const textarea = document.getElementById('fullscreenPasteTextarea');
+            textarea.value = cachedPastedText;
+            modal.classList.add('active');
+            textarea.focus();
+        }
+
+        function closeFullscreenPasteModal(save) {
+            const modal = document.getElementById('pasteModalFullscreen');
+            const textarea = document.getElementById('fullscreenPasteTextarea');
+            const indicator = document.getElementById('pasteStatusIndicator');
+
+            if (save) {
+                cachedPastedText = textarea.value;
+                if (cachedPastedText.trim().length > 0) {
+                    indicator.innerText = "✓ Texto colado com sucesso (" + cachedPastedText.length + " caracteres)";
+                    indicator.style.color = "#2e7d32";
+                    
+                    const btnVoltar = document.getElementById('btn-voltar-config');
+                    if(btnVoltar) btnVoltar.style.display = 'block';
+                } else {
+                    indicator.innerText = "Nenhum texto colado ainda.";
+                    indicator.style.color = "#666";
+                }
+            }
+            modal.classList.remove('active');
+        }
+
+        function voltarParaConfiguracoesCapa() {
+            const btnVoltar = document.getElementById('btn-voltar-config');
+            if(btnVoltar) btnVoltar.style.display = 'none';
+            showToast("Ajuste a capa e clique em 'Adicionar Livro à Estante'.");
+        }
+
+        function setupSideTabEvents(containerId, handleId) {
+            const container = document.getElementById(containerId);
+            const handle = document.getElementById(handleId);
+            if (!container || !handle) return;
+
+            let lastTapTime = 0;
+
+            const handleTouchAction = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+
+                let currentTime = new Date().getTime();
+                let timeDiff = currentTime - lastTapTime;
+
+                if (timeDiff < 350 && timeDiff > 0) {
+                    container.classList.remove('open');
+                    lastTapTime = 0;
+                } else {
+                    container.classList.add('open');
+                    lastTapTime = currentTime;
+                }
+            };
+
+            handle.addEventListener('click', handleTouchAction);
+            handle.addEventListener('touchend', handleTouchAction);
+        }
+
+        function toggleSideTab(containerId) {
+            const container = document.getElementById(containerId);
             if (container) container.classList.toggle('open');
         }
 
         function openFullSettingsModal() {
-            toggleSideTab();
+            const sideTab = document.getElementById('sideTabContainer');
+            if (sideTab) sideTab.classList.remove('open');
+            const readerSideTab = document.getElementById('readerSideTabContainer');
+            if (readerSideTab) readerSideTab.classList.remove('open');
             openSettingsModal();
         }
 
@@ -1214,6 +1437,10 @@
             if (hideTransCheckbox) {
                 hideTransCheckbox.checked = !!settings.hideTranslation;
             }
+            const hideTransCheckboxReader = document.getElementById('toggleTranslationCheckboxReader');
+            if (hideTransCheckboxReader) {
+                hideTransCheckboxReader.checked = !!settings.hideTranslation;
+            }
 
             applySettings();
         }
@@ -1222,6 +1449,22 @@
             const hideTransCheckbox = document.getElementById('toggleTranslationCheckbox');
             if (hideTransCheckbox) {
                 settings.hideTranslation = hideTransCheckbox.checked;
+            }
+            const hideTransCheckboxReader = document.getElementById('toggleTranslationCheckboxReader');
+            if (hideTransCheckboxReader) {
+                hideTransCheckboxReader.checked = settings.hideTranslation;
+            }
+            applySettings();
+        }
+
+        function syncAndToggleTranslation() {
+            const hideTransCheckboxReader = document.getElementById('toggleTranslationCheckboxReader');
+            if (hideTransCheckboxReader) {
+                settings.hideTranslation = hideTransCheckboxReader.checked;
+            }
+            const hideTransCheckbox = document.getElementById('toggleTranslationCheckbox');
+            if (hideTransCheckbox) {
+                hideTransCheckbox.checked = settings.hideTranslation;
             }
             applySettings();
         }
@@ -1349,6 +1592,19 @@
                                 span.innerText = "📖 Livro";
                                 coverDiv.appendChild(span);
                             }
+
+                            const progressBarContainer = document.createElement('div');
+                            progressBarContainer.className = 'book-progress-bar';
+                            const progressFill = document.createElement('div');
+                            progressFill.className = 'book-progress-fill';
+                            
+                            let pct = 0;
+                            if (book.content && book.content.length > 0 && book.lastReadIndex !== undefined) {
+                                pct = Math.min(100, Math.round(((book.lastReadIndex + 1) / book.content.length) * 100));
+                            }
+                            progressFill.style.width = pct + '%';
+                            progressBarContainer.appendChild(progressFill);
+                            coverDiv.appendChild(progressBarContainer);
 
                             const titleLabel = document.createElement('div');
                             titleLabel.className = 'book-title-label';
@@ -1550,42 +1806,65 @@
 
         async function processAndSaveBook() {
             const titleInput = document.getElementById('bookTitleInput').value.trim();
-            const fileInput = document.getElementById('bookFileInput');
             const coverInput = document.getElementById('coverFileInput');
 
-            if (!titleInput || fileInput.files.length === 0) {
-                showToast("Informe o título e selecione o arquivo do livro.");
+            if (!titleInput) {
+                showToast("Informe o título do livro.");
                 return;
             }
 
-            const file = fileInput.files[0];
             let rawText = "";
-            try {
-                const ext = file.name.split('.').pop().toLowerCase();
-                if (['txt', 'csv', 'json', 'srt', 'vtt'].includes(ext)) {
-                    rawText = await file.text();
-                } else if (ext === 'docx') {
-                    const arrayBuffer = await file.arrayBuffer();
-                    const result = await mammoth.extractRawText({ arrayBuffer });
-                    rawText = result.value;
-                } else if (ext === 'pdf') {
-                    const arrayBuffer = await file.arrayBuffer();
-                    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-                    let fullText = "";
-                    for (let i = 1; i <= pdf.numPages; i++) {
-                        const page = await pdf.getPage(i);
-                        const textContent = await page.getTextContent();
-                        fullText += textContent.items.map(item => item.str).join(" ") + "\n";
-                    }
-                    rawText = fullText;
-                }
 
+            if (currentAddMode === 'file') {
+                const fileInput = document.getElementById('bookFileInput');
+                if (fileInput.files.length === 0) {
+                    showToast("Selecione um arquivo de livro.");
+                    return;
+                }
+                const file = fileInput.files[0];
+                try {
+                    const ext = file.name.split('.').pop().toLowerCase();
+                    if (['txt', 'csv', 'json', 'srt', 'vtt'].includes(ext)) {
+                        rawText = await file.text();
+                    } else if (ext === 'docx') {
+                        const arrayBuffer = await file.arrayBuffer();
+                        const result = await mammoth.extractRawText({ arrayBuffer });
+                        rawText = result.value;
+                    } else if (ext === 'pdf') {
+                        const arrayBuffer = await file.arrayBuffer();
+                        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                        let fullText = "";
+                        for (let i = 1; i <= pdf.numPages; i++) {
+                            const page = await pdf.getPage(i);
+                            const textContent = await page.getTextContent();
+                            fullText += textContent.items.map(item => item.str).join(" ") + "\n";
+                        }
+                        rawText = fullText;
+                    }
+                } catch (err) {
+                    showToast("Erro ao processar o arquivo.");
+                    return;
+                }
+            } else {
+                rawText = cachedPastedText.trim();
+                if (!rawText) {
+                    showToast("Cole o texto do livro na tela de colagem.");
+                    return;
+                }
+            }
+
+            try {
                 let lines = rawText.replace(/\r/g, '').split('\n').map(l => l.trim()).filter(l => l.length > 0);
                 let bilingualPairs = [];
                 for (let i = 0; i < lines.length; i += 2) {
                     let origText = lines[i];
                     let transText = (i + 1 < lines.length) ? lines[i + 1] : "";
                     if (origText) bilingualPairs.push({ orig: origText, trans: transText });
+                }
+
+                if (bilingualPairs.length === 0) {
+                    showToast("Nenhum par de frases válido encontrado.");
+                    return;
                 }
 
                 let coverDataUrl = "";
@@ -1598,7 +1877,8 @@
                     title: titleInput,
                     cover: coverDataUrl,
                     content: bilingualPairs,
-                    scrollTop: 0
+                    scrollTop: 0,
+                    lastReadIndex: 0
                 });
                 localStorage.setItem('polyglot_books', JSON.stringify(books));
                 renderShelf();
@@ -1606,10 +1886,16 @@
 
                 document.getElementById('bookTitleInput').value = "";
                 document.getElementById('bookFileInput').value = "";
+                cachedPastedText = "";
+                document.getElementById('pasteStatusIndicator').innerText = "Nenhum texto colado ainda.";
                 document.getElementById('coverFileInput').value = "";
+                
+                const btnVoltar = document.getElementById('btn-voltar-config');
+                if(btnVoltar) btnVoltar.style.display = 'none';
+
                 closeSettingsModal();
             } catch (err) {
-                showToast("Erro ao processar o arquivo.");
+                showToast("Erro ao salvar o livro.");
             }
         }
 
@@ -1625,6 +1911,13 @@
 
         function openReader(book) {
             currentActiveBookId = book.id;
+            
+            const sideTab = document.getElementById('sideTabContainer');
+            if (sideTab) {
+                sideTab.classList.remove('open');
+                sideTab.style.display = 'none';
+            }
+
             const body = document.getElementById('reader-body');
             body.innerHTML = '';
 
@@ -1634,10 +1927,14 @@
                 body.classList.remove('hide-translation');
             }
 
-            book.content.forEach((pair) => {
+            book.content.forEach((pair, index) => {
                 const pairDiv = document.createElement('div');
                 pairDiv.className = 'bilingual-pair';
-                pairDiv.onclick = () => { playSpeech(pair.orig); };
+                pairDiv.dataset.index = index;
+
+                pairDiv.onclick = () => { 
+                    playSpeech(pair.orig); 
+                };
 
                 const origDiv = document.createElement('div');
                 origDiv.className = 'sentence-orig';
@@ -1661,6 +1958,17 @@
                 let currentBook = books.find(b => b.id === currentActiveBookId);
                 if (currentBook) {
                     currentBook.scrollTop = body.scrollTop;
+                    
+                    const pairElements = body.querySelectorAll('.bilingual-pair');
+                    let visibleIndex = 0;
+                    pairElements.forEach((el, idx) => {
+                        const rect = el.getBoundingClientRect();
+                        if (rect.top >= 0 && rect.top < window.innerHeight * 0.6) {
+                            visibleIndex = idx;
+                        }
+                    });
+                    currentBook.lastReadIndex = visibleIndex;
+
                     localStorage.setItem('polyglot_books', JSON.stringify(books));
                 }
             };
@@ -1775,6 +2083,17 @@
             if ('speechSynthesis' in window) window.speechSynthesis.cancel();
             document.getElementById('reader-view').style.display = 'none';
             currentActiveBookId = null;
+
+            renderShelf();
+
+            const sideTab = document.getElementById('sideTabContainer');
+            if (sideTab) {
+                sideTab.style.display = 'flex';
+            }
+            const readerSideTab = document.getElementById('readerSideTabContainer');
+            if (readerSideTab) {
+                readerSideTab.classList.remove('open');
+            }
         }
 
         function setupBackButton() {
@@ -1788,7 +2107,7 @@
             const readerView = document.getElementById('reader-view');
 
             readerView.addEventListener('touchend', (e) => {
-                if (e.target.id === 'readerBackBtn' || e.target.closest('#readerBackBtn')) return;
+                if (e.target.id === 'readerBackBtn' || e.target.closest('#readerBackBtn') || e.target.closest('#readerSideTabContainer')) return;
                 let currentTime = new Date().getTime();
                 if ((currentTime - lastTouchTime) < 300 && (currentTime - lastTouchTime) > 0) {
                     document.getElementById('readerBackBtn').classList.toggle('visible');
@@ -1798,7 +2117,7 @@
             });
 
             readerView.addEventListener('dblclick', (e) => {
-                if (e.target.id === 'readerBackBtn' || e.target.closest('#readerBackBtn')) return;
+                if (e.target.id === 'readerBackBtn' || e.target.closest('#readerBackBtn') || e.target.closest('#readerSideTabContainer')) return;
                 document.getElementById('readerBackBtn').classList.toggle('visible');
             });
         }

@@ -334,6 +334,7 @@
             font-size: 1.2rem;
             cursor: pointer;
             color: var(--app-text);
+            padding: 4px 8px;
         }
 
         .form-group {
@@ -354,6 +355,7 @@
             background-color: var(--app-bg);
             color: var(--app-text);
             font-size: 0.9rem;
+            width: 100%;
         }
 
         .form-group textarea {
@@ -555,6 +557,7 @@
             font-weight: bold;
             cursor: pointer;
             text-align: center;
+            touch-action: manipulation;
         }
 
         .btn-accent {
@@ -566,6 +569,7 @@
             font-weight: bold;
             cursor: pointer;
             text-align: center;
+            touch-action: manipulation;
         }
 
         .btn-danger {
@@ -577,6 +581,7 @@
             font-weight: bold;
             cursor: pointer;
             text-align: center;
+            touch-action: manipulation;
         }
 
         .settings-import-section {
@@ -607,6 +612,7 @@
             justify-content: space-between;
             cursor: pointer;
             transition: background-color 0.2s;
+            touch-action: manipulation;
         }
 
         .backup-folder-box:active {
@@ -720,6 +726,7 @@
             display: flex;
             align-items: center;
             gap: 4px;
+            touch-action: manipulation;
         }
 
         .btn-sm-danger {
@@ -731,6 +738,7 @@
             font-size: 0.75rem;
             font-weight: bold;
             cursor: pointer;
+            touch-action: manipulation;
         }
 
         #reader-view {
@@ -820,6 +828,7 @@
             pointer-events: none;
             transform: translateY(10px);
             transition: opacity 0.3s ease, transform 0.3s ease;
+            touch-action: manipulation;
         }
 
         .reader-floating-back.visible {
@@ -840,6 +849,7 @@
             font-size: 0.85rem;
             display: none;
             z-index: 20000;
+            pointer-events: none;
         }
     </style>
 </head>
@@ -875,7 +885,7 @@
 
     <!-- Modal Completo de Configurações / Livros -->
     <div class="modal" id="settingsModal">
-        <div class="modal-content">
+        <div class="modal-content" id="settingsModalContent">
             <div class="modal-header">
                 <span>Configurações, Livros e Voz</span>
                 <button class="close-btn" onclick="closeSettingsModal()">✕</button>
@@ -887,11 +897,11 @@
                 <span style="font-size: 0.9rem; font-weight: bold; color: var(--app-primary);">🗣️ Configuração de Voz Offline</span>
                 
                 <div class="form-group" style="margin-top: 8px;">
-                    <label>Vozes Baixadas no Aparelho (Clique para Abrir e Selecionar)</label>
-                    <select id="localVoiceSelect" size="1" style="height: auto; max-height: 120px;" onclick="if(this.size===1) this.size=4; else this.size=1;" onchange="this.size=1;">
+                    <label>Vozes Baixadas no Aparelho</label>
+                    <select id="localVoiceSelect">
                         <option value="">Nenhuma voz baixada (Fallback para Web Speech)</option>
                     </select>
-                    <div class="status-box" id="voiceStatus">Toque na caixa acima para abrir a lista e escolher a sua voz.</div>
+                    <div class="status-box" id="voiceStatus">Lista de vozes sincronizada com o aparelho.</div>
                 </div>
 
                 <div class="form-group" style="margin-top: 4px;">

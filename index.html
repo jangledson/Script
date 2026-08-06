@@ -732,16 +732,47 @@
             cursor: pointer;
         }
 
+        /* AJUSTE PARA OCUPAR A TELA CHEIA E REMOVER BARRAS INDESEJADAS */
         #reader-view {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100dvh;
             background-color: #222;
             z-index: 5000;
             display: none;
             flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* JANELA DE TRADUÇÃO FLUTUANTE NO TOPO (MOLDURA SEM TÍTULO, OBEDECENDO CONFIGURAÇÕES) */
+        .live-translation-window {
+            position: sticky;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            width: calc(100% - 20px);
+            margin: 10px auto 0 auto;
+            background-color: var(--reader-bg);
+            border: 2px solid var(--reader-trans);
+            border-radius: 8px;
+            padding: 12px 16px;
+            z-index: 6000;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            backdrop-filter: blur(4px);
+        }
+
+        .live-trans-content {
+            font-size: calc(var(--font-pixel-size) * 0.9);
+            color: var(--reader-trans);
+            font-weight: var(--font-weight, normal);
+            font-family: var(--selected-font, 'Arial', sans-serif);
+            min-height: 24px;
+            word-break: break-word;
         }
 
         #reader-body {
@@ -754,7 +785,8 @@
             max-width: 900px;
             margin: 0 auto;
             width: 100%;
-            padding-bottom: 80px;
+            padding-bottom: 120px;
+            -webkit-overflow-scrolling: touch;
         }
 
         @media (min-width: 768px) {
@@ -848,7 +880,7 @@
 
     <div class="trash-can-dropzone" id="trashCanDropzone" title="Arraste aqui para excluir o livro">🗑️</div>
 
-    <!-- Aba Lateral Direita Retrátil (Estante) -->
+    <!-- Aba Lateral Direta Retrátil (Estante) -->
     <div class="side-tab-container" id="sideTabContainer" style="right: 0;">
         <div class="side-tab-handle" id="sideTabHandle" title="Toque para abrir / Dois toques rápidos para fechar">
             <span style="font-size: 0.65rem; font-weight: bold;">⚙️</span>
@@ -1087,7 +1119,13 @@
         </div>
     </div>
 
+    <!-- TELA DO LEITOR -->
     <div id="reader-view">
+        <!-- Janela de Tradução Dinâmica no Topo (Moldura Sem Título) -->
+        <div class="live-translation-window" id="liveTranslationWindow">
+            <span class="live-trans-content" id="liveTransText">Deslize o texto para traduzir...</span>
+        </div>
+
         <div id="reader-body"></div>
         
         <!-- Aba Lateral Direta Retrátil (Leitor) -->
@@ -1932,6 +1970,8 @@
                 const pairDiv = document.createElement('div');
                 pairDiv.className = 'bilingual-pair';
                 pairDiv.dataset.index = index;
+                pairDiv.dataset.orig = pair.orig;
+                pairDiv.dataset.trans = pair.trans;
 
                 pairDiv.onclick = () => { 
                     playSpeech(pair.orig); 
@@ -1953,7 +1993,10 @@
             document.getElementById('reader-view').style.display = 'flex';
             document.getElementById('readerBackBtn').classList.remove('visible');
 
-            setTimeout(() => { body.scrollTop = book.scrollTop || 0; }, 50);
+            setTimeout(() => { 
+                body.scrollTop = book.scrollTop || 0; 
+                updateLiveTranslationOnScroll();
+            }, 50);
 
             body.onscroll = () => {
                 let currentBook = books.find(b => b.id === currentActiveBookId);
@@ -1972,7 +2015,28 @@
 
                     localStorage.setItem('polyglot_books', JSON.stringify(books));
                 }
+                updateLiveTranslationOnScroll();
             };
+        }
+
+        // LÓGICA DA JANELA DE TRADUÇÃO AUTOMÁTICA AO DESLIZAR
+        function updateLiveTranslationOnScroll() {
+            const body = document.getElementById('reader-body');
+            const liveTransText = document.getElementById('liveTransText');
+            if (!body || !liveTransText) return;
+
+            const pairs = body.querySelectorAll('.bilingual-pair');
+            const windowRect = document.getElementById('liveTranslationWindow').getBoundingClientRect();
+            let activeTrans = "Deslize o texto para traduzir...";
+
+            for (let pair of pairs) {
+                const rect = pair.getBoundingClientRect();
+                if (rect.top <= windowRect.bottom + 20 && rect.bottom >= windowRect.top) {
+                    activeTrans = pair.dataset.trans || "";
+                    break;
+                }
+            }
+            liveTransText.innerText = activeTrans;
         }
 
         function playSpeech(text) {

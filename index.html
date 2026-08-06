@@ -361,7 +361,6 @@
             min-height: 120px;
         }
 
-        /* Altura 100dvh flexível para caber na tela com teclado */
         #pasteModalFullscreen {
             position: fixed;
             top: 0;
@@ -927,7 +926,7 @@
                 <div class="status-box" id="downloadStatusText" style="display: none; text-align: center; font-weight: bold;">Iniciando download...</div>
             </div>
 
-            <!-- Seção de Adicionar Livro (Arquivo ou Colar Texto) -->
+            <!-- Seção de Adicionar Livro -->
             <div class="settings-import-section">
                 <span style="font-size: 0.9rem; font-weight: bold; color: var(--app-primary);">📥 Adicionar Livro Bilíngue</span>
                 
@@ -1243,6 +1242,8 @@
                 }
             };
 
+            handle.removeEventListener('click', handleTouchAction);
+            handle.removeEventListener('touchend', handleTouchAction);
             handle.addEventListener('click', handleTouchAction);
             handle.addEventListener('touchend', handleTouchAction);
         }
@@ -1857,8 +1858,8 @@
                 let lines = rawText.replace(/\r/g, '').split('\n').map(l => l.trim()).filter(l => l.length > 0);
                 let bilingualPairs = [];
                 for (let i = 0; i < lines.length; i += 2) {
-                    let transText = lines[i]; // Linha 1: Português (Fica embaixo)
-                    let origText = (i + 1 < lines.length) ? lines[i + 1] : ""; // Linha 2: Inglês (Fica em cima)
+                    let transText = lines[i]; 
+                    let origText = (i + 1 < lines.length) ? lines[i + 1] : ""; 
                     if (transText) bilingualPairs.push({ orig: origText, trans: transText });
                 }
 

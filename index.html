@@ -1095,7 +1095,7 @@
                 <span style="font-size: 0.7rem; color: #666; margin-top: 2px;">Quando ativado, o português aparece nos balões e o quadro de tradução some. Quando desativado, fica só inglês e o quadro aparece com a tradução.</span>
             </div>
 
-            <button class="btn-primary" onclick="openFullSettingsModal()">⚙️ Configurações Completas</button>
+            <button class="btn-primary" onclick="abrirConfiguracoes()">⚙️ Configurações Completas</button>
         </div>
     </div>
 
@@ -1104,7 +1104,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <span>Configurações, Livros e Voz</span>
-                <button class="close-btn" onclick="closeSettingsModal()">✕</button>
+                <button class="close-btn" onclick="fecharConfiguracoes()">✕</button>
             </div>
 
             <button id="btn-voltar-config" class="btn-primary" style="display: none; background-color: var(--app-accent); color: var(--app-text);" onclick="voltarParaConfiguracoesCapa()">← Voltar para Escolher Capa e Salvar</button>
@@ -1299,7 +1299,7 @@
                 <button class="btn-danger" onclick="deleteSelectedBook()">Excluir Livro Selecionado</button>
             </div>
 
-            <button class="btn-primary" onclick="closeSettingsModal()">Salvar Configurações</button>
+            <button class="btn-primary" onclick="fecharConfiguracoes()">Salvar Configurações</button>
         </div>
     </div>
 
@@ -1370,7 +1370,7 @@
                     <span style="font-size: 0.7rem; color: #666; margin-top: 2px;">Quando ativado, o português aparece nos balões e o quadro de tradução some. Quando desativado, fica só inglês e o quadro aparece com a tradução.</span>
                 </div>
 
-                <button class="btn-primary" onclick="openFullSettingsModal()">⚙️ Configurações Completas</button>
+                <button class="btn-primary" onclick="abrirConfiguracoes()">⚙️ Configurações Completas</button>
             </div>
         </div>
 
@@ -1424,7 +1424,41 @@
                 exportBackupBtn.addEventListener('click', (e) => { e.preventDefault(); exportBackup(); });
                 exportBackupBtn.addEventListener('touchend', (e) => { e.preventDefault(); exportBackup(); });
             }
+            
+            // Fechar modal ao clicar fora
+            document.getElementById('settingsModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    fecharConfiguracoes();
+                }
+            });
         });
+
+        // FUNÇÕES PARA ABRIR E FECHAR CONFIGURAÇÕES - CORRIGIDAS
+        function abrirConfiguracoes() {
+            // Fecha as abas laterais primeiro
+            const sideTab = document.getElementById('sideTabContainer');
+            if (sideTab) sideTab.classList.remove('open');
+            const readerSideTab = document.getElementById('readerSideTabContainer');
+            if (readerSideTab) readerSideTab.classList.remove('open');
+            
+            // Atualiza os dados antes de abrir
+            updateDeleteSelectOptions();
+            loadLocalVoicesFromApp();
+            updateBackupFolderSubtitle();
+            
+            // Abre o modal
+            const modal = document.getElementById('settingsModal');
+            if (modal) {
+                modal.classList.add('active');
+            }
+        }
+
+        function fecharConfiguracoes() {
+            const modal = document.getElementById('settingsModal');
+            if (modal) {
+                modal.classList.remove('active');
+            }
+        }
 
         // CONFIGURAÇÃO DOS BOTÕES DE NAVEGAÇÃO
         function setupNavigationButtons() {
@@ -1583,14 +1617,6 @@
             if (container) container.classList.toggle('open');
         }
 
-        function openFullSettingsModal() {
-            const sideTab = document.getElementById('sideTabContainer');
-            if (sideTab) sideTab.classList.remove('open');
-            const readerSideTab = document.getElementById('readerSideTabContainer');
-            if (readerSideTab) readerSideTab.classList.remove('open');
-            openSettingsModal();
-        }
-
         function showToast(msg) {
             const toast = document.getElementById('toast');
             toast.innerText = msg;
@@ -1598,13 +1624,20 @@
             setTimeout(() => { toast.style.display = 'none'; }, 3000);
         }
 
-        function openSettingsModal() { 
-            updateDeleteSelectOptions();
-            loadLocalVoicesFromApp();
-            updateBackupFolderSubtitle();
-            document.getElementById('settingsModal').classList.add('active'); 
+        // Função antiga mantida para compatibilidade
+        function openFullSettingsModal() {
+            abrirConfiguracoes();
         }
-        function closeSettingsModal() { document.getElementById('settingsModal').classList.remove('active'); }
+
+        // Função antiga mantida para compatibilidade
+        function openSettingsModal() {
+            abrirConfiguracoes();
+        }
+
+        // Função antiga mantida para compatibilidade
+        function closeSettingsModal() {
+            fecharConfiguracoes();
+        }
 
         function openBackupFolderModal() {
             renderBackupListItems();
@@ -1990,7 +2023,7 @@
                             empty.className = 'empty-slot';
                             empty.innerText = '+';
                             empty.dataset.index = slotIndex;
-                            empty.onclick = openSettingsModal;
+                            empty.onclick = abrirConfiguracoes;
 
                             setupEmptySlotDropEvents(empty, slotIndex);
                             rowEl.appendChild(empty);
@@ -2263,7 +2296,7 @@
                 const btnVoltar = document.getElementById('btn-voltar-config');
                 if(btnVoltar) btnVoltar.style.display = 'none';
 
-                closeSettingsModal();
+                fecharConfiguracoes();
             } catch (err) {
                 showToast("Erro ao salvar o livro.");
             }
@@ -2585,7 +2618,7 @@
                             localStorage.setItem('polyglot_settings', JSON.stringify(settings));
                             loadSettingsToUI();
                             renderShelf();
-                            closeSettingsModal();
+                            fecharConfiguracoes();
                             showToast("Backup restaurado com sucesso!");
                         }
                     } else {

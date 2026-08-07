@@ -1405,188 +1405,232 @@
         let totalSentences = 0;
         let currentBookContent = [];
 
-        document.addEventListener('DOMContentLoaded', () => {
-            loadSettingsToUI();
-            renderShelf();
-            setupReaderDoubleTap();
-            setupBackButton();
-            loadLocalVoicesFromApp();
-            updateBackupFolderSubtitle();
-            setupSideTabEvents('sideTabContainer', 'sideTabHandle');
-            setupSideTabEvents('readerSideTabContainer', 'readerSideTabHandle');
-            setupTrashCanDropEvents();
-            setupNavigationButtons();
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                loadSettingsToUI();
+                renderShelf();
+                setupReaderDoubleTap();
+                setupBackButton();
+                loadLocalVoicesFromApp();
+                updateBackupFolderSubtitle();
+                setupSideTabEvents('sideTabContainer', 'sideTabHandle');
+                setupSideTabEvents('readerSideTabContainer', 'readerSideTabHandle');
+                setupTrashCanDropEvents();
+                setupNavigationButtons();
 
-            const addBookBtn = document.getElementById('addBookBtn');
-            if (addBookBtn) {
-                addBookBtn.addEventListener('click', (e) => { e.preventDefault(); processAndSaveBook(); });
-                addBookBtn.addEventListener('touchend', (e) => { e.preventDefault(); processAndSaveBook(); });
-            }
-
-            const exportBackupBtn = document.getElementById('exportBackupBtn');
-            if (exportBackupBtn) {
-                exportBackupBtn.addEventListener('click', (e) => { e.preventDefault(); exportBackup(); });
-                exportBackupBtn.addEventListener('touchend', (e) => { e.preventDefault(); exportBackup(); });
-            }
-            
-            // Fechar modal ao clicar fora
-            document.getElementById('settingsModal').addEventListener('click', function(e) {
-                if (e.target === this) {
-                    fecharConfiguracoes();
+                const addBookBtn = document.getElementById('addBookBtn');
+                if (addBookBtn) {
+                    addBookBtn.addEventListener('click', function(e) { e.preventDefault(); processAndSaveBook(); });
+                    addBookBtn.addEventListener('touchend', function(e) { e.preventDefault(); processAndSaveBook(); });
                 }
-            });
+
+                const exportBackupBtn = document.getElementById('exportBackupBtn');
+                if (exportBackupBtn) {
+                    exportBackupBtn.addEventListener('click', function(e) { e.preventDefault(); exportBackup(); });
+                    exportBackupBtn.addEventListener('touchend', function(e) { e.preventDefault(); exportBackup(); });
+                }
+                
+                // Fechar modal ao clicar fora
+                const settingsModal = document.getElementById('settingsModal');
+                if (settingsModal) {
+                    settingsModal.addEventListener('click', function(e) {
+                        if (e.target === this) {
+                            fecharConfiguracoes();
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Erro na inicialização:', error);
+            }
         });
 
-        // FUNÇÕES PARA ABRIR E FECHAR CONFIGURAÇÕES - CORRIGIDAS
+        // FUNÇÕES PARA ABRIR E FECHAR CONFIGURAÇÕES
         function abrirConfiguracoes(event) {
-            // Previne qualquer propagação de eventos que possa interferir
-            if (event) {
-                event.stopPropagation();
-                event.preventDefault();
-            }
-            
-            // Fecha as abas laterais primeiro
-            const sideTab = document.getElementById('sideTabContainer');
-            if (sideTab) sideTab.classList.remove('open');
-            const readerSideTab = document.getElementById('readerSideTabContainer');
-            if (readerSideTab) readerSideTab.classList.remove('open');
-            
-            // Atualiza os dados antes de abrir
-            updateDeleteSelectOptions();
-            loadLocalVoicesFromApp();
-            updateBackupFolderSubtitle();
-            
-            // Abre o modal
-            const modal = document.getElementById('settingsModal');
-            if (modal) {
-                modal.classList.add('active');
-                document.body.style.overflow = 'hidden'; // Previne rolagem do fundo
+            try {
+                if (event) {
+                    event.stopPropagation();
+                    event.preventDefault();
+                }
+                
+                // Fecha as abas laterais primeiro
+                const sideTab = document.getElementById('sideTabContainer');
+                if (sideTab) sideTab.classList.remove('open');
+                const readerSideTab = document.getElementById('readerSideTabContainer');
+                if (readerSideTab) readerSideTab.classList.remove('open');
+                
+                // Atualiza os dados antes de abrir
+                updateDeleteSelectOptions();
+                loadLocalVoicesFromApp();
+                updateBackupFolderSubtitle();
+                
+                // Abre o modal
+                const modal = document.getElementById('settingsModal');
+                if (modal) {
+                    modal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                }
+            } catch (error) {
+                console.error('Erro ao abrir configurações:', error);
             }
         }
 
         function fecharConfiguracoes() {
-            const modal = document.getElementById('settingsModal');
-            if (modal) {
-                modal.classList.remove('active');
-                document.body.style.overflow = ''; // Restaura rolagem
+            try {
+                const modal = document.getElementById('settingsModal');
+                if (modal) {
+                    modal.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            } catch (error) {
+                console.error('Erro ao fechar configurações:', error);
             }
         }
 
         // CONFIGURAÇÃO DOS BOTÕES DE NAVEGAÇÃO
         function setupNavigationButtons() {
-            const navUp = document.getElementById('navUpBtn');
-            const navDown = document.getElementById('navDownBtn');
+            try {
+                const navUp = document.getElementById('navUpBtn');
+                const navDown = document.getElementById('navDownBtn');
 
-            navUp.addEventListener('click', (e) => {
-                e.stopPropagation();
-                navigateToSentence(currentSentenceIndex + 1);
-            });
+                if (navUp) {
+                    navUp.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        navigateToSentence(currentSentenceIndex + 1);
+                    });
+                    navUp.addEventListener('touchend', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        navigateToSentence(currentSentenceIndex + 1);
+                    });
+                }
 
-            navUp.addEventListener('touchend', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                navigateToSentence(currentSentenceIndex + 1);
-            });
-
-            navDown.addEventListener('click', (e) => {
-                e.stopPropagation();
-                navigateToSentence(currentSentenceIndex - 1);
-            });
-
-            navDown.addEventListener('touchend', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                navigateToSentence(currentSentenceIndex - 1);
-            });
+                if (navDown) {
+                    navDown.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        navigateToSentence(currentSentenceIndex - 1);
+                    });
+                    navDown.addEventListener('touchend', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        navigateToSentence(currentSentenceIndex - 1);
+                    });
+                }
+            } catch (error) {
+                console.error('Erro ao configurar botões de navegação:', error);
+            }
         }
 
         // FUNÇÃO PARA NAVEGAR ENTRE AS FRASES
         function navigateToSentence(index) {
-            if (!currentBookContent || currentBookContent.length === 0) return;
-            if (index < 0 || index >= currentBookContent.length) return;
+            try {
+                if (!currentBookContent || currentBookContent.length === 0) return;
+                if (index < 0 || index >= currentBookContent.length) return;
 
-            currentSentenceIndex = index;
-            const pair = currentBookContent[index];
-            
-            // Atualiza o quadro fixo com APENAS A TRADUÇÃO em português
-            const liveTransText = document.getElementById('liveTransText');
-            if (liveTransText && pair) {
-                liveTransText.textContent = pair.trans;
-            }
+                currentSentenceIndex = index;
+                const pair = currentBookContent[index];
+                
+                // Atualiza o quadro fixo com APENAS A TRADUÇÃO em português
+                const liveTransText = document.getElementById('liveTransText');
+                if (liveTransText && pair) {
+                    liveTransText.textContent = pair.trans;
+                }
 
-            // Rola a frase ativa para ficar BEM PRÓXIMA ao quadro (logo abaixo)
-            const body = document.getElementById('reader-body');
-            const pairs = body.querySelectorAll('.bilingual-pair');
-            
-            // Remove destaque anterior
-            pairs.forEach(p => p.classList.remove('active-sentence'));
-            
-            // Adiciona destaque na frase atual
-            if (pairs[index]) {
-                pairs[index].classList.add('active-sentence');
-                // Rola a frase para o topo da lista, logo abaixo do quadro
-                pairs[index].scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
+                // Rola a frase ativa para ficar BEM PRÓXIMA ao quadro
+                const body = document.getElementById('reader-body');
+                if (body) {
+                    const pairs = body.querySelectorAll('.bilingual-pair');
+                    pairs.forEach(p => p.classList.remove('active-sentence'));
+                    
+                    if (pairs[index]) {
+                        pairs[index].classList.add('active-sentence');
+                        pairs[index].scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }
 
-            // Atualiza o lastReadIndex no livro
-            let currentBook = books.find(b => b.id === currentActiveBookId);
-            if (currentBook) {
-                currentBook.lastReadIndex = index;
-                localStorage.setItem('polyglot_books', JSON.stringify(books));
+                // Atualiza o lastReadIndex no livro
+                let currentBook = books.find(b => b.id === currentActiveBookId);
+                if (currentBook) {
+                    currentBook.lastReadIndex = index;
+                    localStorage.setItem('polyglot_books', JSON.stringify(books));
+                }
+            } catch (error) {
+                console.error('Erro ao navegar para frase:', error);
             }
         }
 
         function switchAddMode(mode) {
-            currentAddMode = mode;
-            const fileBtn = document.getElementById('modeFileBtn');
-            const pasteBtn = document.getElementById('modePasteBtn');
-            const fileContainer = document.getElementById('fileInputContainer');
-            const pasteContainer = document.getElementById('pasteInputContainer');
+            try {
+                currentAddMode = mode;
+                const fileBtn = document.getElementById('modeFileBtn');
+                const pasteBtn = document.getElementById('modePasteBtn');
+                const fileContainer = document.getElementById('fileInputContainer');
+                const pasteContainer = document.getElementById('pasteInputContainer');
 
-            if (mode === 'file') {
-                fileBtn.style.backgroundColor = 'var(--app-primary)';
-                fileBtn.style.color = 'white';
-                pasteBtn.style.backgroundColor = 'var(--app-accent)';
-                pasteBtn.style.color = 'var(--app-text)';
-                fileContainer.style.display = 'flex';
-                pasteContainer.style.display = 'none';
-            } else {
-                pasteBtn.style.backgroundColor = 'var(--app-primary)';
-                pasteBtn.style.color = 'white';
-                fileBtn.style.backgroundColor = 'var(--app-accent)';
-                fileBtn.style.color = 'var(--app-text)';
-                pasteContainer.style.display = 'flex';
-                fileContainer.style.display = 'none';
+                if (mode === 'file') {
+                    if (fileBtn) {
+                        fileBtn.style.backgroundColor = 'var(--app-primary)';
+                        fileBtn.style.color = 'white';
+                    }
+                    if (pasteBtn) {
+                        pasteBtn.style.backgroundColor = 'var(--app-accent)';
+                        pasteBtn.style.color = 'var(--app-text)';
+                    }
+                    if (fileContainer) fileContainer.style.display = 'flex';
+                    if (pasteContainer) pasteContainer.style.display = 'none';
+                } else {
+                    if (pasteBtn) {
+                        pasteBtn.style.backgroundColor = 'var(--app-primary)';
+                        pasteBtn.style.color = 'white';
+                    }
+                    if (fileBtn) {
+                        fileBtn.style.backgroundColor = 'var(--app-accent)';
+                        fileBtn.style.color = 'var(--app-text)';
+                    }
+                    if (pasteContainer) pasteContainer.style.display = 'flex';
+                    if (fileContainer) fileContainer.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Erro ao mudar modo de adição:', error);
             }
         }
 
         function openFullscreenPasteModal() {
-            const modal = document.getElementById('pasteModalFullscreen');
-            const textarea = document.getElementById('fullscreenPasteTextarea');
-            textarea.value = cachedPastedText;
-            modal.classList.add('active');
-            textarea.focus();
+            try {
+                const modal = document.getElementById('pasteModalFullscreen');
+                const textarea = document.getElementById('fullscreenPasteTextarea');
+                if (modal && textarea) {
+                    textarea.value = cachedPastedText;
+                    modal.classList.add('active');
+                    textarea.focus();
+                }
+            } catch (error) {
+                console.error('Erro ao abrir modal de colagem:', error);
+            }
         }
 
         function closeFullscreenPasteModal(save) {
-            const modal = document.getElementById('pasteModalFullscreen');
-            const textarea = document.getElementById('fullscreenPasteTextarea');
-            const indicator = document.getElementById('pasteStatusIndicator');
+            try {
+                const modal = document.getElementById('pasteModalFullscreen');
+                const textarea = document.getElementById('fullscreenPasteTextarea');
+                const indicator = document.getElementById('pasteStatusIndicator');
 
-            if (save) {
-                cachedPastedText = textarea.value;
-                if (cachedPastedText.trim().length > 0) {
-                    indicator.innerText = "✓ Texto colado com sucesso (" + cachedPastedText.length + " caracteres)";
-                    indicator.style.color = "#2e7d32";
-                    
-                    const btnVoltar = document.getElementById('btn-voltar-config');
-                    if(btnVoltar) btnVoltar.style.display = 'block';
-                } else {
-                    indicator.innerText = "Nenhum texto colado ainda.";
-                    indicator.style.color = "#666";
+                if (save && textarea) {
+                    cachedPastedText = textarea.value;
+                    if (cachedPastedText.trim().length > 0 && indicator) {
+                        indicator.innerText = "✓ Texto colado com sucesso (" + cachedPastedText.length + " caracteres)";
+                        indicator.style.color = "#2e7d32";
+                        
+                        const btnVoltar = document.getElementById('btn-voltar-config');
+                        if(btnVoltar) btnVoltar.style.display = 'block';
+                    } else if (indicator) {
+                        indicator.innerText = "Nenhum texto colado ainda.";
+                        indicator.style.color = "#666";
+                    }
                 }
+                if (modal) modal.classList.remove('active');
+            } catch (error) {
+                console.error('Erro ao fechar modal de colagem:', error);
             }
-            modal.classList.remove('active');
         }
 
         function voltarParaConfiguracoesCapa() {
@@ -1596,44 +1640,60 @@
         }
 
         function setupSideTabEvents(containerId, handleId) {
-            const container = document.getElementById(containerId);
-            const handle = document.getElementById(handleId);
-            if (!container || !handle) return;
+            try {
+                const container = document.getElementById(containerId);
+                const handle = document.getElementById(handleId);
+                if (!container || !handle) return;
 
-            let lastTapTime = 0;
+                let lastTapTime = 0;
 
-            const handleTouchAction = (e) => {
-                e.preventDefault();
-                e.stopPropagation();
+                const handleTouchAction = function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
 
-                let currentTime = new Date().getTime();
-                let timeDiff = currentTime - lastTapTime;
+                    let currentTime = new Date().getTime();
+                    let timeDiff = currentTime - lastTapTime;
 
-                if (timeDiff < 350 && timeDiff > 0) {
-                    container.classList.remove('open');
-                    lastTapTime = 0;
-                } else {
-                    container.classList.add('open');
-                    lastTapTime = currentTime;
-                }
-            };
+                    if (timeDiff < 350 && timeDiff > 0) {
+                        container.classList.remove('open');
+                        lastTapTime = 0;
+                    } else {
+                        container.classList.add('open');
+                        lastTapTime = currentTime;
+                    }
+                };
 
-            handle.removeEventListener('click', handleTouchAction);
-            handle.removeEventListener('touchend', handleTouchAction);
-            handle.addEventListener('click', handleTouchAction);
-            handle.addEventListener('touchend', handleTouchAction);
+                handle.removeEventListener('click', handleTouchAction);
+                handle.removeEventListener('touchend', handleTouchAction);
+                handle.addEventListener('click', handleTouchAction);
+                handle.addEventListener('touchend', handleTouchAction);
+            } catch (error) {
+                console.error('Erro ao configurar abas laterais:', error);
+            }
         }
 
         function toggleSideTab(containerId) {
-            const container = document.getElementById(containerId);
-            if (container) container.classList.toggle('open');
+            try {
+                const container = document.getElementById(containerId);
+                if (container) container.classList.toggle('open');
+            } catch (error) {
+                console.error('Erro ao alternar aba lateral:', error);
+            }
         }
 
         function showToast(msg) {
-            const toast = document.getElementById('toast');
-            toast.innerText = msg;
-            toast.style.display = 'block';
-            setTimeout(() => { toast.style.display = 'none'; }, 3000);
+            try {
+                const toast = document.getElementById('toast');
+                if (toast) {
+                    toast.innerText = msg;
+                    toast.style.display = 'block';
+                    setTimeout(function() { 
+                        toast.style.display = 'none'; 
+                    }, 3000);
+                }
+            } catch (error) {
+                console.error('Erro ao mostrar toast:', error);
+            }
         }
 
         // Funções antigas mantidas para compatibilidade
@@ -1650,98 +1710,122 @@
         }
 
         function openBackupFolderModal() {
-            renderBackupListItems();
-            document.getElementById('backupListModal').classList.add('active');
+            try {
+                renderBackupListItems();
+                const modal = document.getElementById('backupListModal');
+                if (modal) modal.classList.add('active');
+            } catch (error) {
+                console.error('Erro ao abrir pasta de backups:', error);
+            }
         }
+        
         function closeBackupFolderModal() {
-            document.getElementById('backupListModal').classList.remove('active');
+            try {
+                const modal = document.getElementById('backupListModal');
+                if (modal) modal.classList.remove('active');
+            } catch (error) {
+                console.error('Erro ao fechar pasta de backups:', error);
+            }
         }
 
         function updateBackupFolderSubtitle() {
-            const sub = document.getElementById('backupCountSubtitle');
-            if (savedBackupsList.length === 0) {
-                sub.innerText = "Nenhum backup gerado";
-            } else if (savedBackupsList.length === 1) {
-                sub.innerText = "1 backup armazenado";
-            } else {
-                sub.innerText = `${savedBackupsList.length} backups armazenados`;
+            try {
+                const sub = document.getElementById('backupCountSubtitle');
+                if (sub) {
+                    if (savedBackupsList.length === 0) {
+                        sub.innerText = "Nenhum backup gerado";
+                    } else if (savedBackupsList.length === 1) {
+                        sub.innerText = "1 backup armazenado";
+                    } else {
+                        sub.innerText = savedBackupsList.length + " backups armazenados";
+                    }
+                }
+            } catch (error) {
+                console.error('Erro ao atualizar subtítulo de backup:', error);
             }
         }
 
         function renderBackupListItems() {
-            const container = document.getElementById('backupItemsContainer');
-            container.innerHTML = '';
-            if (savedBackupsList.length === 0) {
-                container.innerHTML = '<div style="text-align: center; color: #666; padding: 20px;">A pasta está vazia. Gere um backup para começar.</div>';
-                return;
+            try {
+                const container = document.getElementById('backupItemsContainer');
+                if (!container) return;
+                
+                container.innerHTML = '';
+                if (savedBackupsList.length === 0) {
+                    container.innerHTML = '<div style="text-align: center; color: #666; padding: 20px;">A pasta está vazia. Gere um backup para começar.</div>';
+                    return;
+                }
+                
+                savedBackupsList.forEach(function(item, index) {
+                    const row = document.createElement('div');
+                    row.className = 'backup-item-row';
+
+                    const details = document.createElement('div');
+                    details.className = 'backup-item-details';
+
+                    const nameEl = document.createElement('span');
+                    nameEl.className = 'backup-item-name';
+                    nameEl.innerText = item.name;
+
+                    const dateEl = document.createElement('span');
+                    dateEl.className = 'backup-item-date';
+                    dateEl.innerText = item.formattedDate;
+
+                    details.appendChild(nameEl);
+                    details.appendChild(dateEl);
+
+                    const actions = document.createElement('div');
+                    actions.className = 'backup-item-actions';
+
+                    const shareBtn = document.createElement('button');
+                    shareBtn.className = 'btn-sm-share';
+                    shareBtn.innerHTML = '📤 Compartilhar / Baixar';
+                    shareBtn.onclick = function() { shareSpecificBackup(index); };
+
+                    const delBtn = document.createElement('button');
+                    delBtn.className = 'btn-sm-danger';
+                    delBtn.innerText = '✕';
+                    delBtn.onclick = function() { deleteSpecificBackup(index); };
+
+                    actions.appendChild(shareBtn);
+                    actions.appendChild(delBtn);
+
+                    row.appendChild(details);
+                    row.appendChild(actions);
+                    container.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Erro ao renderizar lista de backups:', error);
             }
-            savedBackupsList.forEach((item, index) => {
-                const row = document.createElement('div');
-                row.className = 'backup-item-row';
-
-                const details = document.createElement('div');
-                details.className = 'backup-item-details';
-
-                const nameEl = document.createElement('span');
-                nameEl.className = 'backup-item-name';
-                nameEl.innerText = item.name;
-
-                const dateEl = document.createElement('span');
-                dateEl.className = 'backup-item-date';
-                dateEl.innerText = item.formattedDate;
-
-                details.appendChild(nameEl);
-                details.appendChild(dateEl);
-
-                const actions = document.createElement('div');
-                actions.className = 'backup-item-actions';
-
-                const shareBtn = document.createElement('button');
-                shareBtn.className = 'btn-sm-share';
-                shareBtn.innerHTML = '📤 Compartilhar / Baixar';
-                shareBtn.onclick = () => shareSpecificBackup(index);
-
-                const delBtn = document.createElement('button');
-                delBtn.className = 'btn-sm-danger';
-                delBtn.innerText = '✕';
-                delBtn.onclick = () => deleteSpecificBackup(index);
-
-                actions.appendChild(shareBtn);
-                actions.appendChild(delBtn);
-
-                row.appendChild(details);
-                row.appendChild(actions);
-                container.appendChild(row);
-            });
         }
 
         async function shareSpecificBackup(index) {
-            const item = savedBackupsList[index];
-            if (!item) return;
-            const blob = new Blob([item.data], { type: 'application/json' });
-            const file = new File([blob], item.name, { type: 'application/json' });
-
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                try {
-                    await navigator.share({
-                        title: 'Backup - Lendo Scripts',
-                        text: `Backup gerado em ${item.formattedDate}`,
-                        files: [file]
-                    });
-                    return;
-                } catch (e) {
-                    if (e.name === 'AbortError') return;
-                }
-            }
-
             try {
+                const item = savedBackupsList[index];
+                if (!item) return;
+                const blob = new Blob([item.data], { type: 'application/json' });
+                const file = new File([blob], item.name, { type: 'application/json' });
+
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    try {
+                        await navigator.share({
+                            title: 'Backup - Lendo Scripts',
+                            text: 'Backup gerado em ' + item.formattedDate,
+                            files: [file]
+                        });
+                        return;
+                    } catch (e) {
+                        if (e.name === 'AbortError') return;
+                    }
+                }
+
                 const url = URL.createObjectURL(blob);
                 const downloadAnchor = document.createElement('a');
                 downloadAnchor.href = url;
                 downloadAnchor.download = item.name;
                 document.body.appendChild(downloadAnchor);
                 downloadAnchor.click();
-                setTimeout(() => {
+                setTimeout(function() {
                     document.body.removeChild(downloadAnchor);
                     URL.revokeObjectURL(url);
                 }, 100);
@@ -1752,540 +1836,637 @@
         }
 
         function deleteSpecificBackup(index) {
-            if (confirm("Deseja remover este backup da pasta interna?")) {
-                savedBackupsList.splice(index, 1);
-                localStorage.setItem('polyglot_saved_backups', JSON.stringify(savedBackupsList));
-                renderBackupListItems();
-                updateBackupFolderSubtitle();
-                showToast("Backup removido.");
+            try {
+                if (confirm("Deseja remover este backup da pasta interna?")) {
+                    savedBackupsList.splice(index, 1);
+                    localStorage.setItem('polyglot_saved_backups', JSON.stringify(savedBackupsList));
+                    renderBackupListItems();
+                    updateBackupFolderSubtitle();
+                    showToast("Backup removido.");
+                }
+            } catch (error) {
+                console.error('Erro ao deletar backup:', error);
             }
         }
 
         function loadLocalVoicesFromApp() {
-            if (window.AndroidBridge && typeof window.AndroidBridge.getLocalVoices === 'function') {
-                window.AndroidBridge.getLocalVoices();
+            try {
+                if (window.AndroidBridge && typeof window.AndroidBridge.getLocalVoices === 'function') {
+                    window.AndroidBridge.getLocalVoices();
+                }
+            } catch (error) {
+                console.error('Erro ao carregar vozes locais:', error);
             }
         }
 
         function updateDeleteSelectOptions() {
-            const deleteSection = document.getElementById('deleteSection');
-            const select = document.getElementById('bookSelectToDelete');
-            select.innerHTML = '';
-            if (books.length === 0) {
-                deleteSection.style.display = 'none';
-                return;
+            try {
+                const deleteSection = document.getElementById('deleteSection');
+                const select = document.getElementById('bookSelectToDelete');
+                if (!select) return;
+                
+                select.innerHTML = '';
+                if (books.length === 0) {
+                    if (deleteSection) deleteSection.style.display = 'none';
+                    return;
+                }
+                if (deleteSection) deleteSection.style.display = 'flex';
+                
+                books.forEach(function(book) {
+                    const opt = document.createElement('option');
+                    opt.value = book.id;
+                    opt.innerText = book.title;
+                    select.appendChild(opt);
+                });
+            } catch (error) {
+                console.error('Erro ao atualizar opções de exclusão:', error);
             }
-            deleteSection.style.display = 'flex';
-            books.forEach(book => {
-                const opt = document.createElement('option');
-                opt.value = book.id;
-                opt.innerText = book.title;
-                select.appendChild(opt);
-            });
         }
 
         function deleteSelectedBook() {
-            const select = document.getElementById('bookSelectToDelete');
-            const bookId = parseInt(select.value);
-            if (!bookId) return;
-            if (confirm("Tem certeza de que deseja excluir este livro?")) {
-                books = books.filter(b => b.id !== bookId);
-                localStorage.setItem('polyglot_books', JSON.stringify(books));
-                renderShelf();
-                updateDeleteSelectOptions();
-                showToast("Livro excluído.");
+            try {
+                const select = document.getElementById('bookSelectToDelete');
+                if (!select) return;
+                const bookId = parseInt(select.value);
+                if (!bookId) return;
+                if (confirm("Tem certeza de que deseja excluir este livro?")) {
+                    books = books.filter(function(b) { return b.id !== bookId; });
+                    localStorage.setItem('polyglot_books', JSON.stringify(books));
+                    renderShelf();
+                    updateDeleteSelectOptions();
+                    showToast("Livro excluído.");
+                }
+            } catch (error) {
+                console.error('Erro ao excluir livro:', error);
             }
         }
 
         function loadSettingsToUI() {
-            document.getElementById('fontSelect').value = settings.font;
-            document.getElementById('fontWeightSelect').value = settings.weight;
-            if (!settings.pixelSize) settings.pixelSize = 16;
-            document.getElementById('fontSizeDisplay').innerText = settings.pixelSize + 'px';
+            try {
+                const fontSelect = document.getElementById('fontSelect');
+                const fontWeightSelect = document.getElementById('fontWeightSelect');
+                const fontSizeDisplay = document.getElementById('fontSizeDisplay');
+                
+                if (fontSelect) fontSelect.value = settings.font;
+                if (fontWeightSelect) fontWeightSelect.value = settings.weight;
+                if (!settings.pixelSize) settings.pixelSize = 16;
+                if (fontSizeDisplay) fontSizeDisplay.innerText = settings.pixelSize + 'px';
 
-            document.getElementById('origColorRange').value = settings.origVal ?? 0;
-            document.getElementById('transColorRange').value = settings.transVal ?? 30;
-            document.getElementById('bgColorRange').value = settings.bgVal ?? 100;
+                const origRange = document.getElementById('origColorRange');
+                const transRange = document.getElementById('transColorRange');
+                const bgRange = document.getElementById('bgColorRange');
+                
+                if (origRange) origRange.value = settings.origVal ?? 0;
+                if (transRange) transRange.value = settings.transVal ?? 30;
+                if (bgRange) bgRange.value = settings.bgVal ?? 100;
 
-            // hideTranslation = false significa que MOSTRA português (caixinha marcada)
-            // hideTranslation = true significa que NÃO MOSTRA português (caixinha desmarcada)
-            const hideTransCheckbox = document.getElementById('toggleTranslationCheckbox');
-            if (hideTransCheckbox) {
-                hideTransCheckbox.checked = !settings.hideTranslation;
+                const hideTransCheckbox = document.getElementById('toggleTranslationCheckbox');
+                if (hideTransCheckbox) {
+                    hideTransCheckbox.checked = !settings.hideTranslation;
+                }
+                const hideTransCheckboxReader = document.getElementById('toggleTranslationCheckboxReader');
+                if (hideTransCheckboxReader) {
+                    hideTransCheckboxReader.checked = !settings.hideTranslation;
+                }
+
+                applySettings();
+            } catch (error) {
+                console.error('Erro ao carregar configurações na UI:', error);
             }
-            const hideTransCheckboxReader = document.getElementById('toggleTranslationCheckboxReader');
-            if (hideTransCheckboxReader) {
-                hideTransCheckboxReader.checked = !settings.hideTranslation;
-            }
-
-            applySettings();
         }
 
         function toggleTranslationVisibility() {
-            const hideTransCheckbox = document.getElementById('toggleTranslationCheckbox');
-            if (hideTransCheckbox) {
-                settings.hideTranslation = !hideTransCheckbox.checked;
-            }
-            const hideTransCheckboxReader = document.getElementById('toggleTranslationCheckboxReader');
-            if (hideTransCheckboxReader) {
-                hideTransCheckboxReader.checked = !settings.hideTranslation;
-            }
-            applySettings();
-            
-            // Se estiver no leitor, atualiza a navegação
-            if (document.getElementById('reader-view').style.display === 'flex') {
-                updateNavigationVisibility();
+            try {
+                const hideTransCheckbox = document.getElementById('toggleTranslationCheckbox');
+                if (hideTransCheckbox) {
+                    settings.hideTranslation = !hideTransCheckbox.checked;
+                }
+                const hideTransCheckboxReader = document.getElementById('toggleTranslationCheckboxReader');
+                if (hideTransCheckboxReader) {
+                    hideTransCheckboxReader.checked = !settings.hideTranslation;
+                }
+                applySettings();
+                
+                if (document.getElementById('reader-view').style.display === 'flex') {
+                    updateNavigationVisibility();
+                }
+            } catch (error) {
+                console.error('Erro ao alternar visibilidade da tradução:', error);
             }
         }
 
         function syncAndToggleTranslation() {
-            const hideTransCheckboxReader = document.getElementById('toggleTranslationCheckboxReader');
-            if (hideTransCheckboxReader) {
-                settings.hideTranslation = !hideTransCheckboxReader.checked;
-            }
-            const hideTransCheckbox = document.getElementById('toggleTranslationCheckbox');
-            if (hideTransCheckbox) {
-                hideTransCheckbox.checked = !settings.hideTranslation;
-            }
-            applySettings();
-            
-            // Se estiver no leitor, atualiza a navegação            if (document.getElementById('reader-view').style.display === 'flex') {
-                updateNavigationVisibility();
+            try {
+                const hideTransCheckboxReader = document.getElementById('toggleTranslationCheckboxReader');
+                if (hideTransCheckboxReader) {
+                    settings.hideTranslation = !hideTransCheckboxReader.checked;
+                }
+                const hideTransCheckbox = document.getElementById('toggleTranslationCheckbox');
+                if (hideTransCheckbox) {
+                    hideTransCheckbox.checked = !settings.hideTranslation;
+                }
+                applySettings();
+                
+                if (document.getElementById('reader-view').style.display === 'flex') {
+                    updateNavigationVisibility();
+                }
+            } catch (error) {
+                console.error('Erro ao sincronizar tradução:', error);
             }
         }
 
         // FUNÇÃO PARA ATUALIZAR VISIBILIDADE DOS BOTÕES E CONTROLE DE ROLAGEM
         function updateNavigationVisibility() {
-            const navContainer = document.getElementById('navButtonsContainer');
-            const readerBody = document.getElementById('reader-body');
-            const translationHeader = document.getElementById('translationHeader');
-            
-            if (settings.hideTranslation) {
-                // Modo só inglês: mostra quadro e botões, DESLIGA ROLAGEM
-                if (readerBody) {
-                    readerBody.classList.remove('show-translation');
-                    readerBody.classList.add('hide-translation');
+            try {
+                const navContainer = document.getElementById('navButtonsContainer');
+                const readerBody = document.getElementById('reader-body');
+                const translationHeader = document.getElementById('translationHeader');
+                
+                if (settings.hideTranslation) {
+                    if (readerBody) {
+                        readerBody.classList.remove('show-translation');
+                        readerBody.classList.add('hide-translation');
+                    }
+                    if (navContainer) navContainer.style.display = 'flex';
+                    if (translationHeader) translationHeader.style.display = 'block';
+                } else {
+                    if (readerBody) {
+                        readerBody.classList.remove('hide-translation');
+                        readerBody.classList.add('show-translation');
+                    }
+                    if (navContainer) navContainer.style.display = 'none';
+                    if (translationHeader) translationHeader.style.display = 'none';
                 }
-                if (navContainer) navContainer.style.display = 'flex';
-                if (translationHeader) translationHeader.style.display = 'block';
-            } else {
-                // Modo português: esconde quadro e botões, LIGA ROLAGEM
-                if (readerBody) {
-                    readerBody.classList.remove('hide-translation');
-                    readerBody.classList.add('show-translation');
-                }
-                if (navContainer) navContainer.style.display = 'none';
-                if (translationHeader) translationHeader.style.display = 'none';
+            } catch (error) {
+                console.error('Erro ao atualizar visibilidade da navegação:', error);
             }
         }
 
         function changeFontSize(delta) {
-            settings.pixelSize += delta;
-            if (settings.pixelSize < 10) settings.pixelSize = 10;
-            if (settings.pixelSize > 80) settings.pixelSize = 80;
-            document.getElementById('fontSizeDisplay').innerText = settings.pixelSize + 'px';
-            applySettings();
+            try {
+                settings.pixelSize += delta;
+                if (settings.pixelSize < 10) settings.pixelSize = 10;
+                if (settings.pixelSize > 80) settings.pixelSize = 80;
+                const display = document.getElementById('fontSizeDisplay');
+                if (display) display.innerText = settings.pixelSize + 'px';
+                applySettings();
+            } catch (error) {
+                console.error('Erro ao mudar tamanho da fonte:', error);
+            }
         }
 
         function stepColor(type, delta) {
-            let inputId = type === 'orig' ? 'origColorRange' : (type === 'trans' ? 'transColorRange' : 'bgColorRange');
-            let input = document.getElementById(inputId);
-            let newVal = parseInt(input.value) + delta;
-            if (newVal < 0) newVal = 0;
-            if (newVal > 100) newVal = 100;
-            input.value = newVal;
-            updateRainbowColor(type);
+            try {
+                let inputId = type === 'orig' ? 'origColorRange' : (type === 'trans' ? 'transColorRange' : 'bgColorRange');
+                let input = document.getElementById(inputId);
+                if (!input) return;
+                let newVal = parseInt(input.value) + delta;
+                if (newVal < 0) newVal = 0;
+                if (newVal > 100) newVal = 100;
+                input.value = newVal;
+                updateRainbowColor(type);
+            } catch (error) {
+                console.error('Erro ao ajustar cor:', error);
+            }
         }
 
         function getColorFromSliderValue(val) {
-            let p = parseInt(val);
-            let r, g, b;
-            if (p <= 15) { let f = p / 15; r = Math.floor(153 * f); g = 0; b = 0; }
-            else if (p <= 25) { let f = (p - 15) / 10; r = 153 + Math.floor(102 * f); g = 0; b = 0; }
-            else if (p <= 40) { let f = (p - 25) / 15; r = 255; g = Math.floor(255 * f); b = 0; }
-            else if (p <= 55) { let f = (p - 40) / 15; r = 255 - Math.floor(255 * f); g = 255; b = 0; }
-            else if (p <= 70) { let f = (p - 55) / 15; r = 0; g = 255; b = Math.floor(255 * f); }
-            else if (p <= 85) { let f = (p - 70) / 15; r = 0; g = 255 - Math.floor(255 * f); b = 255; }
-            else if (p <= 95) { let f = (p - 85) / 10; r = Math.floor(255 * f); g = 0; b = 255; }
-            else { r = 255; g = 255; b = 255; }
-            return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+            try {
+                let p = parseInt(val);
+                let r, g, b;
+                if (p <= 15) { let f = p / 15; r = Math.floor(153 * f); g = 0; b = 0; }
+                else if (p <= 25) { let f = (p - 15) / 10; r = 153 + Math.floor(102 * f); g = 0; b = 0; }
+                else if (p <= 40) { let f = (p - 25) / 15; r = 255; g = Math.floor(255 * f); b = 0; }
+                else if (p <= 55) { let f = (p - 40) / 15; r = 255 - Math.floor(255 * f); g = 255; b = 0; }
+                else if (p <= 70) { let f = (p - 55) / 15; r = 0; g = 255; b = Math.floor(255 * f); }
+                else if (p <= 85) { let f = (p - 70) / 15; r = 0; g = 255 - Math.floor(255 * f); b = 255; }
+                else if (p <= 95) { let f = (p - 85) / 10; r = Math.floor(255 * f); g = 0; b = 255; }
+                else { r = 255; g = 255; b = 255; }
+                return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+            } catch (error) {
+                return "#000000";
+            }
         }
 
         function updateRainbowColor(type) {
-            if(type === 'orig') {
-                settings.origVal = document.getElementById('origColorRange').value;
-                let hex = getColorFromSliderValue(settings.origVal);
-                document.getElementById('hexOrigColor').innerText = hex;
-                document.documentElement.style.setProperty('--reader-orig', hex);
-            } else if(type === 'trans') {
-                settings.transVal = document.getElementById('transColorRange').value;
-                let hex = getColorFromSliderValue(settings.transVal);
-                document.getElementById('hexTransColor').innerText = hex;
-                document.documentElement.style.setProperty('--reader-trans', hex);
-            } else if(type === 'bg') {
-                settings.bgVal = document.getElementById('bgColorRange').value;
-                let hex = getColorFromSliderValue(settings.bgVal);
-                document.getElementById('hexBgColor').innerText = hex;
-                document.documentElement.style.setProperty('--reader-bg', hex);
+            try {
+                if(type === 'orig') {
+                    const range = document.getElementById('origColorRange');
+                    if (range) {
+                        settings.origVal = range.value;
+                        let hex = getColorFromSliderValue(settings.origVal);
+                        const hexTag = document.getElementById('hexOrigColor');
+                        if (hexTag) hexTag.innerText = hex;
+                        document.documentElement.style.setProperty('--reader-orig', hex);
+                    }
+                } else if(type === 'trans') {
+                    const range = document.getElementById('transColorRange');
+                    if (range) {
+                        settings.transVal = range.value;
+                        let hex = getColorFromSliderValue(settings.transVal);
+                        const hexTag = document.getElementById('hexTransColor');
+                        if (hexTag) hexTag.innerText = hex;
+                        document.documentElement.style.setProperty('--reader-trans', hex);
+                    }
+                } else if(type === 'bg') {
+                    const range = document.getElementById('bgColorRange');
+                    if (range) {
+                        settings.bgVal = range.value;
+                        let hex = getColorFromSliderValue(settings.bgVal);
+                        const hexTag = document.getElementById('hexBgColor');
+                        if (hexTag) hexTag.innerText = hex;
+                        document.documentElement.style.setProperty('--reader-bg', hex);
+                    }
+                }
+                localStorage.setItem('polyglot_settings', JSON.stringify(settings));
+            } catch (error) {
+                console.error('Erro ao atualizar cor do arco-íris:', error);
             }
-            localStorage.setItem('polyglot_settings', JSON.stringify(settings));
         }
 
         function applySettings() {
-            settings.font = document.getElementById('fontSelect').value;
-            settings.weight = document.getElementById('fontWeightSelect').value;
-            document.documentElement.style.setProperty('--selected-font', settings.font);
-            document.documentElement.style.setProperty('--font-pixel-size', settings.pixelSize + 'px');
-            document.documentElement.style.setProperty('--font-weight', settings.weight);
-            updateRainbowColor('orig');
-            updateRainbowColor('trans');
-            updateRainbowColor('bg');
+            try {
+                const fontSelect = document.getElementById('fontSelect');
+                const fontWeightSelect = document.getElementById('fontWeightSelect');
+                
+                if (fontSelect) settings.font = fontSelect.value;
+                if (fontWeightSelect) settings.weight = fontWeightSelect.value;
+                
+                document.documentElement.style.setProperty('--selected-font', settings.font);
+                document.documentElement.style.setProperty('--font-pixel-size', settings.pixelSize + 'px');
+                document.documentElement.style.setProperty('--font-weight', settings.weight);
+                updateRainbowColor('orig');
+                updateRainbowColor('trans');
+                updateRainbowColor('bg');
 
-            const readerBody = document.getElementById('reader-body');
-            if (readerBody) {
-                if (settings.hideTranslation) {
-                    readerBody.classList.remove('show-translation');
-                    readerBody.classList.add('hide-translation');
-                } else {
-                    readerBody.classList.remove('hide-translation');
-                    readerBody.classList.add('show-translation');
+                const readerBody = document.getElementById('reader-body');
+                if (readerBody) {
+                    if (settings.hideTranslation) {
+                        readerBody.classList.remove('show-translation');
+                        readerBody.classList.add('hide-translation');
+                    } else {
+                        readerBody.classList.remove('hide-translation');
+                        readerBody.classList.add('show-translation');
+                    }
                 }
-            }
 
-            localStorage.setItem('polyglot_settings', JSON.stringify(settings));
+                localStorage.setItem('polyglot_settings', JSON.stringify(settings));
+            } catch (error) {
+                console.error('Erro ao aplicar configurações:', error);
+            }
         }
 
         function renderShelf() {
-            const container = document.getElementById('shelfContainer');
-            container.innerHTML = '';
-            
-            const LIMITE_POR_ESTANTE = 12;
-            let totalLivrosEspacos = Math.max(6, Math.ceil((books.length) / 3) * 3);
-            let totalEstantes = Math.max(1, Math.ceil(totalLivrosEspacos / LIMITE_POR_ESTANTE));
+            try {
+                const container = document.getElementById('shelfContainer');
+                if (!container) return;
+                container.innerHTML = '';
+                
+                const LIMITE_POR_ESTANTE = 12;
+                let totalLivrosEspacos = Math.max(6, Math.ceil((books.length) / 3) * 3);
+                let totalEstantes = Math.max(1, Math.ceil(totalLivrosEspacos / LIMITE_POR_ESTANTE));
 
-            for (let e = 0; e < totalEstantes; e++) {
-                const estanteBloco = document.createElement('div');
-                estanteBloco.className = 'estante-bloco';
+                for (let e = 0; e < totalEstantes; e++) {
+                    const estanteBloco = document.createElement('div');
+                    estanteBloco.className = 'estante-bloco';
 
-                const tituloEstante = document.createElement('div');
-                tituloEstante.className = 'estante-titulo';
-                tituloEstante.innerText = `Estante ${e + 1}`;
-                estanteBloco.appendChild(tituloEstante);
+                    const tituloEstante = document.createElement('div');
+                    tituloEstante.className = 'estante-titulo';
+                    tituloEstante.innerText = 'Estante ' + (e + 1);
+                    estanteBloco.appendChild(tituloEstante);
 
-                for (let r = 0; r < 4; r++) {
-                    const rowEl = document.createElement('div');
-                    rowEl.className = 'shelf-row';
+                    for (let r = 0; r < 4; r++) {
+                        const rowEl = document.createElement('div');
+                        rowEl.className = 'shelf-row';
 
-                    for (let c = 0; c < 3; c++) {
-                        let slotIndex = (e * LIMITE_POR_ESTANTE) + (r * 3) + c;
-                        let book = books[slotIndex];
+                        for (let c = 0; c < 3; c++) {
+                            let slotIndex = (e * LIMITE_POR_ESTANTE) + (r * 3) + c;
+                            let book = books[slotIndex];
 
-                        if (book) {
-                            const card = document.createElement('div');
-                            card.className = 'book-card';
-                            card.draggable = true;
-                            card.dataset.index = slotIndex;
+                            if (book) {
+                                const card = document.createElement('div');
+                                card.className = 'book-card';
+                                card.draggable = true;
+                                card.dataset.index = slotIndex;
 
-                            // REMOVER qualquer onclick que possa interferir
-                            card.onclick = null;
-                            
-                            // Usar event listener separado para abrir o livro
-                            card.addEventListener('click', function(e) {
-                                // Verifica se não está arrastando
-                                if (!this.dataset.moved) {
-                                    openReader(book);
+                                card.addEventListener('click', function(e) {
+                                    if (!this.dataset.moved) {
+                                        openReader(book);
+                                    }
+                                    delete this.dataset.moved;
+                                });
+
+                                const coverDiv = document.createElement('div');
+                                coverDiv.className = 'book-cover';
+                                if (book.cover) {
+                                    const img = document.createElement('img');
+                                    img.src = book.cover;
+                                    coverDiv.appendChild(img);
+                                } else {
+                                    const span = document.createElement('span');
+                                    span.innerText = "📖 Livro";
+                                    coverDiv.appendChild(span);
                                 }
-                                delete this.dataset.moved;
-                            });
 
-                            const coverDiv = document.createElement('div');
-                            coverDiv.className = 'book-cover';
-                            if (book.cover) {
-                                const img = document.createElement('img');
-                                img.src = book.cover;
-                                coverDiv.appendChild(img);
+                                const progressBarContainer = document.createElement('div');
+                                progressBarContainer.className = 'book-progress-bar';
+                                const progressFill = document.createElement('div');
+                                progressFill.className = 'book-progress-fill';
+                                
+                                let pct = 0;
+                                if (book.content && book.content.length > 0 && book.lastReadIndex !== undefined) {
+                                    pct = Math.min(100, Math.round(((book.lastReadIndex + 1) / book.content.length) * 100));
+                                }
+                                progressFill.style.width = pct + '%';
+                                progressBarContainer.appendChild(progressFill);
+                                coverDiv.appendChild(progressBarContainer);
+
+                                const titleLabel = document.createElement('div');
+                                titleLabel.className = 'book-title-label';
+                                titleLabel.innerText = book.title;
+
+                                card.appendChild(coverDiv);
+                                card.appendChild(titleLabel);
+
+                                setupBookDragEvents(card, slotIndex);
+                                rowEl.appendChild(card);
                             } else {
-                                const span = document.createElement('span');
-                                span.innerText = "📖 Livro";
-                                coverDiv.appendChild(span);
+                                const empty = document.createElement('div');
+                                empty.className = 'empty-slot';
+                                empty.innerText = '+';
+                                empty.dataset.index = slotIndex;
+                                empty.onclick = function(e) {
+                                    e.stopPropagation();
+                                    e.preventDefault();
+                                    abrirConfiguracoes(e);
+                                };
+
+                                setupEmptySlotDropEvents(empty, slotIndex);
+                                rowEl.appendChild(empty);
                             }
-
-                            const progressBarContainer = document.createElement('div');
-                            progressBarContainer.className = 'book-progress-bar';
-                            const progressFill = document.createElement('div');
-                            progressFill.className = 'book-progress-fill';
-                            
-                            let pct = 0;
-                            if (book.content && book.content.length > 0 && book.lastReadIndex !== undefined) {
-                                pct = Math.min(100, Math.round(((book.lastReadIndex + 1) / book.content.length) * 100));
-                            }
-                            progressFill.style.width = pct + '%';
-                            progressBarContainer.appendChild(progressFill);
-                            coverDiv.appendChild(progressBarContainer);
-
-                            const titleLabel = document.createElement('div');
-                            titleLabel.className = 'book-title-label';
-                            titleLabel.innerText = book.title;
-
-                            card.appendChild(coverDiv);
-                            card.appendChild(titleLabel);
-
-                            setupBookDragEvents(card, slotIndex);
-                            rowEl.appendChild(card);
-                        } else {
-                            const empty = document.createElement('div');
-                            empty.className = 'empty-slot';
-                            empty.innerText = '+';
-                            empty.dataset.index = slotIndex;
-                            // Usar onclick diretamente para abrir configurações
-                            empty.onclick = function(e) {
-                                e.stopPropagation();
-                                e.preventDefault();
-                                abrirConfiguracoes(e);
-                            };
-
-                            setupEmptySlotDropEvents(empty, slotIndex);
-                            rowEl.appendChild(empty);
                         }
+                        estanteBloco.appendChild(rowEl);
                     }
-                    estanteBloco.appendChild(rowEl);
+                    container.appendChild(estanteBloco);
                 }
-                container.appendChild(estanteBloco);
+            } catch (error) {
+                console.error('Erro ao renderizar estante:', error);
             }
         }
 
         let draggedIndex = null;
 
         function showTrashCan() {
-            const trash = document.getElementById('trashCanDropzone');
-            if (trash) trash.classList.add('active-trash');
+            try {
+                const trash = document.getElementById('trashCanDropzone');
+                if (trash) trash.classList.add('active-trash');
+            } catch (error) {
+                console.error('Erro ao mostrar lixeira:', error);
+            }
         }
 
         function hideTrashCan() {
-            const trash = document.getElementById('trashCanDropzone');
-            if (trash) {
-                trash.classList.remove('active-trash');
-                trash.classList.remove('drag-over-trash');
+            try {
+                const trash = document.getElementById('trashCanDropzone');
+                if (trash) {
+                    trash.classList.remove('active-trash');
+                    trash.classList.remove('drag-over-trash');
+                }
+            } catch (error) {
+                console.error('Erro ao esconder lixeira:', error);
             }
         }
 
         function setupTrashCanDropEvents() {
-            const trash = document.getElementById('trashCanDropzone');
-            if (!trash) return;
+            try {
+                const trash = document.getElementById('trashCanDropzone');
+                if (!trash) return;
 
-            trash.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                trash.classList.add('drag-over-trash');
-            });
+                trash.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    trash.classList.add('drag-over-trash');
+                });
 
-            trash.addEventListener('dragleave', () => {
-                trash.classList.remove('drag-over-trash');
-            });
+                trash.addEventListener('dragleave', function() {
+                    trash.classList.remove('drag-over-trash');
+                });
 
-            trash.addEventListener('drop', (e) => {
-                e.preventDefault();
-                trash.classList.remove('drag-over-trash');
-                if (draggedIndex !== null && books[draggedIndex]) {
-                    if (confirm(`Deseja excluir o livro "${books[draggedIndex].title}"?`)) {
-                        books.splice(draggedIndex, 1);
-                        localStorage.setItem('polyglot_books', JSON.stringify(books));
-                        renderShelf();
-                        showToast("Livro jogado fora!");
+                trash.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    trash.classList.remove('drag-over-trash');
+                    if (draggedIndex !== null && books[draggedIndex]) {
+                        if (confirm('Deseja excluir o livro "' + books[draggedIndex].title + '"?')) {
+                            books.splice(draggedIndex, 1);
+                            localStorage.setItem('polyglot_books', JSON.stringify(books));
+                            renderShelf();
+                            showToast("Livro jogado fora!");
+                        }
                     }
-                }
-                draggedIndex = null;
-                hideTrashCan();
-            });
+                    draggedIndex = null;
+                    hideTrashCan();
+                });
+            } catch (error) {
+                console.error('Erro ao configurar eventos da lixeira:', error);
+            }
         }
 
         function setupBookDragEvents(card, index) {
-            let touchStartX = 0, touchStartY = 0;
-            let isDraggingOrMoving = false;
-            let isTouching = false;
+            try {
+                let touchStartX = 0, touchStartY = 0;
+                let isDraggingOrMoving = false;
+                let isTouching = false;
 
-            card.addEventListener('dragstart', (e) => {
-                draggedIndex = index;
-                card.classList.add('dragging');
-                e.dataTransfer.setData('text/plain', index);
-                showTrashCan();
-            });
-
-            card.addEventListener('dragend', () => {
-                card.classList.remove('dragging');
-                draggedIndex = null;
-                document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
-                hideTrashCan();
-            });
-
-            card.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                card.classList.add('drag-over');
-            });
-
-            card.addEventListener('dragleave', () => {
-                card.classList.remove('drag-over');
-            });
-
-            card.addEventListener('drop', (e) => {
-                e.preventDefault();
-                card.classList.remove('drag-over');
-                if (draggedIndex !== null && draggedIndex !== index) {
-                    reorderBooks(draggedIndex, index);
-                }
-                hideTrashCan();
-            });
-
-            // Versão touch - melhorada para não conflitar com clique
-            card.addEventListener('touchstart', (e) => {
-                isTouching = true;
-                draggedIndex = index;
-                touchStartX = e.touches[0].clientX;
-                touchStartY = e.touches[0].clientY;
-                isDraggingOrMoving = false;
-                delete card.dataset.moved;
-            }, {passive: true});
-
-            card.addEventListener('touchmove', (e) => {
-                if (draggedIndex === null || !isTouching) return;
-                let moveX = e.touches[0].clientX - touchStartX;
-                let moveY = e.touches[0].clientY - touchStartY;
-                
-                if (Math.abs(moveX) > 10 || Math.abs(moveY) > 10) {
-                    isDraggingOrMoving = true;
-                    card.dataset.moved = "true";
+                card.addEventListener('dragstart', function(e) {
+                    draggedIndex = index;
                     card.classList.add('dragging');
+                    e.dataTransfer.setData('text/plain', index);
                     showTrashCan();
-                    // Previne o scroll durante o drag
+                });
+
+                card.addEventListener('dragend', function() {
+                    card.classList.remove('dragging');
+                    draggedIndex = null;
+                    document.querySelectorAll('.drag-over').forEach(function(el) {
+                        el.classList.remove('drag-over');
+                    });
+                    hideTrashCan();
+                });
+
+                card.addEventListener('dragover', function(e) {
                     e.preventDefault();
-                }
-            }, {passive: false});
+                    card.classList.add('drag-over');
+                });
 
-            card.addEventListener('touchend', (e) => {
-                card.classList.remove('dragging');
-                let touch = e.changedTouches[0];
-                let targetEl = document.elementFromPoint(touch.clientX, touch.clientY);
-                
-                let trashEl = document.getElementById('trashCanDropzone');
-                let rect = trashEl ? trashEl.getBoundingClientRect() : null;
-                let droppedOnTrash = rect && touch.clientX >= rect.left && touch.clientX <= rect.right && touch.clientY >= rect.top && touch.clientY <= rect.bottom;
+                card.addEventListener('dragleave', function() {
+                    card.classList.remove('drag-over');
+                });
 
-                if (droppedOnTrash && draggedIndex !== null && books[draggedIndex]) {
-                    if (confirm(`Deseja excluir o livro "${books[draggedIndex].title}"?`)) {
-                        books.splice(draggedIndex, 1);
-                        localStorage.setItem('polyglot_books', JSON.stringify(books));
-                        renderShelf();
-                        showToast("Livro jogado fora!");
+                card.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    card.classList.remove('drag-over');
+                    if (draggedIndex !== null && draggedIndex !== index) {
+                        reorderBooks(draggedIndex, index);
                     }
-                } else if (isDraggingOrMoving && targetEl) {
-                    let dropTarget = targetEl.closest('.book-card, .empty-slot');
-                    if (dropTarget && dropTarget.dataset.index !== undefined) {
-                        let targetIndex = parseInt(dropTarget.dataset.index);
-                        if (draggedIndex !== null && draggedIndex !== targetIndex) {
-                            reorderBooks(draggedIndex, targetIndex);
+                    hideTrashCan();
+                });
+
+                card.addEventListener('touchstart', function(e) {
+                    isTouching = true;
+                    draggedIndex = index;
+                    touchStartX = e.touches[0].clientX;
+                    touchStartY = e.touches[0].clientY;
+                    isDraggingOrMoving = false;
+                    delete card.dataset.moved;
+                }, {passive: true});
+
+                card.addEventListener('touchmove', function(e) {
+                    if (draggedIndex === null || !isTouching) return;
+                    let moveX = e.touches[0].clientX - touchStartX;
+                    let moveY = e.touches[0].clientY - touchStartY;
+                    
+                    if (Math.abs(moveX) > 10 || Math.abs(moveY) > 10) {
+                        isDraggingOrMoving = true;
+                        card.dataset.moved = "true";
+                        card.classList.add('dragging');
+                        showTrashCan();
+                        e.preventDefault();
+                    }
+                }, {passive: false});
+
+                card.addEventListener('touchend', function(e) {
+                    card.classList.remove('dragging');
+                    let touch = e.changedTouches[0];
+                    let targetEl = document.elementFromPoint(touch.clientX, touch.clientY);
+                    
+                    let trashEl = document.getElementById('trashCanDropzone');
+                    let rect = trashEl ? trashEl.getBoundingClientRect() : null;
+                    let droppedOnTrash = rect && touch.clientX >= rect.left && touch.clientX <= rect.right && touch.clientY >= rect.top && touch.clientY <= rect.bottom;
+
+                    if (droppedOnTrash && draggedIndex !== null && books[draggedIndex]) {
+                        if (confirm('Deseja excluir o livro "' + books[draggedIndex].title + '"?')) {
+                            books.splice(draggedIndex, 1);
+                            localStorage.setItem('polyglot_books', JSON.stringify(books));
+                            renderShelf();
+                            showToast("Livro jogado fora!");
+                        }
+                    } else if (isDraggingOrMoving && targetEl) {
+                        let dropTarget = targetEl.closest('.book-card, .empty-slot');
+                        if (dropTarget && dropTarget.dataset.index !== undefined) {
+                            let targetIndex = parseInt(dropTarget.dataset.index);
+                            if (draggedIndex !== null && draggedIndex !== targetIndex) {
+                                reorderBooks(draggedIndex, targetIndex);
+                            }
                         }
                     }
-                } else if (!isDraggingOrMoving) {
-                    // Se não houve movimento, é um clique normal - abrir o livro
-                    // Mas o clique já é tratado pelo event listener click
-                }
 
-                draggedIndex = null;
-                isTouching = false;
-                hideTrashCan();
-            });
+                    draggedIndex = null;
+                    isTouching = false;
+                    hideTrashCan();
+                });
+            } catch (error) {
+                console.error('Erro ao configurar eventos de arraste do livro:', error);
+            }
         }
 
         function setupEmptySlotDropEvents(emptyEl, index) {
-            emptyEl.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                emptyEl.classList.add('drag-over');
-            });
+            try {
+                emptyEl.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    emptyEl.classList.add('drag-over');
+                });
 
-            emptyEl.addEventListener('dragleave', () => {
-                emptyEl.classList.remove('drag-over');
-            });
+                emptyEl.addEventListener('dragleave', function() {
+                    emptyEl.classList.remove('drag-over');
+                });
 
-            emptyEl.addEventListener('drop', (e) => {
-                e.preventDefault();
-                emptyEl.classList.remove('drag-over');
-                if (draggedIndex !== null) {
-                    reorderBooks(draggedIndex, index);
-                }
-                hideTrashCan();
-            });
+                emptyEl.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    emptyEl.classList.remove('drag-over');
+                    if (draggedIndex !== null) {
+                        reorderBooks(draggedIndex, index);
+                    }
+                    hideTrashCan();
+                });
+            } catch (error) {
+                console.error('Erro ao configurar eventos do slot vazio:', error);
+            }
         }
 
         function reorderBooks(fromIndex, toIndex) {
-            if (fromIndex === toIndex) return;
+            try {
+                if (fromIndex === toIndex) return;
 
-            while (books.length <= Math.max(fromIndex, toIndex)) {
-                books.push(null);
+                while (books.length <= Math.max(fromIndex, toIndex)) {
+                    books.push(null);
+                }
+
+                let movedBook = books[fromIndex];
+                books.splice(fromIndex, 1);
+                books.splice(toIndex, 0, movedBook);
+
+                while (books.length > 0 && books[books.length - 1] === null) {
+                    books.pop();
+                }
+
+                localStorage.setItem('polyglot_books', JSON.stringify(books));
+                renderShelf();
+                showToast("Livro reorganizado!");
+            } catch (error) {
+                console.error('Erro ao reorganizar livros:', error);
             }
-
-            let movedBook = books[fromIndex];
-            books.splice(fromIndex, 1);
-            books.splice(toIndex, 0, movedBook);
-
-            while (books.length > 0 && books[books.length - 1] === null) {
-                books.pop();
-            }
-
-            localStorage.setItem('polyglot_books', JSON.stringify(books));
-            renderShelf();
-            showToast("Livro reorganizado!");
         }
 
         async function processAndSaveBook() {
-            const titleInput = document.getElementById('bookTitleInput').value.trim();
-            const coverInput = document.getElementById('coverFileInput');
-
-            if (!titleInput) {
-                showToast("Informe o título do livro.");
-                return;
-            }
-
-            let rawText = "";
-
-            if (currentAddMode === 'file') {
-                const fileInput = document.getElementById('bookFileInput');
-                if (fileInput.files.length === 0) {
-                    showToast("Selecione um arquivo de livro.");
-                    return;
-                }
-                const file = fileInput.files[0];
-                try {
-                    const ext = file.name.split('.').pop().toLowerCase();
-                    if (['txt', 'csv', 'json', 'srt', 'vtt'].includes(ext)) {
-                        rawText = await file.text();
-                    } else if (ext === 'docx') {
-                        const arrayBuffer = await file.arrayBuffer();
-                        const result = await mammoth.extractRawText({ arrayBuffer });
-                        rawText = result.value;
-                    } else if (ext === 'pdf') {
-                        const arrayBuffer = await file.arrayBuffer();
-                        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-                        let fullText = "";
-                        for (let i = 1; i <= pdf.numPages; i++) {
-                            const page = await pdf.getPage(i);
-                            const textContent = await page.getTextContent();
-                            fullText += textContent.items.map(item => item.str).join(" ") + "\n";
-                        }
-                        rawText = fullText;
-                    }
-                } catch (err) {
-                    showToast("Erro ao processar o arquivo.");
-                    return;
-                }
-            } else {
-                rawText = cachedPastedText.trim();
-                if (!rawText) {
-                    showToast("Cole o texto do livro na tela de colagem.");
-                    return;
-                }
-            }
-
             try {
-                let lines = rawText.replace(/\r/g, '').split('\n').map(l => l.trim()).filter(l => l.length > 0);
+                const titleInput = document.getElementById('bookTitleInput');
+                const coverInput = document.getElementById('coverFileInput');
+
+                if (!titleInput || !titleInput.value.trim()) {
+                    showToast("Informe o título do livro.");
+                    return;
+                }
+
+                let rawText = "";
+
+                if (currentAddMode === 'file') {
+                    const fileInput = document.getElementById('bookFileInput');
+                    if (!fileInput || fileInput.files.length === 0) {
+                        showToast("Selecione um arquivo de livro.");
+                        return;
+                    }
+                    const file = fileInput.files[0];
+                    try {
+                        const ext = file.name.split('.').pop().toLowerCase();
+                        if (['txt', 'csv', 'json', 'srt', 'vtt'].includes(ext)) {
+                            rawText = await file.text();
+                        } else if (ext === 'docx') {
+                            const arrayBuffer = await file.arrayBuffer();
+                            const result = await mammoth.extractRawText({ arrayBuffer });
+                            rawText = result.value;
+                        } else if (ext === 'pdf') {
+                            const arrayBuffer = await file.arrayBuffer();
+                            const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                            let fullText = "";
+                            for (let i = 1; i <= pdf.numPages; i++) {
+                                const page = await pdf.getPage(i);
+                                const textContent = await page.getTextContent();
+                                fullText += textContent.items.map(function(item) { return item.str; }).join(" ") + "\n";
+                            }
+                            rawText = fullText;
+                        }
+                    } catch (err) {
+                        showToast("Erro ao processar o arquivo.");
+                        return;
+                    }
+                } else {
+                    rawText = cachedPastedText.trim();
+                    if (!rawText) {
+                        showToast("Cole o texto do livro na tela de colagem.");
+                        return;
+                    }
+                }
+
+                let lines = rawText.replace(/\r/g, '').split('\n').map(function(l) { return l.trim(); }).filter(function(l) { return l.length > 0; });
                 let bilingualPairs = [];
                 for (let i = 0; i < lines.length; i += 2) {
                     let transText = lines[i]; 
@@ -2299,13 +2480,13 @@
                 }
 
                 let coverDataUrl = "";
-                if (coverInput.files.length > 0) {
+                if (coverInput && coverInput.files.length > 0) {
                     coverDataUrl = await fileToDataUrl(coverInput.files[0]);
                 }
 
                 books.push({
                     id: Date.now(),
-                    title: titleInput,
+                    title: titleInput.value.trim(),
                     cover: coverDataUrl,
                     content: bilingualPairs,
                     scrollTop: 0,
@@ -2315,11 +2496,13 @@
                 renderShelf();
                 showToast("Livro adicionado com sucesso!");
 
-                document.getElementById('bookTitleInput').value = "";
-                document.getElementById('bookFileInput').value = "";
+                if (titleInput) titleInput.value = "";
+                const fileInput = document.getElementById('bookFileInput');
+                if (fileInput) fileInput.value = "";
                 cachedPastedText = "";
-                document.getElementById('pasteStatusIndicator').innerText = "Nenhum texto colado ainda.";
-                document.getElementById('coverFileInput').value = "";
+                const indicator = document.getElementById('pasteStatusIndicator');
+                if (indicator) indicator.innerText = "Nenhum texto colado ainda.";
+                if (coverInput) coverInput.value = "";
                 
                 const btnVoltar = document.getElementById('btn-voltar-config');
                 if(btnVoltar) btnVoltar.style.display = 'none';
@@ -2327,13 +2510,14 @@
                 fecharConfiguracoes();
             } catch (err) {
                 showToast("Erro ao salvar o livro.");
+                console.error('Erro ao salvar livro:', err);
             }
         }
 
         function fileToDataUrl(file) {
-            return new Promise((resolve) => {
+            return new Promise(function(resolve) {
                 const reader = new FileReader();
-                reader.onload = (e) => resolve(e.target.result);
+                reader.onload = function(e) { resolve(e.target.result); };
                 reader.readAsDataURL(file);
             });
         }
@@ -2341,99 +2525,105 @@
         let currentActiveBookId = null;
 
         function openReader(book) {
-            currentActiveBookId = book.id;
-            currentBookContent = book.content;
-            totalSentences = book.content.length;
-            
-            // Garante que o índice inicial seja 0 (primeira frase) ou o último salvo
-            currentSentenceIndex = book.lastReadIndex || 0;
-            if (currentSentenceIndex >= totalSentences) {
-                currentSentenceIndex = 0;
-            }
-            
-            const sideTab = document.getElementById('sideTabContainer');
-            if (sideTab) {
-                sideTab.classList.remove('open');
-                sideTab.style.display = 'none';
-            }
-
-            const body = document.getElementById('reader-body');
-            body.innerHTML = '';
-
-            // Aplica as classes corretas baseado no settings
-            if (settings.hideTranslation) {
-                body.classList.remove('show-translation');
-                body.classList.add('hide-translation');
-            } else {
-                body.classList.remove('hide-translation');
-                body.classList.add('show-translation');
-            }
-
-            // Atualiza visibilidade dos botões e quadro
-            updateNavigationVisibility();
-
-            book.content.forEach((pair, index) => {
-                const pairDiv = document.createElement('div');
-                pairDiv.className = 'bilingual-pair';
-                pairDiv.dataset.index = index;
-                pairDiv.dataset.orig = pair.orig;
-                pairDiv.dataset.trans = pair.trans;
-
-                // Marca a frase ativa
-                if (index === currentSentenceIndex) {
-                    pairDiv.classList.add('active-sentence');
-                }
-
-                pairDiv.onclick = () => { 
-                    playSpeech(pair.orig); 
-                };
-
-                const origDiv = document.createElement('div');
-                origDiv.className = 'sentence-orig';
-                origDiv.innerText = pair.orig;
-
-                const transDiv = document.createElement('div');
-                transDiv.className = 'sentence-trans';
-                transDiv.innerText = pair.trans;
-
-                pairDiv.appendChild(origDiv);
-                pairDiv.appendChild(transDiv);
-                body.appendChild(pairDiv);
-            });
-
-            document.getElementById('reader-view').style.display = 'flex';
-            document.getElementById('readerBackBtn').classList.remove('visible');
-
-            // Carrega a primeira frase no quadro e garante que ela fique visível
-            setTimeout(() => { 
-                const currentPair = book.content[currentSentenceIndex];
-                if (currentPair) {
-                    const liveTransText = document.getElementById('liveTransText');
-                    liveTransText.textContent = currentPair.trans;
+            try {
+                currentActiveBookId = book.id;
+                currentBookContent = book.content;
+                totalSentences = book.content.length;
+                
+                currentSentenceIndex = book.lastReadIndex || 0;
+                if (currentSentenceIndex >= totalSentences) {
+                    currentSentenceIndex = 0;
                 }
                 
-                // Rola a primeira frase ativa para o topo, logo abaixo do quadro
-                const pairs = body.querySelectorAll('.bilingual-pair');
-                if (pairs[currentSentenceIndex]) {
-                    pairs[currentSentenceIndex].scrollIntoView({ behavior: 'auto', block: 'start' });
+                const sideTab = document.getElementById('sideTabContainer');
+                if (sideTab) {
+                    sideTab.classList.remove('open');
+                    sideTab.style.display = 'none';
                 }
-            }, 100);
+
+                const body = document.getElementById('reader-body');
+                if (!body) return;
+                body.innerHTML = '';
+
+                if (settings.hideTranslation) {
+                    body.classList.remove('show-translation');
+                    body.classList.add('hide-translation');
+                } else {
+                    body.classList.remove('hide-translation');
+                    body.classList.add('show-translation');
+                }
+
+                updateNavigationVisibility();
+
+                book.content.forEach(function(pair, index) {
+                    const pairDiv = document.createElement('div');
+                    pairDiv.className = 'bilingual-pair';
+                    pairDiv.dataset.index = index;
+                    pairDiv.dataset.orig = pair.orig;
+                    pairDiv.dataset.trans = pair.trans;
+
+                    if (index === currentSentenceIndex) {
+                        pairDiv.classList.add('active-sentence');
+                    }
+
+                    pairDiv.onclick = function() { 
+                        playSpeech(pair.orig); 
+                    };
+
+                    const origDiv = document.createElement('div');
+                    origDiv.className = 'sentence-orig';
+                    origDiv.innerText = pair.orig;
+
+                    const transDiv = document.createElement('div');
+                    transDiv.className = 'sentence-trans';
+                    transDiv.innerText = pair.trans;
+
+                    pairDiv.appendChild(origDiv);
+                    pairDiv.appendChild(transDiv);
+                    body.appendChild(pairDiv);
+                });
+
+                const readerView = document.getElementById('reader-view');
+                if (readerView) readerView.style.display = 'flex';
+                
+                const backBtn = document.getElementById('readerBackBtn');
+                if (backBtn) backBtn.classList.remove('visible');
+
+                setTimeout(function() { 
+                    const currentPair = book.content[currentSentenceIndex];
+                    if (currentPair) {
+                        const liveTransText = document.getElementById('liveTransText');
+                        if (liveTransText) liveTransText.textContent = currentPair.trans;
+                    }
+                    
+                    const pairs = body.querySelectorAll('.bilingual-pair');
+                    if (pairs[currentSentenceIndex]) {
+                        pairs[currentSentenceIndex].scrollIntoView({ behavior: 'auto', block: 'start' });
+                    }
+                }, 100);
+            } catch (error) {
+                console.error('Erro ao abrir leitor:', error);
+            }
         }
 
         function playSpeech(text) {
-            let voiceSelect = document.getElementById('localVoiceSelect');
-            let chosenVoice = voiceSelect ? voiceSelect.value : "";
+            try {
+                let voiceSelect = document.getElementById('localVoiceSelect');
+                let chosenVoice = voiceSelect ? voiceSelect.value : "";
 
-            if (window.AndroidBridge && typeof window.AndroidBridge.synthesizeOffline === 'function' && chosenVoice && chosenVoice !== "") {
-                window.AndroidBridge.synthesizeOffline(text, chosenVoice);
-            } else if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'en-US';
-                utterance.rate = 0.9;
-                window.speechSynthesis.speak(utterance);
-            } else {
-                showToast("Nenhum motor de voz disponível.");
+                if (window.AndroidBridge && typeof window.AndroidBridge.synthesizeOffline === 'function' && chosenVoice && chosenVoice !== "") {
+                    window.AndroidBridge.synthesizeOffline(text, chosenVoice);
+                } else if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = 'en-US';
+                    utterance.rate = 0.9;
+                    window.speechSynthesis.speak(utterance);
+                } else {
+                    showToast("Nenhum motor de voz disponível.");
+                }
+            } catch (error) {
+                console.error('Erro ao reproduzir fala:', error);
             }
         }
 
@@ -2443,53 +2633,66 @@
         }
 
         function requestDownload() {
-            let select = document.getElementById('availableVoices');
-            let selectedVoice = select.value;
-            let selectedText = select.options[select.selectedIndex].text;
-            
-            const progressContainer = document.getElementById('progressContainer');
-            const progressBar = document.getElementById('progressBar');
-            const downloadStatusText = document.getElementById('downloadStatusText');
+            try {
+                let select = document.getElementById('availableVoices');
+                if (!select) return;
+                let selectedVoice = select.value;
+                let selectedText = select.options[select.selectedIndex].text;
+                
+                const progressContainer = document.getElementById('progressContainer');
+                const progressBar = document.getElementById('progressBar');
+                const downloadStatusText = document.getElementById('downloadStatusText');
 
-            progressContainer.style.display = 'block';
-            downloadStatusText.style.display = 'block';
-            progressBar.style.width = '10%';
-            downloadStatusText.textContent = 'Conectando para baixar pacote...';
+                if (progressContainer) progressContainer.style.display = 'block';
+                if (downloadStatusText) {
+                    downloadStatusText.style.display = 'block';
+                    downloadStatusText.textContent = 'Conectando para baixar pacote...';
+                }
+                if (progressBar) progressBar.style.width = '10%';
 
-            if (window.AndroidBridge && typeof window.AndroidBridge.startVoiceDownload === 'function') {
-                window.AndroidBridge.startVoiceDownload(selectedVoice, selectedText);
-            } else {
-                let progress = 10;
-                let interval = setInterval(() => {
-                    progress += 20;
-                    progressBar.style.width = progress + '%';
-                    downloadStatusText.textContent = `Baixando pacote... ${progress}%`;
-                    if(progress >= 100) {
-                        clearInterval(interval);
-                        downloadStatusText.textContent = 'Download concluído!';
-                        updateLocalVoices(JSON.stringify([{ id: selectedVoice, name: selectedText }]));
-                        showToast("Pacote de voz baixado.");
-                    }
-                }, 300);
+                if (window.AndroidBridge && typeof window.AndroidBridge.startVoiceDownload === 'function') {
+                    window.AndroidBridge.startVoiceDownload(selectedVoice, selectedText);
+                } else {
+                    let progress = 10;
+                    let interval = setInterval(function() {
+                        progress += 20;
+                        if (progressBar) progressBar.style.width = progress + '%';
+                        if (downloadStatusText) downloadStatusText.textContent = 'Baixando pacote... ' + progress + '%';
+                        if(progress >= 100) {
+                            clearInterval(interval);
+                            if (downloadStatusText) downloadStatusText.textContent = 'Download concluído!';
+                            updateLocalVoices(JSON.stringify([{ id: selectedVoice, name: selectedText }]));
+                            showToast("Pacote de voz baixado.");
+                        }
+                    }, 300);
+                }
+            } catch (error) {
+                console.error('Erro ao baixar voz:', error);
             }
         }
 
         function updateDownloadProgress(percent, statusMsg) {
-            const progressContainer = document.getElementById('progressContainer');
-            const progressBar = document.getElementById('progressBar');
-            const downloadStatusText = document.getElementById('downloadStatusText');
+            try {
+                const progressContainer = document.getElementById('progressContainer');
+                const progressBar = document.getElementById('progressBar');
+                const downloadStatusText = document.getElementById('downloadStatusText');
 
-            progressContainer.style.display = 'block';
-            downloadStatusText.style.display = 'block';
-            progressBar.style.width = percent + '%';
-            downloadStatusText.textContent = statusMsg || `Baixando... ${percent}%`;
+                if (progressContainer) progressContainer.style.display = 'block';
+                if (downloadStatusText) {
+                    downloadStatusText.style.display = 'block';
+                    downloadStatusText.textContent = statusMsg || 'Baixando... ' + percent + '%';
+                }
+                if (progressBar) progressBar.style.width = percent + '%';
 
-            if (percent >= 100) {
-                setTimeout(() => {
-                    progressContainer.style.display = 'none';
-                    downloadStatusText.style.display = 'none';
-                    loadLocalVoicesFromApp();
-                }, 1500);
+                if (percent >= 100) {
+                    setTimeout(function() {
+                        if (progressContainer) progressContainer.style.display = 'none';
+                        if (downloadStatusText) downloadStatusText.style.display = 'none';
+                        loadLocalVoicesFromApp();
+                    }, 1500);
+                }
+            } catch (error) {
+                console.error('Erro ao atualizar progresso do download:', error);
             }
         }
 
@@ -2504,116 +2707,138 @@
                 
                 if (!voices || voices.length === 0) {
                     select.innerHTML = '<option value="">Nenhuma voz baixada (Fallback para Web Speech)</option>';
-                    document.getElementById('voiceStatus').textContent = 'Nenhum pacote nativo encontrado.';
+                    const status = document.getElementById('voiceStatus');
+                    if (status) status.textContent = 'Nenhum pacote nativo encontrado.';
                     return;
                 }
 
-                voices.forEach(v => {
+                voices.forEach(function(v) {
                     let opt = document.createElement('option');
                     opt.value = v.id;
                     opt.textContent = v.name;
                     select.appendChild(opt);
                 });
                 
-                if (currentVal && Array.from(select.options).some(o => o.value === currentVal)) {
+                if (currentVal && Array.from(select.options).some(function(o) { return o.value === currentVal; })) {
                     select.value = currentVal;
                 } else if (select.options.length > 0) {
                     select.selectedIndex = 0;
                 }
 
-                document.getElementById('voiceStatus').textContent = `${voices.length} voz(es) offline pronta(s).`;
-            } catch(e) {}
+                const status = document.getElementById('voiceStatus');
+                if (status) status.textContent = voices.length + ' voz(es) offline pronta(s).';
+            } catch(e) {
+                console.error('Erro ao atualizar vozes locais:', e);
+            }
         }
 
         function closeReader() {
-            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-            document.getElementById('reader-view').style.display = 'none';
-            currentActiveBookId = null;
-            currentBookContent = [];
+            try {
+                if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+                const readerView = document.getElementById('reader-view');
+                if (readerView) readerView.style.display = 'none';
+                currentActiveBookId = null;
+                currentBookContent = [];
 
-            renderShelf();
+                renderShelf();
 
-            const sideTab = document.getElementById('sideTabContainer');
-            if (sideTab) {
-                sideTab.style.display = 'flex';
-            }
-            const readerSideTab = document.getElementById('readerSideTabContainer');
-            if (readerSideTab) {
-                readerSideTab.classList.remove('open');
+                const sideTab = document.getElementById('sideTabContainer');
+                if (sideTab) {
+                    sideTab.style.display = 'flex';
+                }
+                const readerSideTab = document.getElementById('readerSideTabContainer');
+                if (readerSideTab) {
+                    readerSideTab.classList.remove('open');
+                }
+            } catch (error) {
+                console.error('Erro ao fechar leitor:', error);
             }
         }
 
         function setupBackButton() {
-            const backBtn = document.getElementById('readerBackBtn');
-            backBtn.addEventListener('click', (e) => { e.stopPropagation(); closeReader(); });
-            backBtn.addEventListener('touchend', (e) => { e.stopPropagation(); e.preventDefault(); closeReader(); });
+            try {
+                const backBtn = document.getElementById('readerBackBtn');
+                if (backBtn) {
+                    backBtn.addEventListener('click', function(e) { e.stopPropagation(); closeReader(); });
+                    backBtn.addEventListener('touchend', function(e) { e.stopPropagation(); e.preventDefault(); closeReader(); });
+                }
+            } catch (error) {
+                console.error('Erro ao configurar botão voltar:', error);
+            }
         }
 
         function setupReaderDoubleTap() {
-            let lastTouchTime = 0;
-            const readerView = document.getElementById('reader-view');
+            try {
+                let lastTouchTime = 0;
+                const readerView = document.getElementById('reader-view');
+                if (!readerView) return;
 
-            readerView.addEventListener('touchend', (e) => {
-                if (e.target.id === 'readerBackBtn' || e.target.closest('#readerBackBtn') || e.target.closest('#readerSideTabContainer')) return;
-                if (e.target.closest('.nav-btn')) return;
-                let currentTime = new Date().getTime();
-                if ((currentTime - lastTouchTime) < 300 && (currentTime - lastTouchTime) > 0) {
-                    document.getElementById('readerBackBtn').classList.toggle('visible');
-                    e.preventDefault();
-                }
-                lastTouchTime = currentTime;
-            });
+                readerView.addEventListener('touchend', function(e) {
+                    if (e.target.id === 'readerBackBtn' || e.target.closest('#readerBackBtn') || e.target.closest('#readerSideTabContainer')) return;
+                    if (e.target.closest('.nav-btn')) return;
+                    let currentTime = new Date().getTime();
+                    if ((currentTime - lastTouchTime) < 300 && (currentTime - lastTouchTime) > 0) {
+                        const backBtn = document.getElementById('readerBackBtn');
+                        if (backBtn) backBtn.classList.toggle('visible');
+                        e.preventDefault();
+                    }
+                    lastTouchTime = currentTime;
+                });
 
-            readerView.addEventListener('dblclick', (e) => {
-                if (e.target.id === 'readerBackBtn' || e.target.closest('#readerBackBtn') || e.target.closest('#readerSideTabContainer')) return;
-                if (e.target.closest('.nav-btn')) return;
-                document.getElementById('readerBackBtn').classList.toggle('visible');
-            });
+                readerView.addEventListener('dblclick', function(e) {
+                    if (e.target.id === 'readerBackBtn' || e.target.closest('#readerBackBtn') || e.target.closest('#readerSideTabContainer')) return;
+                    if (e.target.closest('.nav-btn')) return;
+                    const backBtn = document.getElementById('readerBackBtn');
+                    if (backBtn) backBtn.classList.toggle('visible');
+                });
+            } catch (error) {
+                console.error('Erro ao configurar duplo toque:', error);
+            }
         }
 
         async function exportBackup() {
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const day = String(now.getDate()).padStart(2, '0');
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-
-            const dateSlug = `${year}-${month}-${day}_${hours}-${minutes}-${seconds}`;
-            const formattedDateStr = `${day}/${month}/${year} às ${hours}:${minutes}:${seconds}`;
-            const fileName = `lendo_scripts_backup_${dateSlug}.json`;
-
-            const backupData = { books: books, settings: settings, version: "1.0", date: now.toISOString() };
-            const jsonString = JSON.stringify(backupData, null, 2);
-
-            savedBackupsList.unshift({ name: fileName, formattedDate: formattedDateStr, data: jsonString });
-            localStorage.setItem('polyglot_saved_backups', JSON.stringify(savedBackupsList));
-            updateBackupFolderSubtitle();
-
-            if (window.AndroidBridge && typeof window.AndroidBridge.saveBackupFilePicker === 'function') {
-                window.AndroidBridge.saveBackupFilePicker(fileName, jsonString);
-                showToast("Selecione onde deseja salvar o backup.");
-                return;
-            }
-
-            if (window.showSaveFilePicker) {
-                try {
-                    const handle = await window.showSaveFilePicker({
-                        suggestedName: fileName,
-                        types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }]
-                    });
-                    const writable = await handle.createWritable();
-                    await writable.write(jsonString);
-                    await writable.close();
-                    showToast("Backup salvo com sucesso!");
-                    return;
-                } catch (err) {
-                    if (err.name === 'AbortError') return;
-                }
-            }
-
             try {
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const seconds = String(now.getSeconds()).padStart(2, '0');
+
+                const dateSlug = year + '-' + month + '-' + day + '_' + hours + '-' + minutes + '-' + seconds;
+                const formattedDateStr = day + '/' + month + '/' + year + ' às ' + hours + ':' + minutes + ':' + seconds;
+                const fileName = 'lendo_scripts_backup_' + dateSlug + '.json';
+
+                const backupData = { books: books, settings: settings, version: "1.0", date: now.toISOString() };
+                const jsonString = JSON.stringify(backupData, null, 2);
+
+                savedBackupsList.unshift({ name: fileName, formattedDate: formattedDateStr, data: jsonString });
+                localStorage.setItem('polyglot_saved_backups', JSON.stringify(savedBackupsList));
+                updateBackupFolderSubtitle();
+
+                if (window.AndroidBridge && typeof window.AndroidBridge.saveBackupFilePicker === 'function') {
+                    window.AndroidBridge.saveBackupFilePicker(fileName, jsonString);
+                    showToast("Selecione onde deseja salvar o backup.");
+                    return;
+                }
+
+                if (window.showSaveFilePicker) {
+                    try {
+                        const handle = await window.showSaveFilePicker({
+                            suggestedName: fileName,
+                            types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }]
+                        });
+                        const writable = await handle.createWritable();
+                        await writable.write(jsonString);
+                        await writable.close();
+                        showToast("Backup salvo com sucesso!");
+                        return;
+                    } catch (err) {
+                        if (err.name === 'AbortError') return;
+                    }
+                }
+
                 const blob = new Blob([jsonString], { type: 'application/json' });
                 const url = URL.createObjectURL(blob);
                 const downloadAnchor = document.createElement('a');
@@ -2621,42 +2846,48 @@
                 downloadAnchor.download = fileName;
                 document.body.appendChild(downloadAnchor);
                 downloadAnchor.click();
-                setTimeout(() => {
+                setTimeout(function() {
                     document.body.removeChild(downloadAnchor);
                     URL.revokeObjectURL(url);
                 }, 100);
                 showToast("Backup gerado e baixado!");
             } catch (e) {
                 showToast("Backup salvo na pasta interna.");
+                console.error('Erro ao exportar backup:', e);
             }
         }
 
         function importBackup(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const backupData = JSON.parse(e.target.result);
-                    if (backupData.books && backupData.settings) {
-                        if (confirm("Restaurar este backup substituirá os dados atuais. Continuar?")) {
-                            books = backupData.books;
-                            settings = backupData.settings;
-                            localStorage.setItem('polyglot_books', JSON.stringify(books));
-                            localStorage.setItem('polyglot_settings', JSON.stringify(settings));
-                            loadSettingsToUI();
-                            renderShelf();
-                            fecharConfiguracoes();
-                            showToast("Backup restaurado com sucesso!");
+            try {
+                const file = event.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const backupData = JSON.parse(e.target.result);
+                        if (backupData.books && backupData.settings) {
+                            if (confirm("Restaurar este backup substituirá os dados atuais. Continuar?")) {
+                                books = backupData.books;
+                                settings = backupData.settings;
+                                localStorage.setItem('polyglot_books', JSON.stringify(books));
+                                localStorage.setItem('polyglot_settings', JSON.stringify(settings));
+                                loadSettingsToUI();
+                                renderShelf();
+                                fecharConfiguracoes();
+                                showToast("Backup restaurado com sucesso!");
+                            }
+                        } else {
+                            showToast("Arquivo de backup inválido.");
                         }
-                    } else {
-                        showToast("Arquivo de backup inválido.");
+                    } catch (err) {
+                        showToast("Erro ao ler o arquivo de backup.");
+                        console.error('Erro ao importar backup:', err);
                     }
-                } catch (err) {
-                    showToast("Erro ao ler o arquivo de backup.");
-                }
-            };
-            reader.readAsText(file);
+                };
+                reader.readAsText(file);
+            } catch (error) {
+                console.error('Erro ao importar backup:', error);
+            }
         }
     </script>
 </body>

@@ -1418,10 +1418,24 @@
                 setupTrashCanDropEvents();
                 setupNavigationButtons();
 
+                // CORREÇÃO: Adicionar evento diretamente ao botão de adicionar livro
                 const addBookBtn = document.getElementById('addBookBtn');
                 if (addBookBtn) {
-                    addBookBtn.addEventListener('click', function(e) { e.preventDefault(); processAndSaveBook(); });
-                    addBookBtn.addEventListener('touchend', function(e) { e.preventDefault(); processAndSaveBook(); });
+                    // Remover qualquer evento anterior
+                    addBookBtn.removeEventListener('click', processAndSaveBook);
+                    addBookBtn.removeEventListener('touchend', processAndSaveBook);
+                    
+                    // Adicionar eventos novos
+                    addBookBtn.addEventListener('click', function(e) { 
+                        e.preventDefault(); 
+                        e.stopPropagation();
+                        processAndSaveBook(); 
+                    });
+                    addBookBtn.addEventListener('touchend', function(e) { 
+                        e.preventDefault(); 
+                        e.stopPropagation();
+                        processAndSaveBook(); 
+                    });
                 }
 
                 const exportBackupBtn = document.getElementById('exportBackupBtn');
@@ -1441,8 +1455,126 @@
                 }
             } catch (error) {
                 console.error('Erro na inicialização:', error);
+                showToast('Erro ao inicializar o aplicativo. Recarregue a página.');
             }
         });
+
+        // FUNÇÃO PRINCIPAL PARA ADICIONAR LIVRO - CORRIGIDA
+        async function processAndSaveBook() {
+            try {
+                console.log('processAndSaveBook chamado');
+                
+                const titleInput = document.getElementById('bookTitleInput');
+                const coverInput = document.getElementById('coverFileInput');
+
+                if (!titleInput || !titleInput.value.trim()) {
+                    showToast("Informe o título do livro.");
+                    return;
+                }
+
+                let rawText = "";
+                let livroAdicionado = false;
+
+                if (currentAddMode === 'file') {
+                    const fileInput = document.getElementById('bookFileInput');
+                    if (!fileInput || fileInput.files.length === 0) {
+                        showToast("Selecione um arquivo de livro.");
+                        return;
+                    }
+                    const file = fileInput.files[0];
+                    try {
+                        const ext = file.name.split('.').pop().toLowerCase();
+                        if (['txt', 'csv', 'json', 'srt', 'vtt'].includes(ext)) {
+                            rawText = await file.text();
+                        } else if (ext === 'docx') {
+                            const arrayBuffer = await file.arrayBuffer();
+                            const result = await mammoth.extractRawText({ arrayBuffer });
+                            rawText = result.value;
+                        } else if (ext === 'pdf') {
+                            const arrayBuffer = await file.arrayBuffer();
+                            const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                            let fullText = "";
+                            for (let i = 1; i <= pdf.numPages; i++) {
+                                const page = await pdf.getPage(i);
+                                const textContent = await page.getTextContent();
+                                fullText += textContent.items.map(function(item) { return item.str; }).join(" ") + "\n";
+                            }
+                            rawText = fullText;
+                        } else {
+                            showToast("Formato de arquivo não suportado.");
+                            return;
+                        }
+                    } catch (err) {
+                        console.error('Erro ao processar arquivo:', err);
+                        showToast("Erro ao processar o arquivo.");
+                        return;
+                    }
+                } else {
+                    rawText = cachedPastedText.trim();
+                    if (!rawText) {
+                        showToast("Cole o texto do livro na tela de colagem.");
+                        return;
+                    }
+                }
+
+                // Processar o texto para extrair pares bilíngues
+                let lines = rawText.replace(/\r/g, '').split('\n').map(function(l) { return l.trim(); }).filter(function(l) { return l.length > 0; });
+                let bilingualPairs = [];
+                for (let i = 0; i < lines.length; i += 2) {
+                    let transText = lines[i]; 
+                    let origText = (i + 1 < lines.length) ? lines[i + 1] : ""; 
+                    if (transText) bilingualPairs.push({ orig: origText, trans: transText });
+                }
+
+                if (bilingualPairs.length === 0) {
+                    showToast("Nenhum par de frases válido encontrado.");
+                    return;
+                }
+
+                let coverDataUrl = "";
+                if (coverInput && coverInput.files.length > 0) {
+                    coverDataUrl = await fileToDataUrl(coverInput.files[0]);
+                }
+
+                // Adicionar o livro
+                const novoLivro = {
+                    id: Date.now(),
+                    title: titleInput.value.trim(),
+                    cover: coverDataUrl,
+                    content: bilingualPairs,
+                    scrollTop: 0,
+                    lastReadIndex: 0
+                };
+                
+                books.push(novoLivro);
+                localStorage.setItem('polyglot_books', JSON.stringify(books));
+                
+                // Renderizar a estante
+                renderShelf();
+                
+                showToast("Livro adicionado com sucesso!");
+                livroAdicionado = true;
+
+                // Limpar campos
+                if (titleInput) titleInput.value = "";
+                const fileInput = document.getElementById('bookFileInput');
+                if (fileInput) fileInput.value = "";
+                cachedPastedText = "";
+                const indicator = document.getElementById('pasteStatusIndicator');
+                if (indicator) indicator.innerText = "Nenhum texto colado ainda.";
+                if (coverInput) coverInput.value = "";
+                
+                const btnVoltar = document.getElementById('btn-voltar-config');
+                if(btnVoltar) btnVoltar.style.display = 'none';
+
+                // Fechar configurações após adicionar
+                fecharConfiguracoes();
+                
+            } catch (err) {
+                console.error('Erro ao salvar livro:', err);
+                showToast("Erro ao salvar o livro: " + err.message);
+            }
+        }
 
         // FUNÇÕES PARA ABRIR E FECHAR CONFIGURAÇÕES
         function abrirConfiguracoes(event) {
@@ -2413,104 +2545,6 @@
                 showToast("Livro reorganizado!");
             } catch (error) {
                 console.error('Erro ao reorganizar livros:', error);
-            }
-        }
-
-        async function processAndSaveBook() {
-            try {
-                const titleInput = document.getElementById('bookTitleInput');
-                const coverInput = document.getElementById('coverFileInput');
-
-                if (!titleInput || !titleInput.value.trim()) {
-                    showToast("Informe o título do livro.");
-                    return;
-                }
-
-                let rawText = "";
-
-                if (currentAddMode === 'file') {
-                    const fileInput = document.getElementById('bookFileInput');
-                    if (!fileInput || fileInput.files.length === 0) {
-                        showToast("Selecione um arquivo de livro.");
-                        return;
-                    }
-                    const file = fileInput.files[0];
-                    try {
-                        const ext = file.name.split('.').pop().toLowerCase();
-                        if (['txt', 'csv', 'json', 'srt', 'vtt'].includes(ext)) {
-                            rawText = await file.text();
-                        } else if (ext === 'docx') {
-                            const arrayBuffer = await file.arrayBuffer();
-                            const result = await mammoth.extractRawText({ arrayBuffer });
-                            rawText = result.value;
-                        } else if (ext === 'pdf') {
-                            const arrayBuffer = await file.arrayBuffer();
-                            const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-                            let fullText = "";
-                            for (let i = 1; i <= pdf.numPages; i++) {
-                                const page = await pdf.getPage(i);
-                                const textContent = await page.getTextContent();
-                                fullText += textContent.items.map(function(item) { return item.str; }).join(" ") + "\n";
-                            }
-                            rawText = fullText;
-                        }
-                    } catch (err) {
-                        showToast("Erro ao processar o arquivo.");
-                        return;
-                    }
-                } else {
-                    rawText = cachedPastedText.trim();
-                    if (!rawText) {
-                        showToast("Cole o texto do livro na tela de colagem.");
-                        return;
-                    }
-                }
-
-                let lines = rawText.replace(/\r/g, '').split('\n').map(function(l) { return l.trim(); }).filter(function(l) { return l.length > 0; });
-                let bilingualPairs = [];
-                for (let i = 0; i < lines.length; i += 2) {
-                    let transText = lines[i]; 
-                    let origText = (i + 1 < lines.length) ? lines[i + 1] : ""; 
-                    if (transText) bilingualPairs.push({ orig: origText, trans: transText });
-                }
-
-                if (bilingualPairs.length === 0) {
-                    showToast("Nenhum par de frases válido encontrado.");
-                    return;
-                }
-
-                let coverDataUrl = "";
-                if (coverInput && coverInput.files.length > 0) {
-                    coverDataUrl = await fileToDataUrl(coverInput.files[0]);
-                }
-
-                books.push({
-                    id: Date.now(),
-                    title: titleInput.value.trim(),
-                    cover: coverDataUrl,
-                    content: bilingualPairs,
-                    scrollTop: 0,
-                    lastReadIndex: 0
-                });
-                localStorage.setItem('polyglot_books', JSON.stringify(books));
-                renderShelf();
-                showToast("Livro adicionado com sucesso!");
-
-                if (titleInput) titleInput.value = "";
-                const fileInput = document.getElementById('bookFileInput');
-                if (fileInput) fileInput.value = "";
-                cachedPastedText = "";
-                const indicator = document.getElementById('pasteStatusIndicator');
-                if (indicator) indicator.innerText = "Nenhum texto colado ainda.";
-                if (coverInput) coverInput.value = "";
-                
-                const btnVoltar = document.getElementById('btn-voltar-config');
-                if(btnVoltar) btnVoltar.style.display = 'none';
-
-                fecharConfiguracoes();
-            } catch (err) {
-                showToast("Erro ao salvar o livro.");
-                console.error('Erro ao salvar livro:', err);
             }
         }
 

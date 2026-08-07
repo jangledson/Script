@@ -198,6 +198,10 @@
             transition: background-color 0.2s;
         }
 
+        .empty-slot:active {
+            background-color: rgba(139, 107, 79, 0.15);
+        }
+
         .trash-can-dropzone {
             position: fixed;
             bottom: 20px;
@@ -1095,7 +1099,7 @@
                 <span style="font-size: 0.7rem; color: #666; margin-top: 2px;">Quando ativado, o português aparece nos balões e o quadro de tradução some. Quando desativado, fica só inglês e o quadro aparece com a tradução.</span>
             </div>
 
-            <button class="btn-primary" onclick="abrirConfiguracoes()">⚙️ Configurações Completas</button>
+            <button class="btn-primary" id="configBtnEstante" onclick="abrirConfiguracoes(event)">⚙️ Configurações Completas</button>
         </div>
     </div>
 
@@ -1370,7 +1374,7 @@
                     <span style="font-size: 0.7rem; color: #666; margin-top: 2px;">Quando ativado, o português aparece nos balões e o quadro de tradução some. Quando desativado, fica só inglês e o quadro aparece com a tradução.</span>
                 </div>
 
-                <button class="btn-primary" onclick="abrirConfiguracoes()">⚙️ Configurações Completas</button>
+                <button class="btn-primary" id="configBtnLeitor" onclick="abrirConfiguracoes(event)">⚙️ Configurações Completas</button>
             </div>
         </div>
 
@@ -1434,7 +1438,13 @@
         });
 
         // FUNÇÕES PARA ABRIR E FECHAR CONFIGURAÇÕES - CORRIGIDAS
-        function abrirConfiguracoes() {
+        function abrirConfiguracoes(event) {
+            // Previne qualquer propagação de eventos que possa interferir
+            if (event) {
+                event.stopPropagation();
+                event.preventDefault();
+            }
+            
             // Fecha as abas laterais primeiro
             const sideTab = document.getElementById('sideTabContainer');
             if (sideTab) sideTab.classList.remove('open');
@@ -1450,6 +1460,7 @@
             const modal = document.getElementById('settingsModal');
             if (modal) {
                 modal.classList.add('active');
+                document.body.style.overflow = 'hidden'; // Previne rolagem do fundo
             }
         }
 
@@ -1457,6 +1468,7 @@
             const modal = document.getElementById('settingsModal');
             if (modal) {
                 modal.classList.remove('active');
+                document.body.style.overflow = ''; // Restaura rolagem
             }
         }
 
@@ -1624,17 +1636,15 @@
             setTimeout(() => { toast.style.display = 'none'; }, 3000);
         }
 
-        // Função antiga mantida para compatibilidade
+        // Funções antigas mantidas para compatibilidade
         function openFullSettingsModal() {
             abrirConfiguracoes();
         }
 
-        // Função antiga mantida para compatibilidade
         function openSettingsModal() {
             abrirConfiguracoes();
         }
 
-        // Função antiga mantida para compatibilidade
         function closeSettingsModal() {
             fecharConfiguracoes();
         }
@@ -1839,8 +1849,7 @@
             }
             applySettings();
             
-            // Se estiver no leitor, atualiza a navegação
-            if (document.getElementById('reader-view').style.display === 'flex') {
+            // Se estiver no leitor, atualiza a navegação            if (document.getElementById('reader-view').style.display === 'flex') {
                 updateNavigationVisibility();
             }
         }
@@ -1977,12 +1986,17 @@
                             card.draggable = true;
                             card.dataset.index = slotIndex;
 
-                            card.onclick = (e) => {
-                                if (!card.dataset.moved) {
+                            // REMOVER qualquer onclick que possa interferir
+                            card.onclick = null;
+                            
+                            // Usar event listener separado para abrir o livro
+                            card.addEventListener('click', function(e) {
+                                // Verifica se não está arrastando
+                                if (!this.dataset.moved) {
                                     openReader(book);
                                 }
-                                delete card.dataset.moved;
-                            };
+                                delete this.dataset.moved;
+                            });
 
                             const coverDiv = document.createElement('div');
                             coverDiv.className = 'book-cover';
@@ -2023,7 +2037,12 @@
                             empty.className = 'empty-slot';
                             empty.innerText = '+';
                             empty.dataset.index = slotIndex;
-                            empty.onclick = abrirConfiguracoes;
+                            // Usar onclick diretamente para abrir configurações
+                            empty.onclick = function(e) {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                abrirConfiguracoes(e);
+                            };
 
                             setupEmptySlotDropEvents(empty, slotIndex);
                             rowEl.appendChild(empty);
@@ -2080,6 +2099,10 @@
         }
 
         function setupBookDragEvents(card, index) {
+            let touchStartX = 0, touchStartY = 0;
+            let isDraggingOrMoving = false;
+            let isTouching = false;
+
             card.addEventListener('dragstart', (e) => {
                 draggedIndex = index;
                 card.classList.add('dragging');
@@ -2112,10 +2135,9 @@
                 hideTrashCan();
             });
 
-            let touchStartX = 0, touchStartY = 0;
-            let isDraggingOrMoving = false;
-
+            // Versão touch - melhorada para não conflitar com clique
             card.addEventListener('touchstart', (e) => {
+                isTouching = true;
                 draggedIndex = index;
                 touchStartX = e.touches[0].clientX;
                 touchStartY = e.touches[0].clientY;
@@ -2124,17 +2146,19 @@
             }, {passive: true});
 
             card.addEventListener('touchmove', (e) => {
-                if (draggedIndex === null) return;
+                if (draggedIndex === null || !isTouching) return;
                 let moveX = e.touches[0].clientX - touchStartX;
                 let moveY = e.touches[0].clientY - touchStartY;
                 
-                if (Math.abs(moveX) > 6 || Math.abs(moveY) > 6) {
+                if (Math.abs(moveX) > 10 || Math.abs(moveY) > 10) {
                     isDraggingOrMoving = true;
                     card.dataset.moved = "true";
                     card.classList.add('dragging');
                     showTrashCan();
+                    // Previne o scroll durante o drag
+                    e.preventDefault();
                 }
-            }, {passive: true});
+            }, {passive: false});
 
             card.addEventListener('touchend', (e) => {
                 card.classList.remove('dragging');
@@ -2160,9 +2184,13 @@
                             reorderBooks(draggedIndex, targetIndex);
                         }
                     }
+                } else if (!isDraggingOrMoving) {
+                    // Se não houve movimento, é um clique normal - abrir o livro
+                    // Mas o clique já é tratado pelo event listener click
                 }
 
                 draggedIndex = null;
+                isTouching = false;
                 hideTrashCan();
             });
         }

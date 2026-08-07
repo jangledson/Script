@@ -750,50 +750,175 @@
             overflow: hidden;
         }
 
-        /* JANELA DE TRADUÇÃO FLUTUANTE NO TOPO - Agora com novo comportamento */
+        /* QUADRO DE TRADUÇÃO - FIXO com 30% da tela, expande se necessário */
+        .translation-header {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 12px 20px 8px 20px;
+            flex-shrink: 0;
+            min-height: 30vh;
+            max-height: 50vh;
+            transition: min-height 0.2s ease;
+        }
+
         .live-translation-window {
-            position: sticky;
-            top: 10px;
-            left: 10px;
-            right: 10px;
-            width: calc(100% - 20px);
-            margin: 10px auto 0 auto;
+            width: 100%;
+            height: 100%;
+            min-height: 30vh;
             background-color: var(--reader-bg);
             border: 2px solid var(--reader-trans);
-            border-radius: 8px;
-            padding: 12px 16px;
-            z-index: 6000;
+            border-radius: 12px;
+            padding: 16px 20px;
             display: flex;
-            flex-direction: column;
-            gap: 4px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-            backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.12);
             transition: all 0.3s ease;
-        }
-
-        /* Quando a tradução está ATIVA (mostrando português nos balões), a janela some */
-        .show-translation .live-translation-window {
-            display: none !important;
-        }
-
-        /* Quando a tradução está INATIVA (só inglês), a janela aparece */
-        .hide-translation .live-translation-window {
-            display: flex !important;
+            overflow-y: auto;
         }
 
         .live-trans-content {
-            font-size: calc(var(--font-pixel-size) * 0.9);
+            font-size: calc(var(--font-pixel-size) * 1.1);
             color: var(--reader-trans);
             font-weight: var(--font-weight, normal);
             font-family: var(--selected-font, 'Arial', sans-serif);
-            min-height: 24px;
             word-break: break-word;
+            line-height: 1.5;
+            text-align: center;
+            width: 100%;
         }
 
+        /* Quando a tradução está ATIVA (mostrando português nos balões), a janela e botões somem */
+        .show-translation .translation-header {
+            display: none !important;
+        }
+
+        .show-translation .nav-buttons-container {
+            display: none !important;
+        }
+
+        /* Quando a tradução está INATIVA (só inglês), a janela e botões aparecem */
+        .hide-translation .translation-header {
+            display: block !important;
+        }
+
+        .hide-translation .nav-buttons-container {
+            display: flex !important;
+        }
+
+        /* CONTAINER DOS BOTÕES DE NAVEGAÇÃO - Mais separados e com glassmorphism */
+        .nav-buttons-container {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 6001;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            display: none;
+        }
+
+        /* ESTILO DAS SETAS - Formato triangular com fundo translúcido */
+        .nav-btn {
+            width: 60px;
+            height: 60px;
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            transition: all 0.3s ease;
+            position: relative;
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1.5px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+        }
+
+        /* Ajuste para a seta de baixo (invertida) */
+        .nav-btn-down {
+            clip-path: polygon(50% 100%, 0% 0%, 100% 0%);
+        }
+
+        /* Efeitos ao clicar */
+        .nav-btn:active {
+            transform: scale(0.90);
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Cores diferenciadas para cada seta com fundo translúcido */
+        .nav-btn-up {
+            background: rgba(46, 125, 50, 0.2);
+            border-color: rgba(46, 125, 50, 0.3);
+            color: #66bb6a;
+        }
+
+        .nav-btn-up:active {
+            background: rgba(46, 125, 50, 0.35);
+        }
+
+        .nav-btn-down {
+            background: rgba(169, 68, 66, 0.2);
+            border-color: rgba(169, 68, 66, 0.3);
+            color: #ef5350;
+        }
+
+        .nav-btn-down:active {
+            background: rgba(169, 68, 66, 0.35);
+        }
+
+        /* Ícone dentro do triângulo */
+        .nav-btn span {
+            font-size: 1.6rem;
+            line-height: 1;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+        }
+
+        /* Ajuste para telas menores */
+        @media (max-width: 480px) {
+            .nav-btn {
+                width: 50px;
+                height: 50px;
+            }
+            .nav-btn span {
+                font-size: 1.2rem;
+            }
+            .nav-buttons-container {
+                right: 14px;
+                gap: 28px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .nav-btn {
+                width: 68px;
+                height: 68px;
+            }
+            .nav-btn span {
+                font-size: 1.8rem;
+            }
+            .nav-buttons-container {
+                right: 28px;
+                gap: 40px;
+            }
+        }
+
+        /* CORPO DO LEITOR - com scroll desabilitado quando em modo só inglês */
         #reader-body {
             flex: 1;
-            padding: 20px;
-            overflow-y: auto;
+            padding: 8px 20px 20px 20px;
             display: flex;
             flex-direction: column;
             gap: 16px;
@@ -802,12 +927,53 @@
             width: 100%;
             padding-bottom: 120px;
             -webkit-overflow-scrolling: touch;
+            overflow-y: auto;
+        }
+
+        /* Quando em modo só inglês, desabilita a rolagem */
+        .hide-translation #reader-body {
+            overflow-y: hidden !important;
+            touch-action: none !important;
+        }
+
+        /* Quando em modo português, habilita a rolagem */
+        .show-translation #reader-body {
+            overflow-y: auto !important;
+            touch-action: auto !important;
         }
 
         @media (min-width: 768px) {
             #reader-body {
-                padding: 32px;
+                padding: 16px 32px 32px 32px;
                 gap: 20px;
+            }
+            .translation-header {
+                padding: 16px 32px 8px 32px;
+                min-height: 30vh;
+            }
+            .live-translation-window {
+                min-height: 30vh;
+                padding: 20px 28px;
+            }
+            .live-trans-content {
+                font-size: calc(var(--font-pixel-size) * 1.2);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .translation-header {
+                min-height: 30vh;
+                padding: 8px 12px 4px 12px;
+            }
+            .live-translation-window {
+                min-height: 30vh;
+                padding: 10px 14px;
+            }
+            .live-trans-content {
+                font-size: calc(var(--font-pixel-size) * 0.95);
+            }
+            #reader-body {
+                padding: 6px 12px 20px 12px;
             }
         }
 
@@ -818,14 +984,22 @@
             padding: 16px;
             border-radius: 8px;
             background-color: var(--reader-bg);
-            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.12);
             cursor: pointer;
-            transition: opacity 0.15s, transform 0.1s, background-color 0.2s, box-shadow 0.2s;
+            transition: opacity 0.15s, transform 0.1s, background-color 0.2s;
+            scroll-margin-top: 20px;
         }
 
         .bilingual-pair:active {
             transform: scale(0.98);
             opacity: 0.9;
+        }
+
+        /* DESTAQUE DA FRASE ATIVA */
+        .bilingual-pair.active-sentence {
+            border-left: 4px solid var(--app-primary);
+            background-color: rgba(139, 107, 79, 0.08);
+            padding-left: 12px;
         }
 
         .sentence-orig {
@@ -840,7 +1014,7 @@
             color: var(--reader-trans);
             font-weight: var(--font-weight, normal);
             font-family: var(--selected-font, 'Arial', sans-serif);
-            border-top: 1px dashed rgba(128,128,128,0.3);
+            border-top: 1px dashed rgba(128,128,128,0.25);
             padding-top: 8px;
         }
 
@@ -918,7 +1092,7 @@
                     <input type="checkbox" id="toggleTranslationCheckbox" onchange="toggleTranslationVisibility()" style="width: 18px; height: 18px; cursor: pointer;">
                     <span>Mostrar Português nos Balões</span>
                 </label>
-                <span style="font-size: 0.7rem; color: #666; margin-top: 2px;">Quando ativado, o português aparece nos balões e a janela de tradução some. Quando desativado, fica só inglês e a janela aparece.</span>
+                <span style="font-size: 0.7rem; color: #666; margin-top: 2px;">Quando ativado, o português aparece nos balões e o quadro de tradução some. Quando desativado, fica só inglês e o quadro aparece com a tradução.</span>
             </div>
 
             <button class="btn-primary" onclick="openFullSettingsModal()">⚙️ Configurações Completas</button>
@@ -1157,9 +1331,21 @@
 
     <!-- TELA DO LEITOR -->
     <div id="reader-view">
-        <!-- Janela de Tradução Dinâmica no Topo -->
-        <div class="live-translation-window" id="liveTranslationWindow">
-            <span class="live-trans-content" id="liveTransText">Deslize o texto para traduzir...</span>
+        <!-- QUADRO DE TRADUÇÃO - FIXO 30% da tela -->
+        <div class="translation-header" id="translationHeader">
+            <div class="live-translation-window" id="liveTranslationWindow">
+                <div class="live-trans-content" id="liveTransText">📖 Toque nas setas para navegar pelas frases</div>
+            </div>
+        </div>
+
+        <!-- Botões de Navegação - Formato Triangular Translúcido -->
+        <div class="nav-buttons-container" id="navButtonsContainer">
+            <button class="nav-btn nav-btn-up" id="navUpBtn" title="Próxima Frase">
+                <span>▲</span>
+            </button>
+            <button class="nav-btn nav-btn-down" id="navDownBtn" title="Frase Anterior">
+                <span>▼</span>
+            </button>
         </div>
 
         <div id="reader-body"></div>
@@ -1181,7 +1367,7 @@
                         <input type="checkbox" id="toggleTranslationCheckboxReader" onchange="syncAndToggleTranslation()" style="width: 18px; height: 18px; cursor: pointer;">
                         <span>Mostrar Português nos Balões</span>
                     </label>
-                    <span style="font-size: 0.7rem; color: #666; margin-top: 2px;">Quando ativado, o português aparece nos balões e a janela de tradução some. Quando desativado, fica só inglês e a janela aparece.</span>
+                    <span style="font-size: 0.7rem; color: #666; margin-top: 2px;">Quando ativado, o português aparece nos balões e o quadro de tradução some. Quando desativado, fica só inglês e o quadro aparece com a tradução.</span>
                 </div>
 
                 <button class="btn-primary" onclick="openFullSettingsModal()">⚙️ Configurações Completas</button>
@@ -1210,6 +1396,11 @@
         let currentAddMode = 'file';
         let cachedPastedText = "";
 
+        // Variáveis para navegação por frases
+        let currentSentenceIndex = 0;
+        let totalSentences = 0;
+        let currentBookContent = [];
+
         document.addEventListener('DOMContentLoaded', () => {
             loadSettingsToUI();
             renderShelf();
@@ -1220,6 +1411,7 @@
             setupSideTabEvents('sideTabContainer', 'sideTabHandle');
             setupSideTabEvents('readerSideTabContainer', 'readerSideTabHandle');
             setupTrashCanDropEvents();
+            setupNavigationButtons();
 
             const addBookBtn = document.getElementById('addBookBtn');
             if (addBookBtn) {
@@ -1233,6 +1425,70 @@
                 exportBackupBtn.addEventListener('touchend', (e) => { e.preventDefault(); exportBackup(); });
             }
         });
+
+        // CONFIGURAÇÃO DOS BOTÕES DE NAVEGAÇÃO
+        function setupNavigationButtons() {
+            const navUp = document.getElementById('navUpBtn');
+            const navDown = document.getElementById('navDownBtn');
+
+            navUp.addEventListener('click', (e) => {
+                e.stopPropagation();
+                navigateToSentence(currentSentenceIndex + 1);
+            });
+
+            navUp.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                navigateToSentence(currentSentenceIndex + 1);
+            });
+
+            navDown.addEventListener('click', (e) => {
+                e.stopPropagation();
+                navigateToSentence(currentSentenceIndex - 1);
+            });
+
+            navDown.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                navigateToSentence(currentSentenceIndex - 1);
+            });
+        }
+
+        // FUNÇÃO PARA NAVEGAR ENTRE AS FRASES
+        function navigateToSentence(index) {
+            if (!currentBookContent || currentBookContent.length === 0) return;
+            if (index < 0 || index >= currentBookContent.length) return;
+
+            currentSentenceIndex = index;
+            const pair = currentBookContent[index];
+            
+            // Atualiza o quadro fixo com APENAS A TRADUÇÃO em português
+            const liveTransText = document.getElementById('liveTransText');
+            if (liveTransText && pair) {
+                liveTransText.textContent = pair.trans;
+            }
+
+            // Rola a frase ativa para ficar BEM PRÓXIMA ao quadro (logo abaixo)
+            const body = document.getElementById('reader-body');
+            const pairs = body.querySelectorAll('.bilingual-pair');
+            
+            // Remove destaque anterior
+            pairs.forEach(p => p.classList.remove('active-sentence'));
+            
+            // Adiciona destaque na frase atual
+            if (pairs[index]) {
+                pairs[index].classList.add('active-sentence');
+                // Rola a frase para o topo da lista, logo abaixo do quadro
+                pairs[index].scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            // Atualiza o lastReadIndex no livro
+            let currentBook = books.find(b => b.id === currentActiveBookId);
+            if (currentBook) {
+                currentBook.lastReadIndex = index;
+                localStorage.setItem('polyglot_books', JSON.stringify(books));
+            }
+        }
 
         function switchAddMode(mode) {
             currentAddMode = mode;
@@ -1508,11 +1764,10 @@
             document.getElementById('transColorRange').value = settings.transVal ?? 30;
             document.getElementById('bgColorRange').value = settings.bgVal ?? 100;
 
-            // NOVO: hideTranslation = false significa que MOSTRA português (caixinha marcada)
+            // hideTranslation = false significa que MOSTRA português (caixinha marcada)
             // hideTranslation = true significa que NÃO MOSTRA português (caixinha desmarcada)
             const hideTransCheckbox = document.getElementById('toggleTranslationCheckbox');
             if (hideTransCheckbox) {
-                // A caixa deve ficar marcada quando hideTranslation for false (mostra português)
                 hideTransCheckbox.checked = !settings.hideTranslation;
             }
             const hideTransCheckboxReader = document.getElementById('toggleTranslationCheckboxReader');
@@ -1523,11 +1778,9 @@
             applySettings();
         }
 
-        // NOVA FUNÇÃO: toggleTranslationVisibility - inverte o comportamento
         function toggleTranslationVisibility() {
             const hideTransCheckbox = document.getElementById('toggleTranslationCheckbox');
             if (hideTransCheckbox) {
-                // Se a caixa está marcada, queremos MOSTRAR português (hideTranslation = false)
                 settings.hideTranslation = !hideTransCheckbox.checked;
             }
             const hideTransCheckboxReader = document.getElementById('toggleTranslationCheckboxReader');
@@ -1535,12 +1788,16 @@
                 hideTransCheckboxReader.checked = !settings.hideTranslation;
             }
             applySettings();
+            
+            // Se estiver no leitor, atualiza a navegação
+            if (document.getElementById('reader-view').style.display === 'flex') {
+                updateNavigationVisibility();
+            }
         }
 
         function syncAndToggleTranslation() {
             const hideTransCheckboxReader = document.getElementById('toggleTranslationCheckboxReader');
             if (hideTransCheckboxReader) {
-                // Se a caixa está marcada, queremos MOSTRAR português (hideTranslation = false)
                 settings.hideTranslation = !hideTransCheckboxReader.checked;
             }
             const hideTransCheckbox = document.getElementById('toggleTranslationCheckbox');
@@ -1548,12 +1805,42 @@
                 hideTransCheckbox.checked = !settings.hideTranslation;
             }
             applySettings();
+            
+            // Se estiver no leitor, atualiza a navegação
+            if (document.getElementById('reader-view').style.display === 'flex') {
+                updateNavigationVisibility();
+            }
+        }
+
+        // FUNÇÃO PARA ATUALIZAR VISIBILIDADE DOS BOTÕES E CONTROLE DE ROLAGEM
+        function updateNavigationVisibility() {
+            const navContainer = document.getElementById('navButtonsContainer');
+            const readerBody = document.getElementById('reader-body');
+            const translationHeader = document.getElementById('translationHeader');
+            
+            if (settings.hideTranslation) {
+                // Modo só inglês: mostra quadro e botões, DESLIGA ROLAGEM
+                if (readerBody) {
+                    readerBody.classList.remove('show-translation');
+                    readerBody.classList.add('hide-translation');
+                }
+                if (navContainer) navContainer.style.display = 'flex';
+                if (translationHeader) translationHeader.style.display = 'block';
+            } else {
+                // Modo português: esconde quadro e botões, LIGA ROLAGEM
+                if (readerBody) {
+                    readerBody.classList.remove('hide-translation');
+                    readerBody.classList.add('show-translation');
+                }
+                if (navContainer) navContainer.style.display = 'none';
+                if (translationHeader) translationHeader.style.display = 'none';
+            }
         }
 
         function changeFontSize(delta) {
             settings.pixelSize += delta;
             if (settings.pixelSize < 10) settings.pixelSize = 10;
-            if (settings.pixelSize > 80) settings.pixelSize = 80; // AUMENTADO PARA 80
+            if (settings.pixelSize > 80) settings.pixelSize = 80;
             document.getElementById('fontSizeDisplay').innerText = settings.pixelSize + 'px';
             applySettings();
         }
@@ -1614,9 +1901,6 @@
 
             const readerBody = document.getElementById('reader-body');
             if (readerBody) {
-                // NOVO COMPORTAMENTO:
-                // hideTranslation = false → MOSTRA português (show-translation)
-                // hideTranslation = true → NÃO MOSTRA português (hide-translation)
                 if (settings.hideTranslation) {
                     readerBody.classList.remove('show-translation');
                     readerBody.classList.add('hide-translation');
@@ -1997,6 +2281,14 @@
 
         function openReader(book) {
             currentActiveBookId = book.id;
+            currentBookContent = book.content;
+            totalSentences = book.content.length;
+            
+            // Garante que o índice inicial seja 0 (primeira frase) ou o último salvo
+            currentSentenceIndex = book.lastReadIndex || 0;
+            if (currentSentenceIndex >= totalSentences) {
+                currentSentenceIndex = 0;
+            }
             
             const sideTab = document.getElementById('sideTabContainer');
             if (sideTab) {
@@ -2007,7 +2299,7 @@
             const body = document.getElementById('reader-body');
             body.innerHTML = '';
 
-            // NOVO: Aplica as classes corretas baseado no settings
+            // Aplica as classes corretas baseado no settings
             if (settings.hideTranslation) {
                 body.classList.remove('show-translation');
                 body.classList.add('hide-translation');
@@ -2016,12 +2308,20 @@
                 body.classList.add('show-translation');
             }
 
+            // Atualiza visibilidade dos botões e quadro
+            updateNavigationVisibility();
+
             book.content.forEach((pair, index) => {
                 const pairDiv = document.createElement('div');
                 pairDiv.className = 'bilingual-pair';
                 pairDiv.dataset.index = index;
                 pairDiv.dataset.orig = pair.orig;
                 pairDiv.dataset.trans = pair.trans;
+
+                // Marca a frase ativa
+                if (index === currentSentenceIndex) {
+                    pairDiv.classList.add('active-sentence');
+                }
 
                 pairDiv.onclick = () => { 
                     playSpeech(pair.orig); 
@@ -2043,49 +2343,20 @@
             document.getElementById('reader-view').style.display = 'flex';
             document.getElementById('readerBackBtn').classList.remove('visible');
 
+            // Carrega a primeira frase no quadro e garante que ela fique visível
             setTimeout(() => { 
-                body.scrollTop = book.scrollTop || 0; 
-                updateLiveTranslationOnScroll();
-            }, 50);
-
-            body.onscroll = () => {
-                let currentBook = books.find(b => b.id === currentActiveBookId);
-                if (currentBook) {
-                    currentBook.scrollTop = body.scrollTop;
-                    
-                    const pairElements = body.querySelectorAll('.bilingual-pair');
-                    let visibleIndex = 0;
-                    pairElements.forEach((el, idx) => {
-                        const rect = el.getBoundingClientRect();
-                        if (rect.top >= 0 && rect.top < window.innerHeight * 0.6) {
-                            visibleIndex = idx;
-                        }
-                    });
-                    currentBook.lastReadIndex = visibleIndex;
-
-                    localStorage.setItem('polyglot_books', JSON.stringify(books));
+                const currentPair = book.content[currentSentenceIndex];
+                if (currentPair) {
+                    const liveTransText = document.getElementById('liveTransText');
+                    liveTransText.textContent = currentPair.trans;
                 }
-                updateLiveTranslationOnScroll();
-            };
-        }
-
-        // LÓGICA DA JANELA DE TRADUÇÃO AUTOMÁTICA AO DESLIZAR
-        function updateLiveTranslationOnScroll() {
-            const body = document.getElementById('reader-body');
-            const liveTransText = document.getElementById('liveTransText');
-            if (!body || !liveTransText) return;
-
-            const pairs = body.querySelectorAll('.bilingual-pair');
-            let activeTrans = "Deslize o texto para traduzir...";
-
-            for (let pair of pairs) {
-                const rect = pair.getBoundingClientRect();
-                if (rect.top <= window.innerHeight * 0.4 && rect.bottom >= window.innerHeight * 0.1) {
-                    activeTrans = pair.dataset.trans || "";
-                    break;
+                
+                // Rola a primeira frase ativa para o topo, logo abaixo do quadro
+                const pairs = body.querySelectorAll('.bilingual-pair');
+                if (pairs[currentSentenceIndex]) {
+                    pairs[currentSentenceIndex].scrollIntoView({ behavior: 'auto', block: 'start' });
                 }
-            }
-            liveTransText.innerText = activeTrans;
+            }, 100);
         }
 
         function playSpeech(text) {
@@ -2197,6 +2468,7 @@
             if ('speechSynthesis' in window) window.speechSynthesis.cancel();
             document.getElementById('reader-view').style.display = 'none';
             currentActiveBookId = null;
+            currentBookContent = [];
 
             renderShelf();
 
@@ -2222,6 +2494,7 @@
 
             readerView.addEventListener('touchend', (e) => {
                 if (e.target.id === 'readerBackBtn' || e.target.closest('#readerBackBtn') || e.target.closest('#readerSideTabContainer')) return;
+                if (e.target.closest('.nav-btn')) return;
                 let currentTime = new Date().getTime();
                 if ((currentTime - lastTouchTime) < 300 && (currentTime - lastTouchTime) > 0) {
                     document.getElementById('readerBackBtn').classList.toggle('visible');
@@ -2232,6 +2505,7 @@
 
             readerView.addEventListener('dblclick', (e) => {
                 if (e.target.id === 'readerBackBtn' || e.target.closest('#readerBackBtn') || e.target.closest('#readerSideTabContainer')) return;
+                if (e.target.closest('.nav-btn')) return;
                 document.getElementById('readerBackBtn').classList.toggle('visible');
             });
         }

@@ -1189,7 +1189,9 @@
                     <label>Capa do Livro (Opcional)</label>
                     <input type="file" id="coverFileInput" accept="image/*">
                 </div>
-                <button class="btn-primary" id="addBookBtn">Adicionar Livro à Estante</button>
+                
+                <!-- BOTÃO CORRIGIDO COM ID E ONCLICK DIRETO -->
+                <button type="button" class="btn-primary" id="addBookBtn" onclick="processAndSaveBook()">Adicionar Livro à Estante</button>
             </div>
 
             <hr style="border: 0; border-top: 1px solid var(--app-accent); margin: 4px 0;">
@@ -1275,7 +1277,7 @@
                 <span style="font-size: 0.9rem; font-weight: bold; color: var(--app-primary);">💾 Backup e Restauração</span>
                 
                 <div style="display: flex; gap: 8px;">
-                    <button class="btn-primary" id="exportBackupBtn" style="flex: 1; font-size: 0.8rem; padding: 10px;">Gerar Backup</button>
+                    <button class="btn-primary" id="exportBackupBtn" style="flex: 1; font-size: 0.8rem; padding: 10px;" onclick="exportBackup()">Gerar Backup</button>
                     <label class="btn-primary" style="flex: 1; font-size: 0.8rem; padding: 10px; text-align: center; cursor: pointer; display: inline-block; line-height: normal;">
                         Restaurar
                         <input type="file" id="restoreBackupInput" accept=".json" style="display: none;" onchange="importBackup(event)">
@@ -1386,6 +1388,7 @@
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
+        // ===================== VARIÁVEIS GLOBAIS =====================
         let books = JSON.parse(localStorage.getItem('polyglot_books') || '[]');
         let settings = JSON.parse(localStorage.getItem('polyglot_settings') || JSON.stringify({
             font: 'Arial',
@@ -1394,21 +1397,27 @@
             origVal: 0,
             transVal: 30,
             bgVal: 100,
-            hideTranslation: false // false = mostra português, true = só inglês
+            hideTranslation: false
         }));
         let savedBackupsList = JSON.parse(localStorage.getItem('polyglot_saved_backups') || '[]');
         let currentAddMode = 'file';
         let cachedPastedText = "";
-
-        // Variáveis para navegação por frases
         let currentSentenceIndex = 0;
         let totalSentences = 0;
         let currentBookContent = [];
+        let currentActiveBookId = null;
+        let draggedIndex = null;
 
+        // ===================== INICIALIZAÇÃO =====================
         document.addEventListener('DOMContentLoaded', function() {
             try {
+                console.log('App inicializado');
+                
+                // Carregar configurações e renderizar
                 loadSettingsToUI();
                 renderShelf();
+                
+                // Configurar eventos
                 setupReaderDoubleTap();
                 setupBackButton();
                 loadLocalVoicesFromApp();
@@ -1418,32 +1427,6 @@
                 setupTrashCanDropEvents();
                 setupNavigationButtons();
 
-                // CORREÇÃO: Adicionar evento diretamente ao botão de adicionar livro
-                const addBookBtn = document.getElementById('addBookBtn');
-                if (addBookBtn) {
-                    // Remover qualquer evento anterior
-                    addBookBtn.removeEventListener('click', processAndSaveBook);
-                    addBookBtn.removeEventListener('touchend', processAndSaveBook);
-                    
-                    // Adicionar eventos novos
-                    addBookBtn.addEventListener('click', function(e) { 
-                        e.preventDefault(); 
-                        e.stopPropagation();
-                        processAndSaveBook(); 
-                    });
-                    addBookBtn.addEventListener('touchend', function(e) { 
-                        e.preventDefault(); 
-                        e.stopPropagation();
-                        processAndSaveBook(); 
-                    });
-                }
-
-                const exportBackupBtn = document.getElementById('exportBackupBtn');
-                if (exportBackupBtn) {
-                    exportBackupBtn.addEventListener('click', function(e) { e.preventDefault(); exportBackup(); });
-                    exportBackupBtn.addEventListener('touchend', function(e) { e.preventDefault(); exportBackup(); });
-                }
-                
                 // Fechar modal ao clicar fora
                 const settingsModal = document.getElementById('settingsModal');
                 if (settingsModal) {
@@ -1453,130 +1436,250 @@
                         }
                     });
                 }
+                
+                console.log('App inicializado com sucesso!');
+                console.log('Livros carregados:', books.length);
             } catch (error) {
                 console.error('Erro na inicialização:', error);
-                showToast('Erro ao inicializar o aplicativo. Recarregue a página.');
+                showToast('Erro ao inicializar o aplicativo.');
             }
         });
 
-        // FUNÇÃO PRINCIPAL PARA ADICIONAR LIVRO - CORRIGIDA
-        async function processAndSaveBook() {
+        // ===================== FUNÇÃO PRINCIPAL - ADICIONAR LIVRO =====================
+        // CORRIGIDA: Usando function declaration para garantir que esteja disponível globalmente
+        function processAndSaveBook() {
+            console.log('▶ processAndSaveBook() chamado - Iniciando...');
+            
             try {
-                console.log('processAndSaveBook chamado');
-                
+                // Buscar elementos do DOM
                 const titleInput = document.getElementById('bookTitleInput');
                 const coverInput = document.getElementById('coverFileInput');
+                const fileInput = document.getElementById('bookFileInput');
+                const indicator = document.getElementById('pasteStatusIndicator');
 
+                // VALIDAR TÍTULO
                 if (!titleInput || !titleInput.value.trim()) {
-                    showToast("Informe o título do livro.");
+                    showToast("📕 Informe o título do livro.");
+                    console.warn('Título vazio');
                     return;
                 }
+                console.log('✅ Título:', titleInput.value.trim());
 
+                // OBTER TEXTO
                 let rawText = "";
-                let livroAdicionado = false;
+                let fonteTexto = "";
 
                 if (currentAddMode === 'file') {
-                    const fileInput = document.getElementById('bookFileInput');
+                    // MODO ARQUIVO
                     if (!fileInput || fileInput.files.length === 0) {
-                        showToast("Selecione um arquivo de livro.");
+                        showToast("📂 Selecione um arquivo de livro.");
+                        console.warn('Nenhum arquivo selecionado');
                         return;
                     }
+                    
                     const file = fileInput.files[0];
-                    try {
-                        const ext = file.name.split('.').pop().toLowerCase();
-                        if (['txt', 'csv', 'json', 'srt', 'vtt'].includes(ext)) {
-                            rawText = await file.text();
-                        } else if (ext === 'docx') {
-                            const arrayBuffer = await file.arrayBuffer();
-                            const result = await mammoth.extractRawText({ arrayBuffer });
-                            rawText = result.value;
-                        } else if (ext === 'pdf') {
-                            const arrayBuffer = await file.arrayBuffer();
-                            const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-                            let fullText = "";
-                            for (let i = 1; i <= pdf.numPages; i++) {
-                                const page = await pdf.getPage(i);
-                                const textContent = await page.getTextContent();
-                                fullText += textContent.items.map(function(item) { return item.str; }).join(" ") + "\n";
+                    fonteTexto = file.name;
+                    console.log('📄 Arquivo:', file.name, 'Tamanho:', file.size);
+                    
+                    // Processar arquivo baseado na extensão
+                    const ext = file.name.split('.').pop().toLowerCase();
+                    
+                    if (['txt', 'csv', 'json', 'srt', 'vtt'].includes(ext)) {
+                        // Arquivo de texto
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            try {
+                                rawText = e.target.result;
+                                console.log('✅ Texto lido do arquivo:', rawText.length, 'caracteres');
+                                processarTexto(rawText, titleInput, coverInput, fileInput, indicator);
+                            } catch (err) {
+                                console.error('Erro ao processar texto:', err);
+                                showToast("Erro ao processar o arquivo de texto.");
                             }
-                            rawText = fullText;
-                        } else {
-                            showToast("Formato de arquivo não suportado.");
-                            return;
-                        }
-                    } catch (err) {
-                        console.error('Erro ao processar arquivo:', err);
-                        showToast("Erro ao processar o arquivo.");
+                        };
+                        reader.onerror = function() {
+                            showToast("Erro ao ler o arquivo.");
+                            console.error('Erro ao ler arquivo');
+                        };
+                        reader.readAsText(file);
+                        return; // Sai porque o processamento é assíncrono
+                    } else if (ext === 'docx') {
+                        // Processar DOCX
+                        const reader = new FileReader();
+                        reader.onload = async function(e) {
+                            try {
+                                const arrayBuffer = e.target.result;
+                                const result = await mammoth.extractRawText({ arrayBuffer });
+                                rawText = result.value;
+                                console.log('✅ Texto lido do DOCX:', rawText.length, 'caracteres');
+                                processarTexto(rawText, titleInput, coverInput, fileInput, indicator);
+                            } catch (err) {
+                                console.error('Erro ao processar DOCX:', err);
+                                showToast("Erro ao processar o arquivo DOCX.");
+                            }
+                        };
+                        reader.onerror = function() {
+                            showToast("Erro ao ler o arquivo.");
+                        };
+                        reader.readAsArrayBuffer(file);
+                        return;
+                    } else if (ext === 'pdf') {
+                        // Processar PDF
+                        const reader = new FileReader();
+                        reader.onload = async function(e) {
+                            try {
+                                const arrayBuffer = e.target.result;
+                                const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                                let fullText = "";
+                                for (let i = 1; i <= pdf.numPages; i++) {
+                                    const page = await pdf.getPage(i);
+                                    const textContent = await page.getTextContent();
+                                    fullText += textContent.items.map(function(item) { return item.str; }).join(" ") + "\n";
+                                }
+                                rawText = fullText;
+                                console.log('✅ Texto lido do PDF:', rawText.length, 'caracteres');
+                                processarTexto(rawText, titleInput, coverInput, fileInput, indicator);
+                            } catch (err) {
+                                console.error('Erro ao processar PDF:', err);
+                                showToast("Erro ao processar o arquivo PDF.");
+                            }
+                        };
+                        reader.onerror = function() {
+                            showToast("Erro ao ler o arquivo.");
+                        };
+                        reader.readAsArrayBuffer(file);
+                        return;
+                    } else {
+                        showToast("Formato de arquivo não suportado.");
+                        console.warn('Formato não suportado:', ext);
                         return;
                     }
                 } else {
+                    // MODO COLAGEM
                     rawText = cachedPastedText.trim();
+                    fonteTexto = "texto colado";
+                    
                     if (!rawText) {
-                        showToast("Cole o texto do livro na tela de colagem.");
+                        showToast("📋 Cole o texto do livro na tela de colagem.");
+                        console.warn('Texto colado vazio');
                         return;
                     }
+                    
+                    console.log('✅ Texto colado:', rawText.length, 'caracteres');
+                    processarTexto(rawText, titleInput, coverInput, fileInput, indicator);
                 }
+                
+            } catch (error) {
+                console.error('❌ Erro em processAndSaveBook:', error);
+                showToast("Erro ao processar: " + error.message);
+            }
+        }
 
-                // Processar o texto para extrair pares bilíngues
-                let lines = rawText.replace(/\r/g, '').split('\n').map(function(l) { return l.trim(); }).filter(function(l) { return l.length > 0; });
+        // ===================== FUNÇÃO AUXILIAR - PROCESSAR TEXTO =====================
+        function processarTexto(rawText, titleInput, coverInput, fileInput, indicator) {
+            try {
+                console.log('▶ Processando texto...');
+                
+                // Dividir em linhas
+                let lines = rawText.replace(/\r/g, '').split('\n')
+                    .map(function(l) { return l.trim(); })
+                    .filter(function(l) { return l.length > 0; });
+                
+                console.log('📝 Linhas encontradas:', lines.length);
+                
+                // Extrair pares bilíngues
                 let bilingualPairs = [];
                 for (let i = 0; i < lines.length; i += 2) {
                     let transText = lines[i]; 
                     let origText = (i + 1 < lines.length) ? lines[i + 1] : ""; 
-                    if (transText) bilingualPairs.push({ orig: origText, trans: transText });
+                    if (transText) {
+                        bilingualPairs.push({ 
+                            orig: origText || "", 
+                            trans: transText 
+                        });
+                    }
                 }
 
                 if (bilingualPairs.length === 0) {
-                    showToast("Nenhum par de frases válido encontrado.");
+                    showToast("❌ Nenhum par de frases válido encontrado.");
+                    console.warn('Nenhum par bilíngue encontrado');
                     return;
                 }
+                
+                console.log('✅ Pares bilíngues extraídos:', bilingualPairs.length);
 
+                // Processar capa
                 let coverDataUrl = "";
                 if (coverInput && coverInput.files.length > 0) {
-                    coverDataUrl = await fileToDataUrl(coverInput.files[0]);
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        coverDataUrl = e.target.result;
+                        console.log('✅ Capa carregada');
+                        salvarLivro(titleInput.value.trim(), coverDataUrl, bilingualPairs, titleInput, fileInput, coverInput, indicator);
+                    };
+                    reader.onerror = function() {
+                        console.warn('Erro ao carregar capa, continuando sem');
+                        salvarLivro(titleInput.value.trim(), "", bilingualPairs, titleInput, fileInput, coverInput, indicator);
+                    };
+                    reader.readAsDataURL(coverInput.files[0]);
+                    return;
                 }
+                
+                // Sem capa, salvar diretamente
+                salvarLivro(titleInput.value.trim(), "", bilingualPairs, titleInput, fileInput, coverInput, indicator);
+                
+            } catch (error) {
+                console.error('❌ Erro ao processar texto:', error);
+                showToast("Erro ao processar o texto: " + error.message);
+            }
+        }
 
-                // Adicionar o livro
+        // ===================== FUNÇÃO AUXILIAR - SALVAR LIVRO =====================
+        function salvarLivro(titulo, capa, pares, titleInput, fileInput, coverInput, indicator) {
+            try {
+                console.log('▶ Salvando livro:', titulo);
+                
+                // Criar objeto do livro
                 const novoLivro = {
                     id: Date.now(),
-                    title: titleInput.value.trim(),
-                    cover: coverDataUrl,
-                    content: bilingualPairs,
+                    title: titulo,
+                    cover: capa,
+                    content: pares,
                     scrollTop: 0,
                     lastReadIndex: 0
                 };
                 
+                // Adicionar ao array e salvar
                 books.push(novoLivro);
                 localStorage.setItem('polyglot_books', JSON.stringify(books));
+                console.log('✅ Livro salvo no localStorage. Total:', books.length);
                 
-                // Renderizar a estante
+                // Renderizar estante
                 renderShelf();
                 
-                showToast("Livro adicionado com sucesso!");
-                livroAdicionado = true;
-
                 // Limpar campos
                 if (titleInput) titleInput.value = "";
-                const fileInput = document.getElementById('bookFileInput');
                 if (fileInput) fileInput.value = "";
-                cachedPastedText = "";
-                const indicator = document.getElementById('pasteStatusIndicator');
-                if (indicator) indicator.innerText = "Nenhum texto colado ainda.";
                 if (coverInput) coverInput.value = "";
+                if (indicator) {
+                    indicator.innerText = "Nenhum texto colado ainda.";
+                    indicator.style.color = "#666";
+                }
+                cachedPastedText = "";
                 
-                const btnVoltar = document.getElementById('btn-voltar-config');
-                if(btnVoltar) btnVoltar.style.display = 'none';
-
-                // Fechar configurações após adicionar
+                // Fechar configurações
                 fecharConfiguracoes();
                 
-            } catch (err) {
-                console.error('Erro ao salvar livro:', err);
-                showToast("Erro ao salvar o livro: " + err.message);
+                showToast("✅ Livro adicionado com sucesso!");
+                console.log('🎉 Livro adicionado com sucesso!');
+                
+            } catch (error) {
+                console.error('❌ Erro ao salvar livro:', error);
+                showToast("Erro ao salvar o livro: " + error.message);
             }
         }
 
-        // FUNÇÕES PARA ABRIR E FECHAR CONFIGURAÇÕES
+        // ===================== FUNÇÕES DE CONFIGURAÇÃO =====================
         function abrirConfiguracoes(event) {
             try {
                 if (event) {
@@ -1584,18 +1687,15 @@
                     event.preventDefault();
                 }
                 
-                // Fecha as abas laterais primeiro
                 const sideTab = document.getElementById('sideTabContainer');
                 if (sideTab) sideTab.classList.remove('open');
                 const readerSideTab = document.getElementById('readerSideTabContainer');
                 if (readerSideTab) readerSideTab.classList.remove('open');
                 
-                // Atualiza os dados antes de abrir
                 updateDeleteSelectOptions();
                 loadLocalVoicesFromApp();
                 updateBackupFolderSubtitle();
                 
-                // Abre o modal
                 const modal = document.getElementById('settingsModal');
                 if (modal) {
                     modal.classList.add('active');
@@ -1618,7 +1718,7 @@
             }
         }
 
-        // CONFIGURAÇÃO DOS BOTÕES DE NAVEGAÇÃO
+        // ===================== CONFIGURAÇÃO DOS BOTÕES DE NAVEGAÇÃO =====================
         function setupNavigationButtons() {
             try {
                 const navUp = document.getElementById('navUpBtn');
@@ -1652,7 +1752,7 @@
             }
         }
 
-        // FUNÇÃO PARA NAVEGAR ENTRE AS FRASES
+        // ===================== FUNÇÃO PARA NAVEGAR ENTRE AS FRASES =====================
         function navigateToSentence(index) {
             try {
                 if (!currentBookContent || currentBookContent.length === 0) return;
@@ -1661,13 +1761,11 @@
                 currentSentenceIndex = index;
                 const pair = currentBookContent[index];
                 
-                // Atualiza o quadro fixo com APENAS A TRADUÇÃO em português
                 const liveTransText = document.getElementById('liveTransText');
                 if (liveTransText && pair) {
                     liveTransText.textContent = pair.trans;
                 }
 
-                // Rola a frase ativa para ficar BEM PRÓXIMA ao quadro
                 const body = document.getElementById('reader-body');
                 if (body) {
                     const pairs = body.querySelectorAll('.bilingual-pair');
@@ -1679,7 +1777,6 @@
                     }
                 }
 
-                // Atualiza o lastReadIndex no livro
                 let currentBook = books.find(b => b.id === currentActiveBookId);
                 if (currentBook) {
                     currentBook.lastReadIndex = index;
@@ -1690,6 +1787,7 @@
             }
         }
 
+        // ===================== FUNÇÕES DE MODO DE ADIÇÃO =====================
         function switchAddMode(mode) {
             try {
                 currentAddMode = mode;
@@ -1726,6 +1824,7 @@
             }
         }
 
+        // ===================== FUNÇÕES DE COLAGEM =====================
         function openFullscreenPasteModal() {
             try {
                 const modal = document.getElementById('pasteModalFullscreen');
@@ -1771,6 +1870,7 @@
             showToast("Ajuste a capa e clique em 'Adicionar Livro à Estante'.");
         }
 
+        // ===================== FUNÇÕES DE ABA LATERAL =====================
         function setupSideTabEvents(containerId, handleId) {
             try {
                 const container = document.getElementById(containerId);
@@ -1813,6 +1913,7 @@
             }
         }
 
+        // ===================== FUNÇÃO TOAST =====================
         function showToast(msg) {
             try {
                 const toast = document.getElementById('toast');
@@ -1828,19 +1929,7 @@
             }
         }
 
-        // Funções antigas mantidas para compatibilidade
-        function openFullSettingsModal() {
-            abrirConfiguracoes();
-        }
-
-        function openSettingsModal() {
-            abrirConfiguracoes();
-        }
-
-        function closeSettingsModal() {
-            fecharConfiguracoes();
-        }
-
+        // ===================== FUNÇÕES DE BACKUP =====================
         function openBackupFolderModal() {
             try {
                 renderBackupListItems();
@@ -1981,6 +2070,7 @@
             }
         }
 
+        // ===================== FUNÇÕES DE VOZ =====================
         function loadLocalVoicesFromApp() {
             try {
                 if (window.AndroidBridge && typeof window.AndroidBridge.getLocalVoices === 'function') {
@@ -1991,6 +2081,112 @@
             }
         }
 
+        function testSelectedVoice() {
+            const testInput = document.getElementById('voiceTestInput');
+            playSpeech(testInput ? testInput.value : "Hello! This is a test.");
+        }
+
+        function requestDownload() {
+            try {
+                let select = document.getElementById('availableVoices');
+                if (!select) return;
+                let selectedVoice = select.value;
+                let selectedText = select.options[select.selectedIndex].text;
+                
+                const progressContainer = document.getElementById('progressContainer');
+                const progressBar = document.getElementById('progressBar');
+                const downloadStatusText = document.getElementById('downloadStatusText');
+
+                if (progressContainer) progressContainer.style.display = 'block';
+                if (downloadStatusText) {
+                    downloadStatusText.style.display = 'block';
+                    downloadStatusText.textContent = 'Conectando para baixar pacote...';
+                }
+                if (progressBar) progressBar.style.width = '10%';
+
+                if (window.AndroidBridge && typeof window.AndroidBridge.startVoiceDownload === 'function') {
+                    window.AndroidBridge.startVoiceDownload(selectedVoice, selectedText);
+                } else {
+                    let progress = 10;
+                    let interval = setInterval(function() {
+                        progress += 20;
+                        if (progressBar) progressBar.style.width = progress + '%';
+                        if (downloadStatusText) downloadStatusText.textContent = 'Baixando pacote... ' + progress + '%';
+                        if(progress >= 100) {
+                            clearInterval(interval);
+                            if (downloadStatusText) downloadStatusText.textContent = 'Download concluído!';
+                            updateLocalVoices(JSON.stringify([{ id: selectedVoice, name: selectedText }]));
+                            showToast("Pacote de voz baixado.");
+                        }
+                    }, 300);
+                }
+            } catch (error) {
+                console.error('Erro ao baixar voz:', error);
+            }
+        }
+
+        function updateDownloadProgress(percent, statusMsg) {
+            try {
+                const progressContainer = document.getElementById('progressContainer');
+                const progressBar = document.getElementById('progressBar');
+                const downloadStatusText = document.getElementById('downloadStatusText');
+
+                if (progressContainer) progressContainer.style.display = 'block';
+                if (downloadStatusText) {
+                    downloadStatusText.style.display = 'block';
+                    downloadStatusText.textContent = statusMsg || 'Baixando... ' + percent + '%';
+                }
+                if (progressBar) progressBar.style.width = percent + '%';
+
+                if (percent >= 100) {
+                    setTimeout(function() {
+                        if (progressContainer) progressContainer.style.display = 'none';
+                        if (downloadStatusText) downloadStatusText.style.display = 'none';
+                        loadLocalVoicesFromApp();
+                    }, 1500);
+                }
+            } catch (error) {
+                console.error('Erro ao atualizar progresso do download:', error);
+            }
+        }
+
+        function updateLocalVoices(voicesJson) {
+            try {
+                let voices = typeof voicesJson === 'string' ? JSON.parse(voicesJson) : voicesJson;
+                let select = document.getElementById('localVoiceSelect');
+                if (!select) return;
+                
+                let currentVal = select.value;
+                select.innerHTML = '';
+                
+                if (!voices || voices.length === 0) {
+                    select.innerHTML = '<option value="">Nenhuma voz baixada (Fallback para Web Speech)</option>';
+                    const status = document.getElementById('voiceStatus');
+                    if (status) status.textContent = 'Nenhum pacote nativo encontrado.';
+                    return;
+                }
+
+                voices.forEach(function(v) {
+                    let opt = document.createElement('option');
+                    opt.value = v.id;
+                    opt.textContent = v.name;
+                    select.appendChild(opt);
+                });
+                
+                if (currentVal && Array.from(select.options).some(function(o) { return o.value === currentVal; })) {
+                    select.value = currentVal;
+                } else if (select.options.length > 0) {
+                    select.selectedIndex = 0;
+                }
+
+                const status = document.getElementById('voiceStatus');
+                if (status) status.textContent = voices.length + ' voz(es) offline pronta(s).';
+            } catch(e) {
+                console.error('Erro ao atualizar vozes locais:', e);
+            }
+        }
+
+        // ===================== FUNÇÕES DE EXCLUSÃO DE LIVRO =====================
         function updateDeleteSelectOptions() {
             try {
                 const deleteSection = document.getElementById('deleteSection');
@@ -2033,6 +2229,7 @@
             }
         }
 
+        // ===================== FUNÇÕES DE CONFIGURAÇÕES DE TELA =====================
         function loadSettingsToUI() {
             try {
                 const fontSelect = document.getElementById('fontSelect');
@@ -2107,7 +2304,6 @@
             }
         }
 
-        // FUNÇÃO PARA ATUALIZAR VISIBILIDADE DOS BOTÕES E CONTROLE DE ROLAGEM
         function updateNavigationVisibility() {
             try {
                 const navContainer = document.getElementById('navButtonsContainer');
@@ -2248,6 +2444,7 @@
             }
         }
 
+        // ===================== FUNÇÕES DE RENDERIZAÇÃO DA ESTANTE =====================
         function renderShelf() {
             try {
                 const container = document.getElementById('shelfContainer');
@@ -2346,8 +2543,7 @@
             }
         }
 
-        let draggedIndex = null;
-
+        // ===================== FUNÇÕES DE DRAG AND DROP =====================
         function showTrashCan() {
             try {
                 const trash = document.getElementById('trashCanDropzone');
@@ -2548,16 +2744,7 @@
             }
         }
 
-        function fileToDataUrl(file) {
-            return new Promise(function(resolve) {
-                const reader = new FileReader();
-                reader.onload = function(e) { resolve(e.target.result); };
-                reader.readAsDataURL(file);
-            });
-        }
-
-        let currentActiveBookId = null;
-
+        // ===================== FUNÇÕES DO LEITOR =====================
         function openReader(book) {
             try {
                 currentActiveBookId = book.id;
@@ -2661,111 +2848,6 @@
             }
         }
 
-        function testSelectedVoice() {
-            const testInput = document.getElementById('voiceTestInput');
-            playSpeech(testInput ? testInput.value : "Hello! This is a test.");
-        }
-
-        function requestDownload() {
-            try {
-                let select = document.getElementById('availableVoices');
-                if (!select) return;
-                let selectedVoice = select.value;
-                let selectedText = select.options[select.selectedIndex].text;
-                
-                const progressContainer = document.getElementById('progressContainer');
-                const progressBar = document.getElementById('progressBar');
-                const downloadStatusText = document.getElementById('downloadStatusText');
-
-                if (progressContainer) progressContainer.style.display = 'block';
-                if (downloadStatusText) {
-                    downloadStatusText.style.display = 'block';
-                    downloadStatusText.textContent = 'Conectando para baixar pacote...';
-                }
-                if (progressBar) progressBar.style.width = '10%';
-
-                if (window.AndroidBridge && typeof window.AndroidBridge.startVoiceDownload === 'function') {
-                    window.AndroidBridge.startVoiceDownload(selectedVoice, selectedText);
-                } else {
-                    let progress = 10;
-                    let interval = setInterval(function() {
-                        progress += 20;
-                        if (progressBar) progressBar.style.width = progress + '%';
-                        if (downloadStatusText) downloadStatusText.textContent = 'Baixando pacote... ' + progress + '%';
-                        if(progress >= 100) {
-                            clearInterval(interval);
-                            if (downloadStatusText) downloadStatusText.textContent = 'Download concluído!';
-                            updateLocalVoices(JSON.stringify([{ id: selectedVoice, name: selectedText }]));
-                            showToast("Pacote de voz baixado.");
-                        }
-                    }, 300);
-                }
-            } catch (error) {
-                console.error('Erro ao baixar voz:', error);
-            }
-        }
-
-        function updateDownloadProgress(percent, statusMsg) {
-            try {
-                const progressContainer = document.getElementById('progressContainer');
-                const progressBar = document.getElementById('progressBar');
-                const downloadStatusText = document.getElementById('downloadStatusText');
-
-                if (progressContainer) progressContainer.style.display = 'block';
-                if (downloadStatusText) {
-                    downloadStatusText.style.display = 'block';
-                    downloadStatusText.textContent = statusMsg || 'Baixando... ' + percent + '%';
-                }
-                if (progressBar) progressBar.style.width = percent + '%';
-
-                if (percent >= 100) {
-                    setTimeout(function() {
-                        if (progressContainer) progressContainer.style.display = 'none';
-                        if (downloadStatusText) downloadStatusText.style.display = 'none';
-                        loadLocalVoicesFromApp();
-                    }, 1500);
-                }
-            } catch (error) {
-                console.error('Erro ao atualizar progresso do download:', error);
-            }
-        }
-
-        function updateLocalVoices(voicesJson) {
-            try {
-                let voices = typeof voicesJson === 'string' ? JSON.parse(voicesJson) : voicesJson;
-                let select = document.getElementById('localVoiceSelect');
-                if (!select) return;
-                
-                let currentVal = select.value;
-                select.innerHTML = '';
-                
-                if (!voices || voices.length === 0) {
-                    select.innerHTML = '<option value="">Nenhuma voz baixada (Fallback para Web Speech)</option>';
-                    const status = document.getElementById('voiceStatus');
-                    if (status) status.textContent = 'Nenhum pacote nativo encontrado.';
-                    return;
-                }
-
-                voices.forEach(function(v) {
-                    let opt = document.createElement('option');
-                    opt.value = v.id;
-                    opt.textContent = v.name;
-                    select.appendChild(opt);
-                });
-                
-                if (currentVal && Array.from(select.options).some(function(o) { return o.value === currentVal; })) {
-                    select.value = currentVal;
-                } else if (select.options.length > 0) {
-                    select.selectedIndex = 0;
-                }
-
-                const status = document.getElementById('voiceStatus');
-                if (status) status.textContent = voices.length + ' voz(es) offline pronta(s).';
-            } catch(e) {
-                console.error('Erro ao atualizar vozes locais:', e);
-            }
-        }
-
         function closeReader() {
             try {
                 if ('speechSynthesis' in window) window.speechSynthesis.cancel();
@@ -2830,6 +2912,7 @@
             }
         }
 
+        // ===================== FUNÇÕES DE BACKUP =====================
         async function exportBackup() {
             try {
                 const now = new Date();
@@ -2923,6 +3006,11 @@
                 console.error('Erro ao importar backup:', error);
             }
         }
+
+        // FUNÇÕES COMPATIBILIDADE
+        function openFullSettingsModal() { abrirConfiguracoes(); }
+        function openSettingsModal() { abrirConfiguracoes(); }
+        function closeSettingsModal() { fecharConfiguracoes(); }
     </script>
 </body>
 </html>
